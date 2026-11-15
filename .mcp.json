@@ -3,7 +3,10 @@
     "gh-project": {
       "type": "stdio",
       "command": "gh-project-mcp",
-      "args": []
+      "args": [],
+      "env": {
+        "GH_PROJECT_REPO": "heffrey78/body-mechanics"
+      }
     }
   }
 }
