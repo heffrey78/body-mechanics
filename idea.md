@@ -1,5 +1,7 @@
-we're going to write a different kind of exercise application. it will have tauri based desktop and Android deployments. i would like to think about keeping records on github, but not completely married to it. you can review my writer app's writing and syncing mechanisms as a starting point. 
+we're going to write a different kind of exercise application. it will have tauri based desktop and Android deployments. i would like to think about keeping records on github, but not completely married to it. you can review my writer app's writing and syncing mechanisms as a starting point (https://github.com/heffrey78/writer). it also uses gh-project and so it's issues are a good source. 
 
 support for profiles, routines, sessions, exercises, sets, reps, isometrics with timers are table stakes. should also support conditions and modifiers. i should be able to point out on a model where I have pain/stiffness/weakness/injury and get suggestions for exercises, modifications, etc. 
 
 i should be able to start a session by just entering an exercise or movement that i'm doing ad hoc. then i should be able to press a "suggest next exercise" (or similarly named button) to be asked a couple of questions: location (location profile might contain: level of activity such as stretch versus full workout, equipment available), time available, willingness to sweat?
+
+use gh-project to plan and execute. start with an ideation milestone used to inform the rest of the project. use artifact based mockups to work through requirements.
