@@ -18,6 +18,15 @@ tauri-build = { version = "2.7", features = [] }
 tauri = { version = "2.12", features = [] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+# The git port over libgit2 (#21, from writer at e89d55c) and the files port.
+git2-port = { path = "../crates/git2-port" }
+bm-ports = { path = "../crates/bm-ports" }
+# For where libgit2 keeps the global configuration (the same git2 git2-port uses).
+git2 = { version = "0.21", default-features = false }
+
+# No system OpenSSL on Android: built from source for the target.
+[target.'cfg(target_os = "android")'.dependencies]
+git2-port = { path = "../crates/git2-port", features = ["vendored-openssl"] }
 
 # `tauri android build --debug` uses this profile: optimized, so the APK is a download a phone can take,
 # and still signed with a debug key for sideloading (as writer's mobile app does).

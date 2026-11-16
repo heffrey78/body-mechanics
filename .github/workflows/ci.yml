@@ -5,7 +5,8 @@ on:
   pull_request:
 
 jobs:
-  # Types and the engine's tests.
+  # Types, the engine's tests, and the ports (#21): the git contract suite against libgit2's stdio
+  # binary (crates/git2-port), and the Rust tests of git2-port and the files port.
   check:
     runs-on: ubuntu-24.04
     steps:
@@ -14,12 +15,26 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            crates/git2-port
+            crates/bm-ports
       - run: npm ci
       - run: npm run check
-      - run: npm test
+      - run: cargo build --release && cargo test --release --lib
+        working-directory: crates/git2-port
+      - run: cargo test
+        working-directory: crates/bm-ports
+      - name: Engine tests, the git contract suite included
+        run: npm test
+      - name: The contract suite ran, not skipped
+        run: npx vitest run packages/engine/test/git-port.test.ts --reporter=verbose | grep -q "the git port: libgit2"
 
   # The Linux desktop app (#20): built and bundled as a .deb, then started under a virtual display with
-  # BM_SMOKE set: the page renders, asks Rust for the platform, reports it and the app exits.
+  # BM_SMOKE set: the page renders, asks Rust for the platform, runs a round trip through the git and
+  # files ports (#21), reports it, and the app exits.
   desktop:
     runs-on: ubuntu-24.04
     steps:
@@ -40,7 +55,7 @@ jobs:
         run: |
           out=$(BM_SMOKE=1 timeout 60 xvfb-run -a src-tauri/target/release/body-mechanics)
           echo "$out"
-          echo "$out" | grep -q '^BM_SMOKE platform=linux engine='
+          echo "$out" | grep -q '^BM_SMOKE platform=linux engine=.* ports=git+files_ok$'
       - uses: actions/upload-artifact@v4
         with:
           name: desktop-deb

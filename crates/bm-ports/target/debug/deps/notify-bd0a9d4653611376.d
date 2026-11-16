@@ -1,0 +1,12 @@
+/home/jeffw/git/body-mechanics/crates/bm-ports/target/debug/deps/notify-bd0a9d4653611376.d: /home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/lib.rs /home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/inotify.rs /home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/null.rs /home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/poll.rs /home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/config.rs /home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/error.rs
+
+/home/jeffw/git/body-mechanics/crates/bm-ports/target/debug/deps/libnotify-bd0a9d4653611376.rlib: /home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/lib.rs /home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/inotify.rs /home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/null.rs /home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/poll.rs /home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/config.rs /home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/error.rs
+
+/home/jeffw/git/body-mechanics/crates/bm-ports/target/debug/deps/libnotify-bd0a9d4653611376.rmeta: /home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/lib.rs /home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/inotify.rs /home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/null.rs /home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/poll.rs /home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/config.rs /home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/error.rs
+
+/home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/lib.rs:
+/home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/inotify.rs:
+/home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/null.rs:
+/home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/poll.rs:
+/home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/config.rs:
+/home/jeffw/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/notify-8.2.2/src/error.rs:

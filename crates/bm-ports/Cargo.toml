@@ -1,0 +1,14 @@
+[package]
+name = "bm-ports"
+version = "0.1.0"
+description = "Body Mechanics' ports in Rust (D2, #21): files (from writer's mobile ports at writer e89d55c), apart from Tauri so they test anywhere"
+edition = "2024"
+publish = false
+
+[dependencies]
+serde_json = "1"
+base64 = "0.22"
+notify = "8"
+
+[dev-dependencies]
+tempfile = "3"

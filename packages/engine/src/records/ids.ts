@@ -1,6 +1,4 @@
 /** Record and set ids: 16 characters of lowercase base32, random. Opaque, so file names reveal nothing (D2). */
-/** Web Crypto, which every host the engine runs in has (webviews, Node 19+); declared here so the engine needs no DOM or Node types. */
-declare const crypto: { getRandomValues<T extends Uint8Array>(array: T): T };
 
 const ALPHABET = "abcdefghijklmnopqrstuvwxyz234567";
 

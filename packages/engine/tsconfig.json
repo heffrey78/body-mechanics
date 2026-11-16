@@ -5,8 +5,8 @@
     "noEmit": false,
     "emitDeclarationOnly": true,
     "outDir": "../../node_modules/.tsbuild/engine",
-    "lib": ["ES2022"],
+    "lib": ["ES2023"],
     "types": []
   },
-  "include": ["src", "test"]
+  "include": ["src"]
 }
