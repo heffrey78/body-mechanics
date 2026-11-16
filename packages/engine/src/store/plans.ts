@@ -20,7 +20,7 @@ export function starterLocations(): Location[] {
   const loc = (name: string, equipment: Location["equipment"], sweat: Location["sweat"]): Location => ({ type: "location", v: 1, id: newId(), name, equipment, sweat });
   return [
     loc("Home", ["floor", "wall", "chair", "step", "mat"], 1),
-    loc("Office", ["floor", "wall", "chair", "desk"], 0),
+    loc("Office", ["wall", "chair", "desk"], 0),
     loc("Gym", ["floor", "wall", "bench", "mat", "band", "dumbbells", "kettlebell", "barbell", "pullup-bar", "cable", "foam-roller", "machine", "step"], 2),
     loc("Hotel", ["floor", "wall", "chair", "desk"], 1),
   ];
