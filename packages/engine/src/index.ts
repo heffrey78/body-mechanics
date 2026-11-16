@@ -3,3 +3,4 @@
  * Tauri webview on desktop and Android) gives it files, git and secrets through ports.
  */
 export const ENGINE_VERSION = "0.1.0";
+export * from "./records/index.ts";

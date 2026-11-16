@@ -4,5 +4,11 @@
   "private": true,
   "type": "module",
   "description": "The app's logic (D2): TypeScript with no Node or browser imports, given files, git and secrets by its host through ports.",
-  "exports": { ".": "./src/index.ts" }
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "yaml": "^2.9.1",
+    "zod": "^4.6.7"
+  }
 }
