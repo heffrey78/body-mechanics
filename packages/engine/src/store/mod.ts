@@ -11,3 +11,4 @@ export { SessionLog, deviceClock, loadLibrary, createExercise, type Amount, type
 export { nextSet, describeSet, FIELD, type NextSet } from "./next-set.ts";
 export { loadRoutines, loadLocations, starterLocations } from "./plans.ts";
 export { stampChanges, editRoutine, newRoutine, newItem, routineFromSession, planStatus, nextStep, type PlanStep } from "./routines.ts";
+export { progression, targetUpdates, applyUpdates, loadStep, type Progression, type TargetUpdate } from "./progression.ts";

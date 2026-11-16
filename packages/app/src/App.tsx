@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import {
   COMMIT_EMAIL, COMMIT_NAME, Committer, ENGINE_VERSION, NotSetUp, RecordIndex, SessionLog, Vault, clearDraft, createExercise, deviceClock,
-  editRoutine, indexBenchmark, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
+  applyUpdates, editRoutine, indexBenchmark, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
   portsRoundTrip, routineFromSession, saveDraft,
-  type Clock, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
+  type Clock, type TargetUpdate, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
 } from "@bm/engine";
 import { dataDir, hostPlatform, hostPorts, smokeReport, smokeStorage } from "./host.ts";
 import { useTheme } from "./theme/theme.ts";
@@ -17,7 +17,7 @@ import { HomeScreen } from "./screens/HomeScreen.tsx";
 import { NewMovement } from "./screens/NewMovement.tsx";
 import { SessionScreen, type Pending } from "./screens/SessionScreen.tsx";
 import { HistoryScreen } from "./screens/HistoryScreen.tsx";
-import { RoutinesScreen } from "./screens/RoutinesScreen.tsx";
+import { RoutinesScreen, describeItem } from "./screens/RoutinesScreen.tsx";
 import { workerPool } from "./workers/pool.ts";
 import { BottomTabs, Button, type TabId } from "./ui/components.tsx";
 
@@ -42,6 +42,8 @@ export function App() {
   const [clock, setClock] = useState<Clock | null>(null);
   /** The open session's plan: a routine's items, or a repeated session's (#36). */
   const [plan, setPlan] = useState<RoutineItem[] | null>(null);
+  /** After a routine run: the targets it could update (#37). */
+  const [updates, setUpdates] = useState<{ routine: Routine; list: TargetUpdate[]; chosen: Set<string> } | null>(null);
   const [platform, setPlatform] = useState("…");
   const [ports, setPorts] = useState("…");
   // The encrypted records (#25): "unknown" until checked, "setup" on first run, "ready" once open.
@@ -315,6 +317,12 @@ export function App() {
           if (vault) void clearDraft(vault);
           const sets = s.entries.reduce((n, e) => n + e.sets.filter((x) => !x.deleted).length, 0);
           setSummary(`Saved: ${s.entries.length} ${s.entries.length === 1 ? "exercise" : "exercises"}, ${sets} ${sets === 1 ? "set" : "sets"}.`);
+          const r = s.routine ? routines.find((x) => x.id === s.routine) : undefined;
+          if (r) {
+            const byId = new Map(library.map((x) => [x.id, x]));
+            const list = targetUpdates(r, s, (x) => byId.get(x)?.measure ?? "reps");
+            setUpdates(list.length ? { routine: r, list, chosen: new Set(list.map((u) => u.itemId)) } : null);
+          }
           setHome({ screen: "start" });
         }}
         onHome={() => setHome({ screen: "start" })}
@@ -324,6 +332,34 @@ export function App() {
     body = (
       <>
         {summary ? <div className="pad" style={{ paddingBottom: 0, flexGrow: 0 }}><div className="card" role="status">{summary}</div></div> : null}
+        {updates ? (
+          <div className="pad" style={{ paddingBottom: 0, flexGrow: 0 }}>
+            <div className="card" aria-label="Update targets">
+              <span className="label">Update “{updates.routine.name}”?</span>
+              <span className="muted">Set its targets to what you just did:</span>
+              {updates.list.map((u) => {
+                const x = library.find((l) => l.id === u.exercise);
+                const on = updates.chosen.has(u.itemId);
+                return (
+                  <label key={u.itemId} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                    <input type="checkbox" checked={on} style={{ width: 22, height: 22, marginTop: 2 }}
+                      onChange={() => setUpdates({ ...updates, chosen: on ? new Set([...updates.chosen].filter((i) => i !== u.itemId)) : new Set([...updates.chosen, u.itemId]) })} />
+                    <span><span className="strong">{x?.name ?? u.exercise}</span><br /><span className="muted num">{describeItem(u.from, x, profile?.units ?? "kg")} → {describeItem(u.to, x, profile?.units ?? "kg")}</span></span>
+                  </label>
+                );
+              })}
+              <div className="pair">
+                <Button variant="primary" disabled={updates.chosen.size === 0} onClick={() => {
+                  const current = routines.find((r) => r.id === updates.routine.id) ?? updates.routine;
+                  saveRoutine(applyUpdates(current, updates.list.filter((u) => updates.chosen.has(u.itemId))));
+                  setUpdates(null);
+                  setSummary("Routine updated.");
+                }}>Update routine</Button>
+                <Button onClick={() => setUpdates(null)}>Not now</Button>
+              </div>
+            </div>
+          </div>
+        ) : null}
         <HomeScreen
           library={library} recent={recent} sessionOpen={!!session}
           onStart={(x) => void startWith(x)}

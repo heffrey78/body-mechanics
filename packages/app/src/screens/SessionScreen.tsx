@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { EFFORTS, describeSet, nextSet, nextStep, planStatus, search, showLoad, toKg, FIELD, type Effort, type Entry, type LibraryItem, type LoggedSet, type RecordIndex, type RoutineItem, type Session, type SessionLog } from "@bm/engine";
+import { EFFORTS, describeSet, nextSet, nextStep, planStatus, progression, search, showLoad, toKg, FIELD, type Effort, type Entry, type LibraryItem, type LoggedSet, type RecordIndex, type RoutineItem, type Session, type SessionLog } from "@bm/engine";
 import { elapsedSeconds, pageCue, startTimer, stopTimer, type RunningTimer } from "../timer.ts";
 import { Button, Chip, Segmented, Stepper, Timer } from "../ui/components.tsx";
 
@@ -59,10 +59,11 @@ export function SessionScreen({ log, session, plan, library, recent, index, unit
     if (!e) return null;
     const m = byId.get(e.exercise)?.measure ?? "reps";
     const n = nextSet(m, e, index?.lastTime(e.exercise, session.startedAt)?.entry.sets);
-    // A routine's targets come first (#36).
+    // A routine's targets come first (#36), moved on by how last time felt (#37).
     const target = stepOf(e)?.item;
-    const amount = target?.[FIELD[m]] ?? n.amount;
-    const loadKg = target ? target.loadKg : n.loadKg;
+    const prog = target ? progression(target, m, index?.lastTime(e.exercise, session.startedAt)?.entry, units) : undefined;
+    const amount = prog?.amount ?? target?.[FIELD[m]] ?? n.amount;
+    const loadKg = prog ? prog.loadKg : target ? target.loadKg : n.loadKg;
     return { entryId: e.id, amount, ...(loadKg !== undefined ? { loadKg } : {}) };
   };
   const p = pending && pending.entryId === current?.id ? pending : defaults(current);
@@ -191,6 +192,13 @@ export function SessionScreen({ log, session, plan, library, recent, index, unit
             <h2 className="title" style={{ fontSize: 22 }}>{item?.name ?? current.exercise}</h2>
             {stepOf(current) ? <span className="muted num" style={{ whiteSpace: "nowrap", paddingTop: 4 }}>Set {Math.min(stepOf(current)!.done + 1, stepOf(current)!.item.sets)} of {stepOf(current)!.item.sets}</span> : null}
           </div>
+          {(() => {
+            const target = stepOf(current)?.item;
+            const prog = target ? progression(target, measure, index?.lastTime(current.exercise, session.startedAt)?.entry, units) : undefined;
+            if (!prog || prog.direction === "hold") return null;
+            const what = prog.loadKg !== undefined && prog.loadKg !== target!.loadKg ? load(prog.loadKg) : `${prog.amount}${measure === "reps" ? " reps" : measure === "time" ? " s" : " m"}`;
+            return <span className="tag" style={{ alignSelf: "flex-start" }}>{prog.direction === "up" ? "↑" : "↓"} {what}: {prog.reason.toLowerCase()}</span>;
+          })()}
           {(() => {
             const last = index?.lastTime(current.exercise, session.startedAt);
             if (!last) return null;
