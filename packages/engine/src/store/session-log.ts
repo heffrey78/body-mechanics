@@ -78,7 +78,7 @@ export class SessionLog {
   }
 
   /** Change a logged set: each changed field is stamped. */
-  async editSet(entryId: string, setId: string, patch: Partial<Amount> & { note?: string }): Promise<void> {
+  async editSet(entryId: string, setId: string, patch: { [K in keyof Amount]?: Amount[K] | undefined } & { note?: string | undefined }): Promise<void> {
     const set = this.#set(entryId, setId);
     const stamp = this.#clock.tick();
     const edits = { ...(set.edits ?? {}) };
