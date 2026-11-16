@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { EFFORTS, describeSet, nextSet, search, showLoad, toKg, FIELD, type Effort, type Entry, type LibraryItem, type LoggedSet, type RecordIndex, type Session, type SessionLog } from "@bm/engine";
+import { EFFORTS, describeSet, nextSet, nextStep, planStatus, search, showLoad, toKg, FIELD, type Effort, type Entry, type LibraryItem, type LoggedSet, type RecordIndex, type RoutineItem, type Session, type SessionLog } from "@bm/engine";
 import { elapsedSeconds, pageCue, startTimer, stopTimer, type RunningTimer } from "../timer.ts";
 import { Button, Chip, Segmented, Stepper, Timer } from "../ui/components.tsx";
 
@@ -20,9 +20,11 @@ export interface Pending {
  * one-sided sets left then right), the rest timer after each set (+30 s, Skip), effort once per
  * exercise, every set tappable to correct or delete, and Type next / recent chips for what's next.
  */
-export function SessionScreen({ log, session, library, recent, index, units, pending, onPending, onChanged, onFinished, onHome }: {
+export function SessionScreen({ log, session, plan, library, recent, index, units, pending, onPending, onChanged, onFinished, onHome }: {
   log: SessionLog;
   session: Session;
+  /** A routine run or a repeat (#36): the planned exercises and their targets. */
+  plan: RoutineItem[] | null;
   library: LibraryItem[];
   recent: LibraryItem[];
   index: RecordIndex | null;
@@ -35,6 +37,9 @@ export function SessionScreen({ log, session, library, recent, index, units, pen
 }) {
   const byId = useMemo(() => new Map(library.map((x) => [x.id, x])), [library]);
   const entries = session.entries.filter((e) => !e.deleted);
+  const steps = plan ? planStatus(plan, session) : [];
+  const [skipped, setSkipped] = useState<Set<string>>(new Set());
+  const stepOf = (e: Entry | undefined) => (e ? steps.find((x) => x.entryId === e.id) : undefined);
   const [currentId, setCurrentId] = useState(pending?.entryId ?? entries.at(-1)?.id ?? "");
   const current = entries.find((e) => e.id === currentId) ?? entries.at(-1);
   const item = current ? byId.get(current.exercise) : undefined;
@@ -54,7 +59,11 @@ export function SessionScreen({ log, session, library, recent, index, units, pen
     if (!e) return null;
     const m = byId.get(e.exercise)?.measure ?? "reps";
     const n = nextSet(m, e, index?.lastTime(e.exercise, session.startedAt)?.entry.sets);
-    return { entryId: e.id, amount: n.amount, ...(n.loadKg !== undefined ? { loadKg: n.loadKg } : {}) };
+    // A routine's targets come first (#36).
+    const target = stepOf(e)?.item;
+    const amount = target?.[FIELD[m]] ?? n.amount;
+    const loadKg = target ? target.loadKg : n.loadKg;
+    return { entryId: e.id, amount, ...(loadKg !== undefined ? { loadKg } : {}) };
   };
   const p = pending && pending.entryId === current?.id ? pending : defaults(current);
   const update = (patch: Partial<Pending>) => { if (p) onPending({ ...p, ...patch }); };
@@ -101,7 +110,28 @@ export function SessionScreen({ log, session, library, recent, index, units, pen
     if (item?.sided) await log.logSet(current.id, { left: { [f]: p.left }, right: { [f]: amount }, ...loadKg });
     else await log.logSet(current.id, { [f]: amount, ...loadKg });
     onPending({ entryId: current.id, amount: p.amount, ...(p.loadKg !== undefined ? { loadKg: p.loadKg } : {}) });
-    await startRest();
+    const step = stepOf(current);
+    await startRest(step?.item.restSeconds ?? REST_SECONDS);
+    // The planned sets are done: on to the next planned exercise (#36).
+    if (step && step.done + 1 >= step.item.sets) await advance(step.item.id);
+  });
+
+  /** Make the next planned exercise current, adding its entry if it hasn't one yet. */
+  const advance = async (fromItem?: string, skip?: Set<string>) => {
+    const fresh = planStatus(plan ?? [], log.session ?? session);
+    const n = nextStep(fresh, skip ?? skipped, fromItem);
+    if (!n) return;
+    setEditing(null);
+    if (n.entryId) { setCurrentId(n.entryId); return; }
+    const e = await log.addEntry(n.item.exercise);
+    setCurrentId(e.id);
+  };
+  const openStep = (itemId: string) => run(async () => {
+    const st = steps.find((x) => x.item.id === itemId);
+    if (!st) return;
+    setEditing(null);
+    if (st.entryId) setCurrentId(st.entryId);
+    else setCurrentId((await log.addEntry(st.item.exercise)).id);
   });
 
   const startHold = async () => {
@@ -157,7 +187,10 @@ export function SessionScreen({ log, session, library, recent, index, units, pen
 
       {current && p ? (
         <div className="card" aria-label="Current exercise">
-          <h2 className="title" style={{ fontSize: 22 }}>{item?.name ?? current.exercise}</h2>
+          <div className="hrow" style={{ minHeight: 0, alignItems: "flex-start" }}>
+            <h2 className="title" style={{ fontSize: 22 }}>{item?.name ?? current.exercise}</h2>
+            {stepOf(current) ? <span className="muted num" style={{ whiteSpace: "nowrap", paddingTop: 4 }}>Set {Math.min(stepOf(current)!.done + 1, stepOf(current)!.item.sets)} of {stepOf(current)!.item.sets}</span> : null}
+          </div>
           {(() => {
             const last = index?.lastTime(current.exercise, session.startedAt);
             if (!last) return null;
@@ -198,7 +231,37 @@ export function SessionScreen({ log, session, library, recent, index, units, pen
         </div>
       ) : null}
 
-      {entries.length > 1 ? (
+      {plan ? (
+        <>
+          <span className="label">The plan</span>
+          <div className="card" style={{ padding: 0, gap: 0 }}>
+            {steps.map((st) => {
+              const isCurrent = !!st.entryId && st.entryId === current?.id;
+              return (
+                <div key={st.item.id} className="hrow" style={{ borderBottom: "1px solid var(--line)", minHeight: 52 }}>
+                  <button type="button" className="result" style={{ borderBottom: 0, flexGrow: 1 }} aria-current={isCurrent} onClick={() => void openStep(st.item.id)}>
+                    <span className={isCurrent ? "strong" : skipped.has(st.item.id) ? "muted" : ""}>{byId.get(st.item.exercise)?.name ?? st.item.exercise}</span>
+                    <span className="muted num">{st.complete ? "✓ " : ""}{st.done}/{st.item.sets}{skipped.has(st.item.id) && !st.complete ? " · skipped" : ""}</span>
+                  </button>
+                  {!st.complete && !skipped.has(st.item.id) ? (
+                    <button type="button" className="btn ghost" style={{ minHeight: 44, marginRight: 8 }} onClick={() => {
+                      const next = new Set(skipped).add(st.item.id);
+                      setSkipped(next);
+                      if (isCurrent) void run(() => advance(st.item.id, next));
+                    }}>Skip</button>
+                  ) : null}
+                </div>
+              );
+            })}
+            {entries.filter((e) => !steps.some((st) => st.entryId === e.id)).map((e) => (
+              <button key={e.id} type="button" className="result" aria-current={e.id === current?.id} onClick={() => { setEditing(null); setCurrentId(e.id); }}>
+                <span className={e.id === current?.id ? "strong" : ""}>{byId.get(e.exercise)?.name ?? e.exercise} <span className="muted">· added</span></span>
+                <span className="muted num">{e.sets.filter((x) => !x.deleted).length}</span>
+              </button>
+            ))}
+          </div>
+        </>
+      ) : entries.length > 1 ? (
         <>
           <span className="label">This session</span>
           <div className="card" style={{ padding: 0, gap: 0 }}>

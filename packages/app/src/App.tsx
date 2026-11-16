@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import {
   COMMIT_EMAIL, COMMIT_NAME, Committer, ENGINE_VERSION, NotSetUp, RecordIndex, SessionLog, Vault, clearDraft, createExercise, deviceClock,
-  indexBenchmark, loadDraft, loadLibrary, loadProfile, memoryFilesPort, memorySecretsPort, portsRoundTrip, saveDraft,
-  type LibraryItem, type Profile, type Session,
+  editRoutine, indexBenchmark, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
+  portsRoundTrip, routineFromSession, saveDraft,
+  type Clock, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
 } from "@bm/engine";
 import { dataDir, hostPlatform, hostPorts, smokeReport, smokeStorage } from "./host.ts";
 import { useTheme } from "./theme/theme.ts";
@@ -16,6 +17,7 @@ import { HomeScreen } from "./screens/HomeScreen.tsx";
 import { NewMovement } from "./screens/NewMovement.tsx";
 import { SessionScreen, type Pending } from "./screens/SessionScreen.tsx";
 import { HistoryScreen } from "./screens/HistoryScreen.tsx";
+import { RoutinesScreen } from "./screens/RoutinesScreen.tsx";
 import { workerPool } from "./workers/pool.ts";
 import { BottomTabs, Button, type TabId } from "./ui/components.tsx";
 
@@ -36,6 +38,10 @@ export function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [pending, setPending] = useState<Pending | null>(null);
   const [summary, setSummary] = useState<string | null>(null);
+  const [routines, setRoutines] = useState<Routine[]>([]);
+  const [clock, setClock] = useState<Clock | null>(null);
+  /** The open session's plan: a routine's items, or a repeated session's (#36). */
+  const [plan, setPlan] = useState<RoutineItem[] | null>(null);
   const [platform, setPlatform] = useState("…");
   const [ports, setPorts] = useState("…");
   // The encrypted records (#25): "unknown" until checked, "setup" on first run, "ready" once open.
@@ -64,8 +70,10 @@ export function App() {
     setProfile(p);
     setTheme(p.theme);
     if (created) c?.changed("Profile");
-    const [lib, built, clock] = await Promise.all([loadLibrary(v), RecordIndex.build(v, files), deviceClock(v)]);
+    const [lib, built, clock, rs] = await Promise.all([loadLibrary(v), RecordIndex.build(v, files), deviceClock(v), loadRoutines(v)]);
     setLibrary(lib);
+    setRoutines(rs);
+    setClock(clock);
     setIndex(built.index);
     const l = new SessionLog(v, clock, { index: built.index, ...(c ? { committer: c } : {}) });
     setLog(l);
@@ -77,8 +85,21 @@ export function App() {
       l.resume(s);
       setSession(s);
       setPending((draft.state["pending"] as Pending | undefined) ?? null);
+      setPlan((draft.state["plan"] as RoutineItem[] | undefined) ?? null);
       setHome({ screen: "session" });
     }
+  };
+
+  /** A routine changed (#35): stamped against what was saved, written, committed once quiet. */
+  const saveRoutine = (next: Routine) => {
+    if (!vault || !clock) return;
+    const before = routines.find((r) => r.id === next.id);
+    const stamped = editRoutine(before, next, clock);
+    setRoutines((rs) => {
+      const others = rs.filter((r) => r.id !== next.id);
+      return stamped.deleted ? others : [...others, stamped].sort((a, b) => a.name.localeCompare(b.name));
+    });
+    void vault.write(stamped).then(() => committer?.changed(`Routine: ${stamped.name}`));
   };
 
   /** Recent exercises: the last ten distinct ones logged. */
@@ -95,10 +116,23 @@ export function App() {
   })();
 
   /** The open session changed: keep it, and the draft that brings it back after a restart. */
-  const changed = (s: Session, p: Pending | null = pending) => {
+  const changed = (s: Session, p: Pending | null = pending, pl: RoutineItem[] | null = plan) => {
     setSession({ ...s });
-    if (vault) void saveDraft(vault, { sessionId: s.id, state: { pending: p }, savedAt: new Date().toISOString() });
+    if (vault) void saveDraft(vault, { sessionId: s.id, state: { pending: p, plan: pl }, savedAt: new Date().toISOString() });
   };
+
+  /** Run a plan (#36): a routine (`routine` set) or a repeat of a past session. */
+  const startPlan = async (items: RoutineItem[], routine?: string) => {
+    const live = items.filter((i) => !i.deleted);
+    if (!log || log.session || !live.length) return;
+    setSummary(null);
+    setPending(null);
+    setPlan(live);
+    changed(await log.start(live[0]!.exercise, routine ? { routine } : {}), null, live);
+    setHome({ screen: "session" });
+    setTab("home");
+  };
+  const startRoutine = (r: Routine) => startPlan(r.items, r.id);
   const startWith = async (x: LibraryItem) => {
     if (!log) return;
     setSummary(null);
@@ -219,10 +253,30 @@ export function App() {
         onOpen={setSub}
       />
     );
+  } else if (tab === "routines") {
+    body = (
+      <RoutinesScreen
+        routines={routines} library={library} index={index} units={profile?.units ?? "kg"} sessionOpen={!!session}
+        onSave={saveRoutine}
+        onDelete={(r) => saveRoutine({ ...r, deleted: true })}
+        onNew={() => { const r = newRoutine("New routine"); saveRoutine(r); return r; }}
+        onStart={(r) => void startRoutine(r)}
+      />
+    );
   } else if (tab === "history") {
     body = (
       <HistoryScreen
         vault={vault} index={index} library={library} units={profile?.units ?? "kg"} canEdit={!session}
+        onRepeat={(s) => {
+          const byId = new Map(library.map((x) => [x.id, x]));
+          void startPlan(routineFromSession(s, "Repeat", (x) => byId.get(x)?.measure ?? "reps").items);
+        }}
+        onSaveAsRoutine={(s, name) => {
+          const byId = new Map(library.map((x) => [x.id, x]));
+          const r = routineFromSession(s, name, (x) => byId.get(x)?.measure ?? "reps");
+          saveRoutine(r);
+          return r.name;
+        }}
         onEdit={(s) => {
           if (!log) return;
           log.resume(s);
@@ -250,13 +304,14 @@ export function App() {
   } else if (tab === "home" && home.screen === "session" && log && session) {
     body = (
       <SessionScreen
-        log={log} session={session} library={library} recent={recent} index={index} units={profile?.units ?? "kg"}
+        log={log} session={session} plan={plan} library={library} recent={recent} index={index} units={profile?.units ?? "kg"}
         pending={pending}
         onPending={(p) => { setPending(p); changed(log.session ?? session, p); }}
         onChanged={(s) => changed(s)}
         onFinished={(s) => {
           setSession(null);
           setPending(null);
+          setPlan(null);
           if (vault) void clearDraft(vault);
           const sets = s.entries.reduce((n, e) => n + e.sets.filter((x) => !x.deleted).length, 0);
           setSummary(`Saved: ${s.entries.length} ${s.entries.length === 1 ? "exercise" : "exercises"}, ${sets} ${sets === 1 ? "set" : "sets"}.`);

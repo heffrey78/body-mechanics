@@ -30,12 +30,12 @@ function edited(base: Obj | undefined, side: Obj): boolean {
   return !same(strip(base), strip(side));
 }
 
-function mergeValue(base: Json, ours: Json, theirs: Json, oursStamp: string | undefined, theirsStamp: string | undefined, path: string, flags: string[]): Json {
+function mergeValue(base: Json, ours: Json, theirs: Json, oursStamp: string | undefined, theirsStamp: string | undefined, path: string, flags: string[], theirOrder = false): Json {
   if (same(ours, theirs)) return ours;
   if (same(ours, base)) return theirs;
   if (same(theirs, base)) return ours;
   if ((isIdList(ours) || isIdList(theirs) || isIdList(base)) && Array.isArray(ours) && Array.isArray(theirs)) {
-    return mergeList((Array.isArray(base) ? base : []) as Obj[], ours as Obj[], theirs as Obj[], path, flags);
+    return mergeList((Array.isArray(base) ? base : []) as Obj[], ours as Obj[], theirs as Obj[], path, flags, theirOrder);
   }
   if (isObj(ours) && isObj(theirs) && !("id" in ours) && (oursStamp === undefined && theirsStamp === undefined)) {
     // A plain nested object (answers, focus, left/right): field by field, as far as it goes.
@@ -51,7 +51,9 @@ function mergeObject(base: Obj | undefined, ours: Obj, theirs: Obj, path: string
   const keys = [...new Set([...Object.keys(ours), ...Object.keys(theirs), ...Object.keys(base ?? {})])].filter((k) => k !== "edits");
   const out: Obj = {};
   for (const k of keys) {
-    const v = mergeValue(base?.[k], ours[k], theirs[k], oe[k], te[k], path ? `${path}.${k}` : k, flags);
+    // A list reordered on both sides takes the later reorder (`<list>.order`, #35); otherwise ours.
+    const theirOrder = (te[`${k}.order`] ?? "") > (oe[`${k}.order`] ?? "");
+    const v = mergeValue(base?.[k], ours[k], theirs[k], oe[k], te[k], path ? `${path}.${k}` : k, flags, theirOrder);
     if (v !== undefined) out[k] = v;
   }
   // A deletion on one side against an edit on the other: the edit stays.
@@ -68,11 +70,12 @@ function mergeObject(base: Obj | undefined, ours: Obj, theirs: Obj, path: string
   return out;
 }
 
-function mergeList(base: Obj[], ours: Obj[], theirs: Obj[], path: string, flags: string[]): Obj[] {
+function mergeList(base: Obj[], ours: Obj[], theirs: Obj[], path: string, flags: string[], theirOrder = false): Obj[] {
   const byId = (list: Obj[]) => new Map(list.map((x) => [x["id"] as string, x]));
   const [b, o, t] = [byId(base), byId(ours), byId(theirs)];
-  // Our order, then what only they have, in theirs.
-  const ids = [...o.keys(), ...[...t.keys()].filter((id) => !o.has(id))];
+  // One side's order (ours, unless theirs was reordered later), then what only the other has.
+  const [first, second] = theirOrder ? [t, o] : [o, t];
+  const ids = [...first.keys(), ...[...second.keys()].filter((id) => !first.has(id))];
   const out: Obj[] = [];
   ids.forEach((id) => {
     const [bo, oo, to] = [b.get(id), o.get(id), t.get(id)];

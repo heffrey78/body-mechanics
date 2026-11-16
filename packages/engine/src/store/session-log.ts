@@ -52,10 +52,11 @@ export class SessionLog {
   }
 
   /** A new session, its first exercise already in it (#2: start by typing what you're doing). */
-  async start(exercise: string, options: { location?: string } = {}): Promise<Session> {
+  async start(exercise: string, options: { location?: string; routine?: string } = {}): Promise<Session> {
     this.#session = {
       type: "session", v: 1, id: newId(), startedAt: this.#now().toISOString(),
       ...(options.location ? { location: options.location } : {}),
+      ...(options.routine ? { routine: options.routine } : {}),
       entries: [],
     };
     await this.addEntry(exercise);

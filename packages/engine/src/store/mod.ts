@@ -10,3 +10,4 @@ export { loadProfile, showLoad, toKg } from "./profile.ts";
 export { SessionLog, deviceClock, loadLibrary, createExercise, type Amount, type LibraryItem } from "./session-log.ts";
 export { nextSet, describeSet, FIELD, type NextSet } from "./next-set.ts";
 export { loadRoutines, loadLocations, starterLocations } from "./plans.ts";
+export { stampChanges, editRoutine, newRoutine, newItem, routineFromSession, planStatus, nextStep, type PlanStep } from "./routines.ts";

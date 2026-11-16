@@ -18,20 +18,23 @@ type View = { screen: "weeks" } | { screen: "session"; path: string } | { screen
  * History (#33): sessions by week with totals, a session's detail (reopen it to edit), and an
  * exercise's progress: the best set per session, modified sessions marked, left/right for one-sided.
  */
-export function HistoryScreen({ vault, index, library, units, canEdit, onEdit }: {
+export function HistoryScreen({ vault, index, library, units, canEdit, onEdit, onRepeat, onSaveAsRoutine }: {
   vault: Vault | null;
   index: RecordIndex | null;
   library: LibraryItem[];
   units: "kg" | "lb";
   canEdit: boolean;
   onEdit: (s: Session) => void;
+  onRepeat: (s: Session) => void;
+  /** Saves the routine and returns its name. */
+  onSaveAsRoutine: (s: Session, name: string) => string;
 }) {
   const [view, setView] = useState<View>({ screen: "weeks" });
   const byId = new Map(library.map((x) => [x.id, x]));
   const name = (id: string) => byId.get(id)?.name ?? id;
 
   if (view.screen === "session") {
-    return <SessionDetail vault={vault} path={view.path} name={name} byId={byId} units={units} canEdit={canEdit} onEdit={onEdit}
+    return <SessionDetail vault={vault} path={view.path} name={name} byId={byId} units={units} canEdit={canEdit} onEdit={onEdit} onRepeat={onRepeat} onSaveAsRoutine={onSaveAsRoutine}
       onBack={() => setView({ screen: "weeks" })} onProgress={(exercise) => setView({ screen: "progress", exercise, from: view.path })} />;
   }
   if (view.screen === "progress") {
@@ -70,11 +73,14 @@ export function HistoryScreen({ vault, index, library, units, canEdit, onEdit }:
   );
 }
 
-function SessionDetail({ vault, path, name, byId, units, canEdit, onEdit, onBack, onProgress }: {
+function SessionDetail({ vault, path, name, byId, units, canEdit, onEdit, onRepeat, onSaveAsRoutine, onBack, onProgress }: {
   vault: Vault | null; path: string; name: (id: string) => string; byId: Map<string, LibraryItem>; units: "kg" | "lb"; canEdit: boolean;
-  onEdit: (s: Session) => void; onBack: () => void; onProgress: (exercise: string) => void;
+  onEdit: (s: Session) => void; onRepeat: (s: Session) => void; onSaveAsRoutine: (s: Session, name: string) => string;
+  onBack: () => void; onProgress: (exercise: string) => void;
 }) {
   const [s, setS] = useState<Session | null>(null);
+  const [naming, setNaming] = useState<string | null>(null);
+  const [saved, setSaved] = useState<string | null>(null);
   useEffect(() => {
     void vault?.read(path).then((r) => { if (r?.type === "session") setS(r); });
   }, [vault, path]);
@@ -100,7 +106,25 @@ function SessionDetail({ vault, path, name, byId, units, canEdit, onEdit, onBack
               ))}
             </div>
           ))}
-          {canEdit ? <Button variant="primary" onClick={() => onEdit(s)}>Edit this session</Button> : <span className="muted">Finish the open session to edit this one.</span>}
+          {canEdit ? (
+            <div className="pair">
+              <Button variant="primary" onClick={() => onRepeat(s)}>Repeat</Button>
+              <Button onClick={() => onEdit(s)}>Edit this session</Button>
+            </div>
+          ) : <span className="muted">Finish the open session to repeat or edit this one.</span>}
+          {!s.routine && s.entries.some((e) => !e.deleted && e.sets.some((x) => !x.deleted)) ? (
+            saved ? <span className="muted" role="status">Saved as the routine “{saved}”. It's in Routines.</span>
+            : naming === null ? <Button variant="ghost" onClick={() => setNaming(`${day(s.startedAt)} session`)}>Save as routine</Button>
+            : (
+              <div className="card">
+                <input className="field" aria-label="Routine name" value={naming} onChange={(e) => setNaming(e.target.value)} />
+                <div className="pair">
+                  <Button variant="primary" disabled={!naming.trim()} onClick={() => setSaved(onSaveAsRoutine(s, naming.trim()))}>Save routine</Button>
+                  <Button onClick={() => setNaming(null)}>Cancel</Button>
+                </div>
+              </div>
+            )
+          ) : null}
         </>
       ) : <span className="muted">Opening…</span>}
     </div>
