@@ -46,6 +46,12 @@ export function memoryFilesPort(seed: Record<string, string | Uint8Array> = {}):
 
   const port: FilesPort & { files: Map<string, Uint8Array> } = {
     files,
+    readMany: async (paths) => new Map(paths.map((p) => [p, files.get(norm(p))])),
+    statMany: async (paths) => {
+      const out = new Map<string, FileInfo | undefined>();
+      for (const p of paths) out.set(p, await port.stat(p));
+      return out;
+    },
     read: async (path) => files.get(norm(path)),
     stat: async (path): Promise<FileInfo | undefined> => {
       const p = norm(path);

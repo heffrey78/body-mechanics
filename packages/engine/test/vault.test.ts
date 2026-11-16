@@ -45,7 +45,7 @@ describe("the vault", () => {
 
   it("never lets plaintext reach the repository", async () => {
     const { files } = await setUp();
-    const paths = [...files.files.keys()].filter((p) => p !== "/repo/format.yaml");
+    const paths = [...files.files.keys()].filter((p) => p !== "/repo/format.yaml" && p !== "/repo/.gitignore");
     expect(paths.sort()).toEqual(["/repo/keys/identity.age", "/repo/profile.yaml.age", "/repo/sessions/2026/11/ssssssssssssssss.yaml.age"]);
     for (const path of paths) {
       const bytes = files.files.get(path)!;

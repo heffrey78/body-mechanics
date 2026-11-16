@@ -48,8 +48,8 @@ it.runIf(git)("a second device clones with libgit2, joins with the passphrase an
   await git!.stage(desktop);
   await git!.commit(desktop, "First session");
 
-  // Every committed file but format.yaml is encrypted.
-  for (const path of filesUnder(desktop).filter((p) => p !== "format.yaml")) {
+  // Every committed file but format.yaml and .gitignore is encrypted.
+  for (const path of filesUnder(desktop).filter((p) => p !== "format.yaml" && p !== ".gitignore")) {
     expect(isSealed(new Uint8Array(readFileSync(join(desktop, path)))), path).toBe(true);
   }
 

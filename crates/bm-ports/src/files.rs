@@ -292,6 +292,12 @@ fn skipped(path: &str) -> bool {
 
 /// The port's operations by name, as remote-ports.ts calls them; `watch` and `unwatch` are the app's
 /// (lib.rs), which keeps the watches and sends their events.
+/// The paths of a `*Many` call: its first argument, an array of strings.
+fn paths(args: &[Value]) -> Result<Vec<String>, Failure> {
+    let list = args.first().and_then(Value::as_array).ok_or_else(|| Failure { code: None, message: "expected an array of paths".into() })?;
+    list.iter().map(|v| v.as_str().map(str::to_string).ok_or_else(|| Failure { code: None, message: "a path isn't a string".into() })).collect()
+}
+
 pub fn call(op: &str, args: &[Value]) -> Result<Value, Failure> {
     let path = |i: usize| -> Result<&str, Failure> { args.get(i).and_then(Value::as_str).ok_or_else(|| Failure { code: None, message: format!("{op}: argument {i} isn't a path") }) };
     Ok(match op {
@@ -314,6 +320,9 @@ pub fn call(op: &str, args: &[Value]) -> Result<Value, Failure> {
         "makeDir" => std::fs::create_dir_all(path(0)?).map(|_| Value::Null)?,
         "copy" => std::fs::copy(path(0)?, path(1)?).map(|_| Value::Null)?,
         "real" => real(path(0)?).map_or(Value::Null, Value::String),
+        // Many at once (#28): one crossing for the index's rebuild instead of one per file.
+        "readMany" => json!({ "$map": paths(args)?.iter().map(|p| Ok(json!([p, read(p)?.map_or(Value::Null, |b| json!({ "$bytes": BASE64.encode(b) }))]))).collect::<Result<Vec<_>, Failure>>()? }),
+        "statMany" => json!({ "$map": paths(args)?.iter().map(|p| Ok(json!([p, stat(p)?.unwrap_or(Value::Null)]))).collect::<Result<Vec<_>, Failure>>()? }),
         _ => return Err(Failure { code: None, message: format!("No files operation {op}.") }),
     })
 }

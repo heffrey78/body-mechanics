@@ -154,6 +154,12 @@ fn timer_stop(app: tauri::AppHandle) -> Result<(), String> {
     }
 }
 
+/// Extra smoke checks asked for by environment (#28): BM_SMOKE_STORAGE=<sessions> runs the storage check.
+#[tauri::command]
+fn smoke_storage() -> Option<u32> {
+    std::env::var("BM_SMOKE_STORAGE").ok().and_then(|v| v.parse().ok())
+}
+
 /// The smoke test (#20, #21): with BM_SMOKE set, the page reports what it rendered and checked, and the
 /// app exits, so CI checks the webview, the engine and the ports end to end. Otherwise it does nothing.
 #[tauri::command]
@@ -186,7 +192,7 @@ pub fn run() {
             app.manage(App { root, watches: files::Watches::default(), events: Arc::default() });
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![host_platform, data_dir, git, listen, port, timer_start, timer_stop, smoke_report])
+        .invoke_handler(tauri::generate_handler![host_platform, data_dir, git, listen, port, timer_start, timer_stop, smoke_storage, smoke_report])
         .run(tauri::generate_context!())
         .expect("Body Mechanics failed to start");
 }

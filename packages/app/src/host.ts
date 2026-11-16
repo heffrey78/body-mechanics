@@ -37,3 +37,8 @@ export function hostPorts(): { git: GitPort; files: FilesPort; secrets: SecretsP
 export async function smokeReport(report: string): Promise<void> {
   if (isTauri()) await invoke("smoke_report", { report });
 }
+
+/** How many sessions the smoke run's storage check should use, if one was asked for (BM_SMOKE_STORAGE). */
+export async function smokeStorage(): Promise<number | null> {
+  return isTauri() ? invoke<number | null>("smoke_storage") : null;
+}

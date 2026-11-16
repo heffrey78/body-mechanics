@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { ENGINE_VERSION, NotSetUp, Vault, portsRoundTrip } from "@bm/engine";
-import { dataDir, hostPlatform, hostPorts, smokeReport } from "./host.ts";
+import { ENGINE_VERSION, NotSetUp, Vault, indexBenchmark, portsRoundTrip } from "@bm/engine";
+import { dataDir, hostPlatform, hostPorts, smokeReport, smokeStorage } from "./host.ts";
 import { useTheme } from "./theme/theme.ts";
 import { ThemeScreen } from "./screens/ThemeScreen.tsx";
 import { TimerCheck } from "./screens/TimerCheck.tsx";
 import { SetupScreen } from "./screens/SetupScreen.tsx";
+import { StorageCheck } from "./screens/StorageCheck.tsx";
+import { workerPool } from "./workers/pool.ts";
 import { BottomTabs, Button, type TabId } from "./ui/components.tsx";
 
 /** Where the person's records repository lives: the app's folder (D2). */
@@ -56,7 +58,13 @@ export function App() {
           return back === "kept" && (await secrets.get("smoke-check")) === undefined ? "ok" : "mismatch";
         })().catch((e: unknown) => `unavailable(${String(e).slice(0, 60).replaceAll(" ", "_")})`);
       }
-      await smokeReport(`platform=${p} engine=${ENGINE_VERSION} ports=${check.replaceAll(" ", "_")} secrets=${secretsCheck}`);
+      let storage = "";
+      const n = p !== "browser" ? await smokeStorage() : null;
+      if (n) {
+        const r = await indexBenchmark(hostPorts().files, `${(await dataDir()).replace(/\/$/, "")}/storage-check`, n, undefined, workerPool);
+        storage = ` storage=${r.sessions}:cold=${r.coldMs}ms:warm=${r.warmMs}ms:write=${r.writeMs}ms:phases=${Object.entries(r.coldPhases).map(([k, v]) => `${k}${v}`).join(",")}`;
+      }
+      await smokeReport(`platform=${p} engine=${ENGINE_VERSION} ports=${check.replaceAll(" ", "_")} secrets=${secretsCheck}${storage}`);
     })();
   }, []);
 
@@ -99,6 +107,7 @@ export function App() {
           <dt className="muted">Records</dt><dd style={{ margin: 0 }} className="strong">{records === "ready" ? "encrypted, ready" : records}</dd>
         </dl>
         <TimerCheck />
+        {platform !== "browser" ? <StorageCheck /> : null}
       </div>
     );
   } else {

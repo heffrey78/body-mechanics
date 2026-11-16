@@ -57,6 +57,10 @@ export interface FilesPort {
   /** A folder, with its parents. */
   makeDir(path: string): Promise<void>;
   copy(from: string, to: string): Promise<void>;
+  /** Many files' bytes in one call (#28): undefined for each path with no file. */
+  readMany(paths: string[]): Promise<Map<string, Uint8Array | undefined>>;
+  /** What's at each path, in one call (#28). */
+  statMany(paths: string[]): Promise<Map<string, FileInfo | undefined>>;
   /** `path` with every symlink in it followed; undefined if nothing is there. */
   real(path: string): Promise<string | undefined>;
 

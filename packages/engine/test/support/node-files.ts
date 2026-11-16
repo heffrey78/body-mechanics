@@ -22,6 +22,8 @@ export const nodeFiles: FilesPort = {
     await writeFile(tmp, data);
     await rename(tmp, p);
   },
+  readMany: async (paths) => new Map(await Promise.all(paths.map(async (p) => [p, await nodeFiles.read(p)] as const))),
+  statMany: async (paths) => new Map(await Promise.all(paths.map(async (p) => [p, await nodeFiles.stat(p)] as const))),
   remove: (p) => unlink(p).catch(() => undefined),
   removeTree: (p) => rm(p, { recursive: true, force: true }),
   removeEmptyDir: (p) => rmdir(p).then(() => true, () => false),

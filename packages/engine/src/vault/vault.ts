@@ -5,12 +5,42 @@
  * cloned repository on another device with the passphrase. Every record is written encrypted and
  * read decrypted here: plaintext never reaches the repository.
  */
-import type { FilesPort } from "../ports/files-port.ts";
+import type { FilesPort, WriteHooks } from "../ports/files-port.ts";
+import type { GitPort } from "../ports/git-port.ts";
 import type { SecretsPort } from "../ports/secrets-port.ts";
 import { FORMAT_FILE, IDENTITY_FILE, recordPath } from "../records/paths.ts";
 import { FORMAT_VERSION, type AnyRecord } from "../records/schemas.ts";
 import { parseFormat, parseRecord, serializeFormat, serializeRecord } from "../records/yaml.ts";
+import { readRecordFast } from "../store/fast-read.ts";
 import { isSealed, newIdentity, open, recipientOf, seal, unwrapIdentity, wrapIdentity } from "./crypto.ts";
+
+/**
+ * Decrypts and reads many records (#28): `decryptRecords` here, or the host's pool of workers running
+ * it in parallel. Records come back parsed by the fast reader; one that fails is reported, not thrown.
+ */
+export type DecryptPool = (identity: string, items: { path: string; bytes: Uint8Array }[]) => Promise<{ records: Map<string, AnyRecord>; failed: Map<string, string> }>;
+
+export async function decryptRecords(identity: string, items: { path: string; bytes: Uint8Array }[]): Promise<{ records: Map<string, AnyRecord>; failed: Map<string, string> }> {
+  const records = new Map<string, AnyRecord>();
+  const failed = new Map<string, string>();
+  const decoder = new TextDecoder();
+  const CONCURRENT = 32;
+  for (let i = 0; i < items.length; i += CONCURRENT) {
+    await Promise.all(items.slice(i, i + CONCURRENT).map(async ({ path, bytes }) => {
+      try {
+        if (!isSealed(bytes)) throw new Error("isn't encrypted");
+        records.set(path, readRecordFast(decoder.decode(await open(identity, bytes))));
+      } catch (e) {
+        failed.set(path, e instanceof Error ? e.message : String(e));
+      }
+    }));
+  }
+  return { records, failed };
+}
+
+/** Device-local files inside the repository that git ignores (#28): the in-progress draft, the index cache. */
+export const LOCAL_DIR = ".local";
+const GITIGNORE = `# Device-local (Body Mechanics, #28): the in-progress draft and the index cache.\n${LOCAL_DIR}/\n*.bm-tmp\n`;
 
 /**
  * scrypt's work factor for the passphrase-wrapped identity: 2^16 (64 MB), which a phone's webview can
@@ -31,13 +61,20 @@ export class NotSetUp extends Error {
 export interface VaultPorts {
   files: FilesPort;
   secrets: SecretsPort;
+  /** When given, `create` makes the folder a git repository too, with the app's own identity. */
+  git?: GitPort;
 }
+
+/** Who the app commits as: the app, on this device, never the person's own git identity (D2). */
+export const COMMIT_NAME = "Body Mechanics";
+export const COMMIT_EMAIL = "records@body-mechanics.invalid";
 
 export class Vault {
   readonly root: string;
   readonly #files: FilesPort;
   readonly #identity: string;
   readonly #recipient: string;
+  #pool: DecryptPool = decryptRecords;
 
   private constructor(files: FilesPort, root: string, identity: string, recipient: string) {
     this.#files = files;
@@ -57,6 +94,14 @@ export class Vault {
       format: "body-mechanics", version: FORMAT_VERSION, encryption: { scheme: "age-x25519", identity: IDENTITY_FILE },
     }));
     await files.write(files.join(root, ...IDENTITY_FILE.split("/")), await wrapIdentity(identity, passphrase, options.scryptLogN ?? SCRYPT_LOG_N));
+    await files.write(files.join(root, ".gitignore"), GITIGNORE);
+    if (ports.git) {
+      await ports.git.init(root, "main");
+      await ports.git.setConfig(root, "user.name", COMMIT_NAME);
+      await ports.git.setConfig(root, "user.email", COMMIT_EMAIL);
+      await ports.git.stage(root);
+      await ports.git.commit(root, "Set up records");
+    }
     await secrets.set(IDENTITY_SECRET, identity);
     return { vault: new Vault(files, root, identity, await recipientOf(identity)), recoveryKey: identity };
   }
@@ -92,11 +137,54 @@ export class Vault {
     parseFormat(new TextDecoder().decode(text));
   }
 
-  /** Writes a record, encrypted, at its place (D2); returns its path from the repository's root. */
-  async write(record: AnyRecord): Promise<string> {
+  /** Decrypt many records with the host's pool of workers instead of on this thread (#28). */
+  setDecryptPool(pool: DecryptPool): void {
+    this.#pool = pool;
+  }
+
+  /** Writes a record, encrypted, at its place (D2), atomically; returns its path from the repository's root. */
+  async write(record: AnyRecord, hooks?: WriteHooks): Promise<string> {
     const path = recordPath(record);
-    await this.#files.write(this.#files.join(this.root, ...path.split("/")), await seal(this.#recipient, serializeRecord(record)));
+    await this.#files.write(this.#files.join(this.root, ...path.split("/")), await seal(this.#recipient, serializeRecord(record)), hooks);
     return path;
+  }
+
+  /**
+   * Many records at once, for the index (#28): read in one call, decrypted with several in flight,
+   * parsed by the fast reader. A record that fails to read is reported in `failed`, not thrown.
+   */
+  async readMany(paths: string[]): Promise<{ records: Map<string, AnyRecord>; failed: Map<string, string>; phases: Record<string, number> }> {
+    const files = this.#files;
+    const full = paths.map((p) => files.join(this.root, ...p.split("/")));
+    const t0 = performance.now();
+    const bytes = await files.readMany(full);
+    const t1 = performance.now();
+    const items: { path: string; bytes: Uint8Array }[] = [];
+    paths.forEach((path, k) => {
+      const b = bytes.get(full[k]!);
+      if (b) items.push({ path, bytes: b });
+    });
+    const { records, failed } = await this.#pool(this.#identity, items);
+    return { records, failed, phases: { read: Math.round(t1 - t0), decrypt: Math.round(performance.now() - t1) } };
+  }
+
+  /** A device-local value, encrypted, in .local/ (never committed): the draft, the index cache. */
+  async writeLocal(name: string, value: unknown): Promise<void> {
+    await this.#files.write(this.#files.join(this.root, LOCAL_DIR, name), await seal(this.#recipient, JSON.stringify(value)));
+  }
+
+  async readLocal<T>(name: string): Promise<T | undefined> {
+    const bytes = await this.#files.read(this.#files.join(this.root, LOCAL_DIR, name));
+    if (!bytes) return undefined;
+    try {
+      return JSON.parse(new TextDecoder().decode(await open(this.#identity, bytes))) as T;
+    } catch {
+      return undefined; // unreadable (another key, a torn file): as if there were none
+    }
+  }
+
+  async removeLocal(name: string): Promise<void> {
+    await this.#files.remove(this.#files.join(this.root, LOCAL_DIR, name));
   }
 
   /** A record by its path from the root, decrypted and checked; undefined if there's no file. */

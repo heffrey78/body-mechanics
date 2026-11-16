@@ -17,3 +17,6 @@ declare class AbortSignal {
 declare function atob(data: string): string;
 declare function btoa(data: string): string;
 declare const crypto: { getRandomValues<T extends Uint8Array>(array: T): T };
+declare function setTimeout(handler: () => void, ms?: number): unknown;
+declare function clearTimeout(handle: unknown): void;
+declare const performance: { now(): number };
