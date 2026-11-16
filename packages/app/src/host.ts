@@ -1,3 +1,4 @@
+import type { HttpPort, HttpResponse } from "@bm/engine";
 import { Channel, invoke, isTauri } from "@tauri-apps/api/core";
 import { git2GitPort, remoteFilesPort, remoteSecretsPort, type FilesPort, type GitPort, type PortChannel, type SecretsPort } from "@bm/engine";
 
@@ -48,3 +49,11 @@ export function exportDir(): Promise<string> {
   const stamp = new Date().toISOString().slice(0, 16).replace("T", " ").replace(":", ".");
   return invoke<string>("export_dir", { stamp });
 }
+
+/** HTTP to GitHub through the host (#38): the webview can't reach GitHub's sign-in itself. */
+export const httpPort: HttpPort = {
+  async request(req) {
+    if (!isTauri()) throw new Error("GitHub is only reachable from the app");
+    return invoke<HttpResponse>("http", { method: req.method, url: req.url, headers: Object.entries(req.headers), body: req.body ?? null });
+  },
+};

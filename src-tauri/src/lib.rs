@@ -39,6 +39,67 @@ fn export_dir(app: tauri::AppHandle, state: State<'_, App>, stamp: String) -> St
     base.unwrap_or_else(|| state.root.join("exports")).join(name).to_string_lossy().into_owned()
 }
 
+/// One HTTP request to GitHub (#38): the webview can't make them itself (GitHub's sign-in sends no
+/// CORS headers). Only github.com and api.github.com, over https; the answer is never an error for a
+/// status, only when GitHub can't be reached.
+#[tauri::command]
+async fn http(method: String, url: String, headers: Vec<(String, String)>, body: Option<String>) -> Result<Value, String> {
+    let allowed = url.starts_with("https://github.com/") || url.starts_with("https://api.github.com/");
+    if !allowed {
+        return Err(format!("not a GitHub address: {url}"));
+    }
+    tauri::async_runtime::spawn_blocking(move || http_blocking(&method, &url, &headers, body))
+        .await
+        .map_err(|e| e.to_string())?
+}
+
+fn http_blocking(method: &str, url: &str, headers: &[(String, String)], body: Option<String>) -> Result<Value, String> {
+    {
+        let agent: ureq::Agent = ureq::Agent::config_builder()
+            .timeout_global(Some(std::time::Duration::from_secs(20)))
+            .http_status_as_error(false)
+            .build()
+            .into();
+        let mut req = ureq::http::Request::builder().method(method).uri(url);
+        for (k, v) in headers {
+            req = req.header(k, v);
+        }
+        let sent = match body {
+            Some(b) => agent.run(req.body(b).map_err(|e| e.to_string())?),
+            None => agent.run(req.body(()).map_err(|e| e.to_string())?),
+        };
+        let mut res = sent.map_err(|e| format!("unreachable: {e}"))?;
+        let status = res.status().as_u16();
+        let headers: serde_json::Map<String, Value> = res
+            .headers()
+            .iter()
+            .filter_map(|(k, v)| v.to_str().ok().map(|v| (k.as_str().to_lowercase(), Value::String(v.to_string()))))
+            .collect();
+        let text = res.body_mut().read_to_string().map_err(|e| e.to_string())?;
+        Ok(serde_json::json!({ "status": status, "headers": headers, "body": text }))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    /// Reaches GitHub for real: run by hand with `cargo test -- --ignored`.
+    #[test]
+    #[ignore]
+    fn http_reaches_github() {
+        let res = super::http_blocking("GET", "https://api.github.com/zen", &[("User-Agent".into(), "body-mechanics".into())], None).unwrap();
+        assert_eq!(res["status"], 200, "{res}");
+        let res = super::http_blocking(
+            "POST",
+            "https://github.com/login/device/code",
+            &[("Accept".into(), "application/json".into()), ("Content-Type".into(), "application/x-www-form-urlencoded".into()), ("User-Agent".into(), "body-mechanics".into())],
+            Some("client_id=Ov23lixhZMZ75CiX01PR&scope=repo%20read%3Auser".into()),
+        )
+        .unwrap();
+        assert_eq!(res["status"], 200, "{res}");
+        assert!(res["body"].as_str().unwrap().contains("user_code"), "{res}");
+    }
+}
+
 /// One git port operation (git2-port's `call`): its answer, or `{ code, message }`. A clone's or a
 /// fetch's progress goes to `progress` as it comes.
 #[tauri::command]
@@ -201,7 +262,7 @@ pub fn run() {
             app.manage(App { root, watches: files::Watches::default(), events: Arc::default() });
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![host_platform, data_dir, export_dir, git, listen, port, timer_start, timer_stop, smoke_storage, smoke_report])
+        .invoke_handler(tauri::generate_handler![host_platform, data_dir, export_dir, http, git, listen, port, timer_start, timer_stop, smoke_storage, smoke_report])
         .run(tauri::generate_context!())
         .expect("Body Mechanics failed to start");
 }

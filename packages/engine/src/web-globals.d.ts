@@ -20,3 +20,4 @@ declare const crypto: { getRandomValues<T extends Uint8Array>(array: T): T };
 declare function setTimeout(handler: () => void, ms?: number): unknown;
 declare function clearTimeout(handle: unknown): void;
 declare const performance: { now(): number };
+declare function encodeURIComponent(s: string): string;

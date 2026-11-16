@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   COMMIT_EMAIL, COMMIT_NAME, Committer, ENGINE_VERSION, NotSetUp, RecordIndex, SessionLog, Vault, clearDraft, createExercise, deviceClock,
-  applyUpdates, editRoutine, indexBenchmark, loadLocations, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
+  GitHub, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
   portsRoundTrip, routineFromSession, saveDraft,
   type Clock, type Location, type Suggestion, type TargetUpdate, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
 } from "@bm/engine";
-import { dataDir, hostPlatform, hostPorts, smokeReport, smokeStorage } from "./host.ts";
+import { dataDir, hostPlatform, hostPorts, httpPort, smokeReport, smokeStorage } from "./host.ts";
+import { SyncScreen } from "./screens/SyncScreen.tsx";
 import { useTheme } from "./theme/theme.ts";
 import { ThemeScreen } from "./screens/ThemeScreen.tsx";
 import { TimerCheck } from "./screens/TimerCheck.tsx";
@@ -32,7 +33,11 @@ async function recordsRoot(): Promise<string> {
 export function App() {
   const [theme, setTheme] = useTheme();
   const [tab, setTab] = useState<TabId>("home");
-  const [sub, setSub] = useState<"theme" | "credits" | "checks" | "locations" | null>(null);
+  const [sub, setSub] = useState<"theme" | "credits" | "checks" | "locations" | "sync" | null>(null);
+  // GitHub sync (#38): the connection, the records' remote, and what the last sync did.
+  const github = useMemo(() => new GitHub(httpPort, hostPorts().secrets), []);
+  const [remote, setRemote] = useState<string | null>(null);
+  const [syncText, setSyncText] = useState<string | null>(null);
   const [locations, setLocations] = useState<Location[]>([]);
   const [location, setLocation] = useState<string | null>(null);
   // Suggest next (#43): open or not, the answers before a session starts, what's been turned down.
@@ -76,6 +81,7 @@ export function App() {
       c = new Committer(git, v.root);
       setCommitter(c);
     }
+    if (withGit) setRemote(await hostPorts().git.remoteUrl(v.root, "origin"));
     const { profile: p, created } = await loadProfile(v, { theme });
     setProfile(p);
     setTheme(p.theme);
@@ -171,6 +177,28 @@ export function App() {
       onClose={() => setSuggesting(false)}
     />
   ) : null;
+
+  /** After a sync brought in other devices' records: read the lists and the index again. */
+  const reload = async (v: Vault) => {
+    const [lib, built, rs, ls, prof] = await Promise.all([loadLibrary(v), RecordIndex.build(v, hostPorts().files), loadRoutines(v), loadLocations(v), loadProfile(v)]);
+    setLibrary(lib);
+    setIndex(built.index);
+    setRoutines(rs);
+    setLocations(ls);
+    setProfile(prof.profile);
+    setTheme(prof.profile.theme);
+  };
+
+  /** Sync with the remote now (#38; on a timer in #39). */
+  const syncNow = async () => {
+    if (!vault || !committer || !remote) return;
+    const auth = await github.gitAuth(remote);
+    const out = await sync(hostPorts().git, vault, committer, auth ? { auth } : {});
+    if (out.status !== "synced") return;
+    if (out.pulled) await reload(vault);
+    const what = out.merged ? "Merged with another device's changes" : out.pulled ? "Brought in changes from another device" : out.pushed ? "Sent this device's changes" : "Already up to date";
+    setSyncText(`${what} at ${new Date().toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}.${out.flags.length ? ` ${out.flags.length} edit(s) were kept over deletions.` : ""}`);
+  };
 
   /** Recent exercises: the last ten distinct ones logged. */
   const recent = (() => {
@@ -298,6 +326,23 @@ export function App() {
           setTheme(t);
           if (profile) void saveProfile({ ...profile, theme: t });
         }}
+        onBack={() => setSub(null)}
+      />
+    );
+  } else if (tab === "more" && sub === "sync") {
+    body = (
+      <SyncScreen
+        github={github} remote={remote} available={platform !== "browser"} syncText={syncText}
+        onCreate={async (name) => {
+          if (!vault) return;
+          const repo = await github.createRepo(name);
+          await hostPorts().git.addRemote(vault.root, "origin", repo.cloneUrl);
+          setRemote(repo.cloneUrl);
+          const auth = await github.gitAuth(repo.cloneUrl);
+          if (committer) await sync(hostPorts().git, vault, committer, auth ? { auth } : {});
+          setSyncText(`Your records are on GitHub at ${repo.fullName}, encrypted.`);
+        }}
+        onSyncNow={syncNow}
         onBack={() => setSub(null)}
       />
     );

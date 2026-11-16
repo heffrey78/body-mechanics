@@ -6,3 +6,4 @@ export { remoteFilesPort, remoteGitPort, remoteSecretsPort, encode, decode, type
 export { toBase64, fromBase64 } from "./base64.ts";
 export { portsRoundTrip } from "./round-trip.ts";
 export { memorySecretsPort, type SecretsPort } from "./secrets-port.ts";
+export type { HttpPort, HttpRequest, HttpResponse } from "./http-port.ts";

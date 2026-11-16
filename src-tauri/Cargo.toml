@@ -25,6 +25,8 @@ bm-ports = { path = "../crates/bm-ports" }
 bm-android = { path = "../crates/bm-android" }
 # For where libgit2 keeps the global configuration (the same git2 git2-port uses).
 git2 = { version = "0.21", default-features = false }
+# GitHub's sign-in and API (#38): rustls with bundled roots, so it works the same on Android.
+ureq = { version = "3", default-features = false, features = ["rustls", "json"] }
 
 # Secrets on the desktop (#25): the OS keychain (Secret Service on Linux).
 [target.'cfg(not(target_os = "android"))'.dependencies]
