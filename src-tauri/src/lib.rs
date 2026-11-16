@@ -50,10 +50,61 @@ fn listen(state: State<'_, App>, events: Channel<Value>) {
     *state.events.lock().unwrap() = Some(events);
 }
 
-/// An operation of the files port, as remote-ports.ts calls it: its answer, with bytes as
+/// The secrets port (#25): `get` / `set` / `delete` a named secret. The OS keychain on the desktop; on
+/// Android, a file per secret sealed by a key in Android's keystore (bm-android).
+fn secrets(app: &tauri::AppHandle, root: &std::path::Path, op: &str, args: &[Value]) -> Result<Value, String> {
+    let name = args.first().and_then(Value::as_str).ok_or("No secret's name.")?;
+    let value = args.get(1).and_then(Value::as_str);
+    #[cfg(target_os = "android")]
+    {
+        let named = bm_ports::secrets::Named::new(root.join("secrets"), Keystore(app.clone()));
+        let secret = named.named(name)?;
+        return match op {
+            "get" => secret.get().map(|v| v.map_or(Value::Null, Value::String)),
+            "set" => secret.set(value.unwrap_or("")).map(|_| Value::Null),
+            "delete" => secret.delete().map(|_| Value::Null),
+            _ => Err(format!("No secrets operation {op}.")),
+        };
+    }
+    #[cfg(not(target_os = "android"))]
+    {
+        let _ = (app, root);
+        let entry = keyring::Entry::new("io.github.heffrey78.bodymechanics", name).map_err(|e| e.to_string())?;
+        match op {
+            "get" => match entry.get_password() {
+                Ok(v) => Ok(Value::String(v)),
+                Err(keyring::Error::NoEntry) => Ok(Value::Null),
+                Err(e) => Err(format!("The keychain couldn't be read: {e}")),
+            },
+            "set" => entry.set_password(value.unwrap_or("")).map(|_| Value::Null).map_err(|e| format!("The keychain couldn't be written: {e}")),
+            "delete" => match entry.delete_credential() {
+                Ok(()) | Err(keyring::Error::NoEntry) => Ok(Value::Null),
+                Err(e) => Err(e.to_string()),
+            },
+            _ => Err(format!("No secrets operation {op}.")),
+        }
+    }
+}
+
+/// Android's keystore, through the bm-android plugin, as the secrets store's cipher.
+#[cfg(target_os = "android")]
+#[derive(Clone)]
+struct Keystore(tauri::AppHandle);
+
+#[cfg(target_os = "android")]
+impl bm_ports::secrets::Cipher for Keystore {
+    fn seal(&self, plain: String) -> Result<String, String> {
+        self.0.try_state::<bm_android::Android<tauri::Wry>>().ok_or("No keystore plugin.")?.seal(plain)
+    }
+    fn open(&self, sealed: String) -> Result<String, String> {
+        self.0.try_state::<bm_android::Android<tauri::Wry>>().ok_or("No keystore plugin.")?.open(sealed)
+    }
+}
+
+/// An operation of the files or secrets port, as remote-ports.ts calls it: its answer, with bytes as
 /// `{ "$bytes": base64 }`, or `{ code?, message }`.
 #[tauri::command]
-async fn port(state: State<'_, App>, port: String, op: String, args: Vec<Value>) -> Result<Value, Value> {
+async fn port(app: tauri::AppHandle, state: State<'_, App>, port: String, op: String, args: Vec<Value>) -> Result<Value, Value> {
     let failed = |message: String| json!({ "message": message });
     match (port.as_str(), op.as_str()) {
         ("files", "watch") => {
@@ -73,6 +124,13 @@ async fn port(state: State<'_, App>, port: String, op: String, args: Vec<Value>)
         ("files", _) => tauri::async_runtime::spawn_blocking(move || files::call(&op, &args).map_err(|e| e.to_json()))
             .await
             .map_err(|e| failed(e.to_string()))?,
+        ("secrets", _) => {
+            let root = state.root.clone();
+            tauri::async_runtime::spawn_blocking(move || secrets(&app, &root, &op, &args))
+                .await
+                .map_err(|e| failed(e.to_string()))?
+                .map_err(failed)
+        }
         _ => Err(failed(format!("No {port} operation {op}."))),
     }
 }

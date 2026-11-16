@@ -2,6 +2,7 @@ import type { FileEventType, FilesPort } from "./files-port.ts";
 import type { GitPort } from "./git-port.ts";
 import { gitFailure, type GitErrorCode } from "./git-port.ts";
 import { fromBase64, toBase64 } from "./base64.ts";
+import type { SecretsPort } from "./secrets-port.ts";
 
 
 /**
@@ -97,3 +98,12 @@ export function remoteFilesPort(channel: PortChannel): FilesPort {
   });
 }
 
+
+/** The secrets port through the channel (#25): the OS keychain on the desktop, the keystore on Android. */
+export function remoteSecretsPort(channel: PortChannel): SecretsPort {
+  return {
+    get: async (name) => ((await called(channel, "secrets", "get", [name])) as string | null) ?? undefined,
+    set: async (name, value) => void (await called(channel, "secrets", "set", [name, value])),
+    delete: async (name) => void (await called(channel, "secrets", "delete", [name])),
+  };
+}

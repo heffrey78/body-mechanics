@@ -1,4 +1,5 @@
-//! Body Mechanics' Android plugin (#22). Its Kotlin (android/) runs a foreground service while a hold
+//! Body Mechanics' Android plugin (#22, #25). Its Kotlin (android/) seals and opens secrets with a key
+//! in Android's keystore, and runs a foreground service while a hold
 //! or rest timer runs: a notification whose clock Android keeps ticking, a partial wake lock so the
 //! cue comes on time with the screen locked, and at the target a vibration and the notification
 //! sound. Elsewhere there's no service: the page keeps time and cues itself.
@@ -23,7 +24,15 @@ pub struct TimerSpec {
 }
 
 #[derive(Serialize)]
+#[cfg_attr(not(target_os = "android"), allow(dead_code))]
 struct Nothing {}
+
+#[derive(Serialize, serde::Deserialize)]
+#[cfg_attr(not(target_os = "android"), allow(dead_code))]
+struct Bytes {
+    /// Base64.
+    data: String,
+}
 
 pub struct Android<R: Runtime>(#[allow(dead_code)] tauri::plugin::PluginHandle<R>);
 
@@ -40,6 +49,25 @@ impl<R: Runtime> Android<R> {
         return self.0.run_mobile_plugin::<serde_json::Value>("stopTimer", Nothing {}).map(|_| ()).map_err(|e| e.to_string());
         #[cfg(not(target_os = "android"))]
         return Err("No timer service: it's Android's.".into());
+    }
+}
+
+impl<R: Runtime> Android<R> {
+    fn bytes(&self, op: &str, data: String) -> Result<String, String> {
+        #[cfg(target_os = "android")]
+        return self.0.run_mobile_plugin::<Bytes>(op, Bytes { data }).map(|b| b.data).map_err(|e| e.to_string());
+        #[cfg(not(target_os = "android"))]
+        return Err(format!("No keystore here to {op} {} bytes: it's Android's.", data.len()));
+    }
+
+    /// `plain` (base64) sealed with the keystore's key (#25): base64 of the nonce and the ciphertext.
+    pub fn seal(&self, plain: String) -> Result<String, String> {
+        self.bytes("seal", plain)
+    }
+
+    /// What `seal` sealed, back; an error if the key that sealed it is gone.
+    pub fn open(&self, sealed: String) -> Result<String, String> {
+        self.bytes("open", sealed)
     }
 }
 

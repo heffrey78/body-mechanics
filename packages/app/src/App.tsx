@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
-import { ENGINE_VERSION, portsRoundTrip } from "@bm/engine";
+import { ENGINE_VERSION, NotSetUp, Vault, portsRoundTrip } from "@bm/engine";
 import { dataDir, hostPlatform, hostPorts, smokeReport } from "./host.ts";
 import { useTheme } from "./theme/theme.ts";
 import { ThemeScreen } from "./screens/ThemeScreen.tsx";
 import { TimerCheck } from "./screens/TimerCheck.tsx";
+import { SetupScreen } from "./screens/SetupScreen.tsx";
 import { BottomTabs, Button, type TabId } from "./ui/components.tsx";
+
+/** Where the person's records repository lives: the app's folder (D2). */
+async function recordsRoot(): Promise<string> {
+  return `${(await dataDir()).replace(/\/$/, "")}/records`;
+}
 
 /** Build 1's shell: tabs, a placeholder home with the host checks (#20, #21), and More › Theme (#23). */
 export function App() {
@@ -13,6 +19,9 @@ export function App() {
   const [sub, setSub] = useState<"theme" | null>(null);
   const [platform, setPlatform] = useState("…");
   const [ports, setPorts] = useState("…");
+  // The encrypted records (#25): "unknown" until checked, "setup" on first run, "ready" once open.
+  const [records, setRecords] = useState<"unknown" | "setup" | "ready" | "browser">("unknown");
+  const [, setVault] = useState<Vault | null>(null);
 
   useEffect(() => {
     void (async () => {
@@ -25,11 +34,47 @@ export function App() {
         check = await portsRoundTrip(git, files, await dataDir()).catch((e: unknown) => `FAILED: ${String(e)}`);
       }
       setPorts(check);
-      await smokeReport(`platform=${p} engine=${ENGINE_VERSION} ports=${check.replaceAll(" ", "_")}`);
+      if (p !== "browser") {
+        try {
+          setVault(await Vault.open(hostPorts(), await recordsRoot()));
+          setRecords("ready");
+        } catch (e) {
+          if (e instanceof NotSetUp) setRecords("setup");
+          else throw e;
+        }
+      } else {
+        setRecords("browser");
+      }
+      // The secrets port (#25): a throwaway secret set, read back and deleted.
+      let secretsCheck = "skipped";
+      if (p !== "browser") {
+        const { secrets } = hostPorts();
+        secretsCheck = await (async () => {
+          await secrets.set("smoke-check", "kept");
+          const back = await secrets.get("smoke-check");
+          await secrets.delete("smoke-check");
+          return back === "kept" && (await secrets.get("smoke-check")) === undefined ? "ok" : "mismatch";
+        })().catch((e: unknown) => `unavailable(${String(e).slice(0, 60).replaceAll(" ", "_")})`);
+      }
+      await smokeReport(`platform=${p} engine=${ENGINE_VERSION} ports=${check.replaceAll(" ", "_")} secrets=${secretsCheck}`);
     })();
   }, []);
 
   let body;
+  if (records === "setup") {
+    return (
+      <div className="screen">
+        <SetupScreen
+          onCreate={async (passphrase) => {
+            const { vault, recoveryKey } = await Vault.create(hostPorts(), await recordsRoot(), passphrase);
+            setVault(vault);
+            return recoveryKey;
+          }}
+          onDone={() => setRecords("ready")}
+        />
+      </div>
+    );
+  }
   if (tab === "more" && sub === "theme") {
     body = <ThemeScreen choice={theme} onChange={setTheme} onBack={() => setSub(null)} />;
   } else if (tab === "more") {
@@ -51,6 +96,7 @@ export function App() {
           <dt className="muted">Running on</dt><dd style={{ margin: 0 }} className="strong" data-testid="platform">{platform}</dd>
           <dt className="muted">Engine</dt><dd style={{ margin: 0 }} className="strong">{ENGINE_VERSION}</dd>
           <dt className="muted">Ports</dt><dd style={{ margin: 0 }} className="strong" data-testid="ports">{ports}</dd>
+          <dt className="muted">Records</dt><dd style={{ margin: 0 }} className="strong">{records === "ready" ? "encrypted, ready" : records}</dd>
         </dl>
         <TimerCheck />
       </div>

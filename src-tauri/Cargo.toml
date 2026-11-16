@@ -26,6 +26,10 @@ bm-android = { path = "../crates/bm-android" }
 # For where libgit2 keeps the global configuration (the same git2 git2-port uses).
 git2 = { version = "0.21", default-features = false }
 
+# Secrets on the desktop (#25): the OS keychain (Secret Service on Linux).
+[target.'cfg(not(target_os = "android"))'.dependencies]
+keyring = { version = "3", features = ["sync-secret-service", "crypto-rust", "apple-native", "windows-native"] }
+
 # No system OpenSSL on Android: built from source for the target.
 [target.'cfg(target_os = "android")'.dependencies]
 git2-port = { path = "../crates/git2-port", features = ["vendored-openssl"] }

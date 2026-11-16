@@ -56,7 +56,8 @@ jobs:
         run: |
           out=$(BM_SMOKE=1 timeout 60 xvfb-run -a src-tauri/target/release/body-mechanics)
           echo "$out"
-          echo "$out" | grep -q '^BM_SMOKE platform=linux engine=.* ports=git+files_ok$'
+          # The secrets check is only logged here: the virtual display has no keychain (Secret Service).
+          echo "$out" | grep -q '^BM_SMOKE platform=linux engine=.* ports=git+files_ok '
       - uses: actions/upload-artifact@v4
         with:
           name: desktop-deb

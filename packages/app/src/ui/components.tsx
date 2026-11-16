@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 
 /** The shared components (#23): markup and classes only; every colour and size comes from the theme. */
 
-export function Button({ variant = "secondary", xl = false, onClick, children }: { variant?: "primary" | "secondary" | "stop" | "ghost"; xl?: boolean; onClick?: () => void; children: ReactNode }) {
-  return <button type="button" className={`btn ${variant}${xl ? " xl" : ""}`} onClick={onClick}>{children}</button>;
+export function Button({ variant = "secondary", xl = false, disabled = false, onClick, children }: { variant?: "primary" | "secondary" | "stop" | "ghost"; xl?: boolean; disabled?: boolean; onClick?: () => void; children: ReactNode }) {
+  return <button type="button" className={`btn ${variant}${xl ? " xl" : ""}`} disabled={disabled} onClick={onClick}>{children}</button>;
 }
 
 export function Chip({ on = false, onClick, children }: { on?: boolean; onClick?: () => void; children: ReactNode }) {
