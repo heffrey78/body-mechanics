@@ -18,10 +18,12 @@ type View = { screen: "weeks" } | { screen: "session"; path: string } | { screen
  * History (#33): sessions by week with totals, a session's detail (reopen it to edit), and an
  * exercise's progress: the best set per session, modified sessions marked, left/right for one-sided.
  */
-export function HistoryScreen({ vault, index, library, units, canEdit, onEdit, onRepeat, onSaveAsRoutine }: {
+export function HistoryScreen({ vault, index, library, places, units, canEdit, onEdit, onRepeat, onSaveAsRoutine }: {
   vault: Vault | null;
   index: RecordIndex | null;
   library: LibraryItem[];
+  /** Location names by id (#41). */
+  places: Map<string, string>;
   units: "kg" | "lb";
   canEdit: boolean;
   onEdit: (s: Session) => void;
@@ -34,7 +36,7 @@ export function HistoryScreen({ vault, index, library, units, canEdit, onEdit, o
   const name = (id: string) => byId.get(id)?.name ?? id;
 
   if (view.screen === "session") {
-    return <SessionDetail vault={vault} path={view.path} name={name} byId={byId} units={units} canEdit={canEdit} onEdit={onEdit} onRepeat={onRepeat} onSaveAsRoutine={onSaveAsRoutine}
+    return <SessionDetail places={places} vault={vault} path={view.path} name={name} byId={byId} units={units} canEdit={canEdit} onEdit={onEdit} onRepeat={onRepeat} onSaveAsRoutine={onSaveAsRoutine}
       onBack={() => setView({ screen: "weeks" })} onProgress={(exercise) => setView({ screen: "progress", exercise, from: view.path })} />;
   }
   if (view.screen === "progress") {
@@ -73,8 +75,8 @@ export function HistoryScreen({ vault, index, library, units, canEdit, onEdit, o
   );
 }
 
-function SessionDetail({ vault, path, name, byId, units, canEdit, onEdit, onRepeat, onSaveAsRoutine, onBack, onProgress }: {
-  vault: Vault | null; path: string; name: (id: string) => string; byId: Map<string, LibraryItem>; units: "kg" | "lb"; canEdit: boolean;
+function SessionDetail({ places, vault, path, name, byId, units, canEdit, onEdit, onRepeat, onSaveAsRoutine, onBack, onProgress }: {
+  places: Map<string, string>; vault: Vault | null; path: string; name: (id: string) => string; byId: Map<string, LibraryItem>; units: "kg" | "lb"; canEdit: boolean;
   onEdit: (s: Session) => void; onRepeat: (s: Session) => void; onSaveAsRoutine: (s: Session, name: string) => string;
   onBack: () => void; onProgress: (exercise: string) => void;
 }) {
@@ -91,7 +93,7 @@ function SessionDetail({ vault, path, name, byId, units, canEdit, onEdit, onRepe
       {s ? (
         <>
           <h1 className="title">{day(s.startedAt)}</h1>
-          <span className="muted">{time(s.startedAt)}{s.finishedAt ? ` – ${time(s.finishedAt)}` : " · still open"}{s.location ? ` · ${s.location}` : ""}</span>
+          <span className="muted">{time(s.startedAt)}{s.finishedAt ? ` – ${time(s.finishedAt)}` : " · still open"}{s.location ? ` · ${places.get(s.location) ?? "a deleted location"}` : ""}</span>
           {s.entries.filter((e) => !e.deleted).map((e) => (
             <div key={e.id} className="card" style={{ gap: 6 }}>
               <button type="button" className="result" style={{ padding: 0, minHeight: 36, borderBottom: 0 }} onClick={() => onProgress(e.exercise)}>

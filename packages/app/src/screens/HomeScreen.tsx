@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { search, type LibraryItem } from "@bm/engine";
+import { search, type LibraryItem, type Location } from "@bm/engine";
 import { Button, Chip, Tag } from "../ui/components.tsx";
 import { REGION_LABEL } from "../ui/labels.ts";
 
@@ -8,8 +8,12 @@ import { REGION_LABEL } from "../ui/labels.ts";
  * Enter starts the top one only when every word matched, otherwise it opens the new-movement form.
  * Recent exercises sit below as chips.
  */
-export function HomeScreen({ library, recent, sessionOpen, onStart, onNew, onResume }: {
+export function HomeScreen({ library, recent, sessionOpen, locations, location, onLocation, onStart, onNew, onResume }: {
   library: LibraryItem[];
+  locations: Location[];
+  /** Where the next session is (#41): the last one used, until changed. */
+  location: string | null;
+  onLocation: (id: string | null) => void;
   recent: LibraryItem[];
   sessionOpen: boolean;
   onStart: (item: LibraryItem) => void;
@@ -27,6 +31,11 @@ export function HomeScreen({ library, recent, sessionOpen, onStart, onNew, onRes
     <div className="pad">
       <h1 className="title">Body Mechanics</h1>
       {sessionOpen ? <Button variant="primary" xl onClick={onResume}>Back to your session</Button> : null}
+      {!sessionOpen && locations.length ? (
+        <div className="chips" role="group" aria-label="Where are you?">
+          {locations.map((l) => <Chip key={l.id} on={l.id === location} onClick={() => onLocation(l.id === location ? null : l.id)}>{l.name}</Chip>)}
+        </div>
+      ) : null}
       <input
         className="field" type="search" aria-label="What are you doing?" placeholder="What are you doing?" autoComplete="off"
         value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") enter(); }}

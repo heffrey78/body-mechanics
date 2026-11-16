@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import {
   COMMIT_EMAIL, COMMIT_NAME, Committer, ENGINE_VERSION, NotSetUp, RecordIndex, SessionLog, Vault, clearDraft, createExercise, deviceClock,
-  applyUpdates, editRoutine, indexBenchmark, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
+  applyUpdates, editRoutine, indexBenchmark, loadLocations, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
   portsRoundTrip, routineFromSession, saveDraft,
-  type Clock, type TargetUpdate, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
+  type Clock, type Location, type TargetUpdate, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
 } from "@bm/engine";
 import { dataDir, hostPlatform, hostPorts, smokeReport, smokeStorage } from "./host.ts";
 import { useTheme } from "./theme/theme.ts";
@@ -18,6 +18,7 @@ import { NewMovement } from "./screens/NewMovement.tsx";
 import { SessionScreen, type Pending } from "./screens/SessionScreen.tsx";
 import { HistoryScreen } from "./screens/HistoryScreen.tsx";
 import { RoutinesScreen, describeItem } from "./screens/RoutinesScreen.tsx";
+import { LocationsScreen } from "./screens/LocationsScreen.tsx";
 import { workerPool } from "./workers/pool.ts";
 import { BottomTabs, Button, type TabId } from "./ui/components.tsx";
 
@@ -30,7 +31,9 @@ async function recordsRoot(): Promise<string> {
 export function App() {
   const [theme, setTheme] = useTheme();
   const [tab, setTab] = useState<TabId>("home");
-  const [sub, setSub] = useState<"theme" | "credits" | "checks" | null>(null);
+  const [sub, setSub] = useState<"theme" | "credits" | "checks" | "locations" | null>(null);
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [location, setLocation] = useState<string | null>(null);
   const [home, setHome] = useState<{ screen: "start" } | { screen: "new"; name: string } | { screen: "session" }>({ screen: "start" });
   const [library, setLibrary] = useState<LibraryItem[]>([]);
   const [index, setIndex] = useState<RecordIndex | null>(null);
@@ -72,9 +75,13 @@ export function App() {
     setProfile(p);
     setTheme(p.theme);
     if (created) c?.changed("Profile");
-    const [lib, built, clock, rs] = await Promise.all([loadLibrary(v), RecordIndex.build(v, files), deviceClock(v), loadRoutines(v)]);
+    const [lib, built, clock, rs, ls] = await Promise.all([loadLibrary(v), RecordIndex.build(v, files), deviceClock(v), loadRoutines(v), loadLocations(v)]);
     setLibrary(lib);
     setRoutines(rs);
+    setLocations(ls);
+    // The last location used is where the next session starts (#41).
+    const lastAt = built.index.sessions().find((x) => x.location)?.location;
+    setLocation(lastAt && ls.some((l) => l.id === lastAt) ? lastAt : null);
     setClock(clock);
     setIndex(built.index);
     const l = new SessionLog(v, clock, { index: built.index, ...(c ? { committer: c } : {}) });
@@ -104,6 +111,19 @@ export function App() {
     void vault.write(stamped).then(() => committer?.changed(`Routine: ${stamped.name}`));
   };
 
+  /** A location changed (#41): stamped, written, committed once quiet. */
+  const saveLocation = (next: Location) => {
+    if (!vault || !clock) return;
+    const before = locations.find((l) => l.id === next.id);
+    const stamped = stampChanges(before as Record<string, unknown> | undefined, next as unknown as Record<string, unknown>, clock.tick()) as unknown as Location;
+    setLocations((ls) => {
+      const others = ls.filter((l) => l.id !== next.id);
+      return stamped.deleted ? others : [...others, stamped].sort((a, b) => a.name.localeCompare(b.name));
+    });
+    if (stamped.deleted && location === stamped.id) setLocation(null);
+    void vault.write(stamped).then(() => committer?.changed(`Location: ${stamped.name}`));
+  };
+
   /** Recent exercises: the last ten distinct ones logged. */
   const recent = (() => {
     const byId = new Map(library.map((x) => [x.id, x]));
@@ -130,7 +150,7 @@ export function App() {
     setSummary(null);
     setPending(null);
     setPlan(live);
-    changed(await log.start(live[0]!.exercise, routine ? { routine } : {}), null, live);
+    changed(await log.start(live[0]!.exercise, { ...(routine ? { routine } : {}), ...(location ? { location } : {}) }), null, live);
     setHome({ screen: "session" });
     setTab("home");
   };
@@ -143,7 +163,7 @@ export function App() {
       setPending(null);
       changed(log.session);
     } else {
-      changed(await log.start(x.id), null);
+      changed(await log.start(x.id, location ? { location } : {}), null);
       setPending(null);
     }
     setHome({ screen: "session" });
@@ -179,7 +199,9 @@ export function App() {
       } else {
         // In a plain browser (development, screenshots): records in memory, nothing kept.
         const files = memoryFilesPort();
-        await opened((await Vault.create({ files, secrets: memorySecretsPort() }, "/records", "browser preview", { scryptLogN: 1 })).vault, files, false);
+        const preview = (await Vault.create({ files, secrets: memorySecretsPort() }, "/records", "browser preview", { scryptLogN: 1 })).vault;
+        for (const l of starterLocations()) await preview.write(l);
+        await opened(preview, files, false);
         setRecords("browser");
       }
       // The secrets port (#25): a throwaway secret set, read back and deleted.
@@ -210,6 +232,8 @@ export function App() {
         <SetupScreen
           onCreate={async (passphrase) => {
             const { vault: v, recoveryKey } = await Vault.create(hostPorts(), await recordsRoot(), passphrase);
+            // A new set of records starts with the usual locations (#41); a joined device gets them by sync.
+            for (const l of starterLocations()) await v.write(l);
             await opened(v);
             return recoveryKey;
           }}
@@ -229,6 +253,8 @@ export function App() {
         onBack={() => setSub(null)}
       />
     );
+  } else if (tab === "more" && sub === "locations") {
+    body = <LocationsScreen locations={locations} onSave={saveLocation} onAddStarters={() => starterLocations().forEach((l) => saveLocation(l))} onBack={() => setSub(null)} />;
   } else if (tab === "more" && sub === "credits") {
     body = <CreditsScreen onBack={() => setSub(null)} />;
   } else if (tab === "more" && sub === "checks") {
@@ -269,6 +295,7 @@ export function App() {
     body = (
       <HistoryScreen
         vault={vault} index={index} library={library} units={profile?.units ?? "kg"} canEdit={!session}
+        places={new Map(locations.map((l) => [l.id, l.name]))}
         onRepeat={(s) => {
           const byId = new Map(library.map((x) => [x.id, x]));
           void startPlan(routineFromSession(s, "Repeat", (x) => byId.get(x)?.measure ?? "reps").items);
@@ -362,6 +389,7 @@ export function App() {
         ) : null}
         <HomeScreen
           library={library} recent={recent} sessionOpen={!!session}
+          locations={locations} location={location} onLocation={setLocation}
           onStart={(x) => void startWith(x)}
           onNew={(name) => setHome({ screen: "new", name })}
           onResume={() => setHome({ screen: "session" })}
