@@ -173,6 +173,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "bm-android"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "tauri",
+]
+
+[[package]]
 name = "bm-ports"
 version = "0.1.0"
 dependencies = [
@@ -185,6 +194,7 @@ dependencies = [
 name = "body-mechanics"
 version = "0.1.0"
 dependencies = [
+ "bm-android",
  "bm-ports",
  "git2",
  "git2-port",

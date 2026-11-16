@@ -77,6 +77,25 @@ async fn port(state: State<'_, App>, port: String, op: String, args: Vec<Value>)
     }
 }
 
+/// A hold or rest timer in Android's foreground service (#22), so it runs and cues with the screen
+/// locked: true if the service took it. Elsewhere false, and the page keeps time and cues itself.
+#[tauri::command]
+fn timer_start(app: tauri::AppHandle, kind: String, label: String, target_seconds: u32, elapsed_seconds: u32) -> Result<bool, String> {
+    let spec = bm_android::TimerSpec { kind, label, target_seconds, elapsed_seconds };
+    match app.try_state::<bm_android::Android<tauri::Wry>>() {
+        Some(android) => android.start_timer(spec).map(|_| true),
+        None => Ok(false),
+    }
+}
+
+#[tauri::command]
+fn timer_stop(app: tauri::AppHandle) -> Result<(), String> {
+    match app.try_state::<bm_android::Android<tauri::Wry>>() {
+        Some(android) => android.stop_timer(),
+        None => Ok(()),
+    }
+}
+
 /// The smoke test (#20, #21): with BM_SMOKE set, the page reports what it rendered and checked, and the
 /// app exits, so CI checks the webview, the engine and the ports end to end. Otherwise it does nothing.
 #[tauri::command]
@@ -90,6 +109,7 @@ fn smoke_report(app: tauri::AppHandle, report: String) {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(bm_android::init())
         .setup(|app| {
             let root = app.path().app_data_dir()?;
             std::fs::create_dir_all(&root)?;
@@ -108,7 +128,7 @@ pub fn run() {
             app.manage(App { root, watches: files::Watches::default(), events: Arc::default() });
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![host_platform, data_dir, git, listen, port, smoke_report])
+        .invoke_handler(tauri::generate_handler![host_platform, data_dir, git, listen, port, timer_start, timer_stop, smoke_report])
         .run(tauri::generate_context!())
         .expect("Body Mechanics failed to start");
 }

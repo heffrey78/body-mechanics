@@ -3,6 +3,7 @@ import { ENGINE_VERSION, portsRoundTrip } from "@bm/engine";
 import { dataDir, hostPlatform, hostPorts, smokeReport } from "./host.ts";
 import { useTheme } from "./theme/theme.ts";
 import { ThemeScreen } from "./screens/ThemeScreen.tsx";
+import { TimerCheck } from "./screens/TimerCheck.tsx";
 import { BottomTabs, Button, type TabId } from "./ui/components.tsx";
 
 /** Build 1's shell: tabs, a placeholder home with the host checks (#20, #21), and More › Theme (#23). */
@@ -51,6 +52,7 @@ export function App() {
           <dt className="muted">Engine</dt><dd style={{ margin: 0 }} className="strong">{ENGINE_VERSION}</dd>
           <dt className="muted">Ports</dt><dd style={{ margin: 0 }} className="strong" data-testid="ports">{ports}</dd>
         </dl>
+        <TimerCheck />
       </div>
     );
   } else {
