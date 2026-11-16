@@ -6,6 +6,11 @@ set -euo pipefail
 target="${1:-aarch64}"
 cd "$(dirname "${BASH_SOURCE[0]}")/../src-tauri"
 : "${ANDROID_HOME:?set ANDROID_HOME}" "${NDK_HOME:?set NDK_HOME}" "${JAVA_HOME:?set JAVA_HOME}"
+# OpenSSL's build (git2-port's vendored-openssl) asks for a ranlib named for Android, which isn't on the
+# PATH: the NDK's own, for both targets (as writer's packages/mobile/build.sh does).
+ndk_bin="$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin"
+export RANLIB_aarch64_linux_android="$ndk_bin/llvm-ranlib" RANLIB_x86_64_linux_android="$ndk_bin/llvm-ranlib"
+export AR_aarch64_linux_android="$ndk_bin/llvm-ar" AR_x86_64_linux_android="$ndk_bin/llvm-ar"
 [[ -d gen/android ]] || npx tauri android init --ci
 gradle=gen/android/app/build.gradle.kts
 # Android 8 (API 26) at least, as tauri.conf.json says.
