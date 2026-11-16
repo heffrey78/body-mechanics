@@ -42,6 +42,9 @@ it.runIf(git)("a second device clones with libgit2, joins with the passphrase an
   const { vault } = await Vault.create({ files: nodeFiles, secrets: memorySecretsPort() }, desktop, "correct horse battery", { scryptLogN: 10 });
   await vault.write(session);
   await git!.init(desktop, "main");
+  // libgit2 doesn't read GIT_CONFIG_GLOBAL: the identity goes in the repository (as the app sets its own).
+  await git!.setConfig(desktop, "user.name", "Test");
+  await git!.setConfig(desktop, "user.email", "test@example.com");
   await git!.stage(desktop);
   await git!.commit(desktop, "First session");
 
