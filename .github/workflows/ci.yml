@@ -30,7 +30,8 @@ jobs:
       - name: Engine tests, the git contract suite included
         run: npm test
       - name: The contract suite ran, not skipped
-        run: npx vitest run packages/engine/test/git-port.test.ts --reporter=verbose | grep -q "the git port: libgit2"
+        run: |
+          npx vitest run packages/engine/test/git-port.test.ts --reporter=verbose | grep -q "the git port: libgit2"
 
   # The Linux desktop app (#20): built and bundled as a .deb, then started under a virtual display with
   # BM_SMOKE set: the page renders, asks Rust for the platform, runs a round trip through the git and
