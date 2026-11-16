@@ -1,0 +1,10 @@
+/* Placeholder styles until the theme tokens land (#23). */
+:root { color-scheme: light dark; --bg: #f4f7f8; --ink: #12202a; --muted: #4f5e68; }
+@media (prefers-color-scheme: dark) { :root { --bg: #0d151a; --ink: #e7eef1; --muted: #9cb0ba; } }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: Inter, system-ui, sans-serif; }
+.home { padding: max(24px, env(safe-area-inset-top)) 20px 24px; display: flex; flex-direction: column; gap: 12px; }
+.home h1 { margin: 0; font-size: 28px; }
+.muted { color: var(--muted); margin: 0; }
+dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 8px 0 0; }
+dt { color: var(--muted); }
+dd { margin: 0; font-weight: 600; }

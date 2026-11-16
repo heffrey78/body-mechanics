@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  # Types and the engine's tests.
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npm test
+
+  # The Linux desktop app (#20): built and bundled as a .deb, then started under a virtual display with
+  # BM_SMOKE set: the page renders, asks Rust for the platform, reports it and the app exits.
+  desktop:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - name: WebKitGTK and friends
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf xvfb > /dev/null
+      - run: npm ci
+      - run: npx tauri build
+      - name: Smoke test
+        run: |
+          out=$(BM_SMOKE=1 timeout 60 xvfb-run -a src-tauri/target/release/body-mechanics)
+          echo "$out"
+          echo "$out" | grep -q '^BM_SMOKE platform=linux engine='
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-deb
+          path: src-tauri/target/release/bundle/deb/*.deb
+          if-no-files-found: error
+          retention-days: 14
+
+  # The Android APK (#20), built as writer's CI builds its own: the runner's SDK, an NDK from sdkmanager,
+  # Java 17 and Rust with the aarch64 Android target.
+  android:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      NDK_VERSION: 27.2.12479018
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - name: The NDK
+        run: |
+          ndk="$ANDROID_HOME/ndk/$NDK_VERSION"
+          [ -d "$ndk" ] || yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;$NDK_VERSION" > /dev/null
+          echo "NDK_HOME=$ndk" >> "$GITHUB_ENV"
+      - run: npm ci
+      - name: The owner's debug key, if the repository has one
+        env:
+          KEYSTORE: ${{ secrets.ANDROID_DEBUG_KEYSTORE }}
+        run: |
+          [ -n "$KEYSTORE" ] || { echo "::warning::No ANDROID_DEBUG_KEYSTORE secret: the APK is signed with a new key each run, so it won't install over an earlier build."; exit 0; }
+          mkdir -p ~/.android
+          echo "$KEYSTORE" | base64 -d > ~/.android/debug.keystore
+          echo "BM_ANDROID_DEBUG_KEYSTORE=$HOME/.android/debug.keystore" >> "$GITHUB_ENV"
+      - run: scripts/android-build.sh aarch64
+      - run: cp "$(find src-tauri/gen/android/app/build/outputs/apk -name '*.apk' | head -n 1)" body-mechanics-android.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: body-mechanics-android.apk
+          if-no-files-found: error
+          retention-days: 14

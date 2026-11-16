@@ -1,0 +1,25 @@
+[package]
+name = "body-mechanics"
+version = "0.1.0"
+description = "Body Mechanics on the desktop and Android (D2, #16): the UI and engine in the webview, with files, git and secrets given by this Rust"
+license = "MIT"
+repository = "https://github.com/heffrey78/body-mechanics"
+edition = "2024"
+publish = false
+
+[lib]
+name = "body_mechanics_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.7", features = [] }
+
+[dependencies]
+tauri = { version = "2.12", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# `tauri android build --debug` uses this profile: optimized, so the APK is a download a phone can take,
+# and still signed with a debug key for sideloading (as writer's mobile app does).
+[profile.dev.package."*"]
+opt-level = 2

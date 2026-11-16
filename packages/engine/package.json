@@ -1,0 +1,8 @@
+{
+  "name": "@bm/engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The app's logic (D2): TypeScript with no Node or browser imports, given files, git and secrets by its host through ports.",
+  "exports": { ".": "./src/index.ts" }
+}

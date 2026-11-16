@@ -1,0 +1,21 @@
+{
+  "name": "body-mechanics",
+  "private": true,
+  "type": "module",
+  "description": "An exercise app for desktop and Android: ad hoc sessions, routines, a body map and suggestions, kept as encrypted records you own.",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "check": "tsc -b packages/engine packages/app",
+    "test": "vitest run",
+    "dev": "npm run dev -w @bm/app",
+    "build": "npm run build -w @bm/app",
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.12.2",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  }
+}
