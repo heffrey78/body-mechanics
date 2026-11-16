@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { search, type LibraryItem, type Location } from "@bm/engine";
 import { Button, Chip, Tag } from "../ui/components.tsx";
 import { REGION_LABEL } from "../ui/labels.ts";
@@ -8,7 +8,9 @@ import { REGION_LABEL } from "../ui/labels.ts";
  * Enter starts the top one only when every word matched, otherwise it opens the new-movement form.
  * Recent exercises sit below as chips.
  */
-export function HomeScreen({ library, recent, sessionOpen, locations, location, onLocation, onStart, onNew, onResume }: {
+export function HomeScreen({ suggestPanel, onSuggest, library, recent, sessionOpen, locations, location, onLocation, onStart, onNew, onResume }: {
+  suggestPanel: ReactNode;
+  onSuggest: () => void;
   library: LibraryItem[];
   locations: Location[];
   /** Where the next session is (#41): the last one used, until changed. */
@@ -56,6 +58,7 @@ export function HomeScreen({ library, recent, sessionOpen, locations, location, 
           </button>
         </div>
       ) : null}
+      {!sessionOpen && !q.trim() ? suggestPanel ?? <Button xl onClick={onSuggest}>Suggest next</Button> : null}
       {recent.length ? (
         <>
           <span className="label">Recent</span>

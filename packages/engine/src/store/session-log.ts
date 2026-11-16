@@ -63,6 +63,20 @@ export class SessionLog {
     return this.#session;
   }
 
+  /** The Suggest next answers for this session (#43): where, how long, how much sweat, the focus. */
+  async setAnswers(answers: { location?: string; minutes?: number; sweat: 0 | 1 | 2; area: Region[]; kinds: Kind[] }): Promise<void> {
+    const s = this.#need();
+    const stamp = this.#clock.tick();
+    const before = JSON.stringify([s.location, s.answers, s.focus]);
+    if (answers.location) s.location = answers.location;
+    else delete s.location;
+    s.answers = { sweat: answers.sweat, ...(answers.minutes ? { minutes: answers.minutes } : {}) };
+    s.focus = { area: answers.area, kinds: answers.kinds };
+    if (JSON.stringify([s.location, s.answers, s.focus]) === before) return;
+    s.edits = { ...(s.edits ?? {}), location: stamp, answers: stamp, focus: stamp };
+    await this.#save();
+  }
+
   async addEntry(exercise: string): Promise<Entry> {
     const s = this.#need();
     const entry: Entry = { id: newId(), exercise, modifiers: [], sets: [] };

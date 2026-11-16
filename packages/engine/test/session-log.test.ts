@@ -33,6 +33,16 @@ describe("logging a session (#31, #32)", () => {
     expect(log.session).toBeNull();
   });
 
+  it("keeps the Suggest next answers on the session, so they survive a restart (#43)", async () => {
+    const { ports, vault } = await setup();
+    const log = new SessionLog(vault, new Clock("dddddddddddddddd"));
+    const s = await log.start("bm:chin-tuck", { location: "llllllllllllllll" });
+    await log.setAnswers({ location: "llllllllllllllll", minutes: 10, sweat: 0, area: ["neck", "shoulder"], kinds: ["mobility"] });
+    const back = (await (await Vault.open(ports, "/r")).read(`sessions/${s.startedAt.slice(0, 4)}/${s.startedAt.slice(5, 7)}/${s.id}.yaml.age`)) as Session;
+    expect(back).toMatchObject({ location: "llllllllllllllll", answers: { minutes: 10, sweat: 0 }, focus: { area: ["neck", "shoulder"], kinds: ["mobility"] } });
+    expect(back.edits?.answers).toMatch(/~dddddddddddddddd$/);
+  });
+
   it("keeps one device id across restarts", async () => {
     const { ports, vault } = await setup();
     const a = await deviceClock(vault);

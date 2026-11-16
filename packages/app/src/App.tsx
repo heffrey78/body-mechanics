@@ -3,7 +3,7 @@ import {
   COMMIT_EMAIL, COMMIT_NAME, Committer, ENGINE_VERSION, NotSetUp, RecordIndex, SessionLog, Vault, clearDraft, createExercise, deviceClock,
   applyUpdates, editRoutine, indexBenchmark, loadLocations, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
   portsRoundTrip, routineFromSession, saveDraft,
-  type Clock, type Location, type TargetUpdate, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
+  type Clock, type Location, type Suggestion, type TargetUpdate, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
 } from "@bm/engine";
 import { dataDir, hostPlatform, hostPorts, smokeReport, smokeStorage } from "./host.ts";
 import { useTheme } from "./theme/theme.ts";
@@ -19,6 +19,7 @@ import { SessionScreen, type Pending } from "./screens/SessionScreen.tsx";
 import { HistoryScreen } from "./screens/HistoryScreen.tsx";
 import { RoutinesScreen, describeItem } from "./screens/RoutinesScreen.tsx";
 import { LocationsScreen } from "./screens/LocationsScreen.tsx";
+import { SuggestPanel, type SuggestAnswers } from "./screens/SuggestPanel.tsx";
 import { workerPool } from "./workers/pool.ts";
 import { BottomTabs, Button, type TabId } from "./ui/components.tsx";
 
@@ -34,6 +35,10 @@ export function App() {
   const [sub, setSub] = useState<"theme" | "credits" | "checks" | "locations" | null>(null);
   const [locations, setLocations] = useState<Location[]>([]);
   const [location, setLocation] = useState<string | null>(null);
+  // Suggest next (#43): open or not, the answers before a session starts, what's been turned down.
+  const [suggesting, setSuggesting] = useState(false);
+  const [homeAnswers, setHomeAnswers] = useState<SuggestAnswers | null>(null);
+  const [refused, setRefused] = useState<Set<string>>(new Set());
   const [home, setHome] = useState<{ screen: "start" } | { screen: "new"; name: string } | { screen: "session" }>({ screen: "start" });
   const [library, setLibrary] = useState<LibraryItem[]>([]);
   const [index, setIndex] = useState<RecordIndex | null>(null);
@@ -123,6 +128,49 @@ export function App() {
     if (stamped.deleted && location === stamped.id) setLocation(null);
     void vault.write(stamped).then(() => committer?.changed(`Location: ${stamped.name}`));
   };
+
+  /** This session's Suggest next answers, from the record (so they survive a restart). */
+  const sessionAnswers = (s: Session): SuggestAnswers | null => s.answers?.sweat === undefined ? null : {
+    ...(s.location ? { location: s.location } : {}), ...(s.answers.minutes ? { minutes: s.answers.minutes } : {}),
+    sweat: s.answers.sweat, area: s.focus?.area ?? [], kinds: s.focus?.kinds ?? [],
+  };
+  const takeSuggestion = async (x: Suggestion) => {
+    if (!log) return;
+    setSuggesting(false);
+    setSummary(null);
+    const dose = (entryId: string): Pending => ({ entryId, amount: x.amount, ...(x.loadKg !== undefined ? { loadKg: x.loadKg } : {}) });
+    if (log.session) {
+      const e = await log.addEntry(x.item.id);
+      setPending(dose(e.id));
+      changed(log.session, dose(e.id));
+    } else {
+      const a = homeAnswers;
+      const s = await log.start(x.item.id, a?.location ? { location: a.location } : location ? { location } : {});
+      if (a) await log.setAnswers(a);
+      setRefused(new Set());
+      setPlan(null);
+      setPending(dose(s.entries[0]!.id));
+      changed(log.session ?? s, dose(s.entries[0]!.id), null);
+      setHome({ screen: "session" });
+    }
+  };
+  const suggestPanel = suggesting && log ? (
+    <SuggestPanel
+      answers={session ? sessionAnswers(session) : homeAnswers}
+      defaultLocation={location} locations={locations} library={library} index={index}
+      done={session ? session.entries.filter((e) => !e.deleted).map((e) => e.exercise) : []}
+      {...(session ? { startedAt: session.startedAt } : {})}
+      seed={session?.id ?? new Date().toISOString().slice(0, 10)} refused={refused} units={profile?.units ?? "kg"}
+      onAnswers={(a) => {
+        if (a.location) setLocation(a.location);
+        if (log.session) void log.setAnswers(a).then(() => changed(log.session!));
+        else setHomeAnswers(a);
+      }}
+      onRefuse={(x) => setRefused((r) => new Set(r).add(x))}
+      onAccept={(x) => void takeSuggestion(x)}
+      onClose={() => setSuggesting(false)}
+    />
+  ) : null;
 
   /** Recent exercises: the last ten distinct ones logged. */
   const recent = (() => {
@@ -333,6 +381,7 @@ export function App() {
   } else if (tab === "home" && home.screen === "session" && log && session) {
     body = (
       <SessionScreen
+        suggestPanel={suggestPanel} onSuggest={() => setSuggesting(true)}
         log={log} session={session} plan={plan} library={library} recent={recent} index={index} units={profile?.units ?? "kg"}
         pending={pending}
         onPending={(p) => { setPending(p); changed(log.session ?? session, p); }}
@@ -341,6 +390,9 @@ export function App() {
           setSession(null);
           setPending(null);
           setPlan(null);
+          setRefused(new Set());
+          setHomeAnswers(null);
+          setSuggesting(false);
           if (vault) void clearDraft(vault);
           const sets = s.entries.reduce((n, e) => n + e.sets.filter((x) => !x.deleted).length, 0);
           setSummary(`Saved: ${s.entries.length} ${s.entries.length === 1 ? "exercise" : "exercises"}, ${sets} ${sets === 1 ? "set" : "sets"}.`);
@@ -388,6 +440,7 @@ export function App() {
           </div>
         ) : null}
         <HomeScreen
+          suggestPanel={suggestPanel} onSuggest={() => setSuggesting(true)}
           library={library} recent={recent} sessionOpen={!!session}
           locations={locations} location={location} onLocation={setLocation}
           onStart={(x) => void startWith(x)}

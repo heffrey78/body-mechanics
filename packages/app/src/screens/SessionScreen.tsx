@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { EFFORTS, describeSet, nextSet, nextStep, planStatus, progression, search, showLoad, toKg, FIELD, type Effort, type Entry, type LibraryItem, type LoggedSet, type RecordIndex, type RoutineItem, type Session, type SessionLog } from "@bm/engine";
 import { elapsedSeconds, pageCue, startTimer, stopTimer, type RunningTimer } from "../timer.ts";
 import { Button, Chip, Segmented, Stepper, Timer } from "../ui/components.tsx";
@@ -20,7 +20,10 @@ export interface Pending {
  * one-sided sets left then right), the rest timer after each set (+30 s, Skip), effort once per
  * exercise, every set tappable to correct or delete, and Type next / recent chips for what's next.
  */
-export function SessionScreen({ log, session, plan, library, recent, index, units, pending, onPending, onChanged, onFinished, onHome }: {
+export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, library, recent, index, units, pending, onPending, onChanged, onFinished, onHome }: {
+  /** Suggest next (#43), shown in place when open. */
+  suggestPanel: ReactNode;
+  onSuggest: () => void;
   log: SessionLog;
   session: Session;
   /** A routine run or a repeat (#36): the planned exercises and their targets. */
@@ -41,6 +44,8 @@ export function SessionScreen({ log, session, plan, library, recent, index, unit
   const [skipped, setSkipped] = useState<Set<string>>(new Set());
   const stepOf = (e: Entry | undefined) => (e ? steps.find((x) => x.entryId === e.id) : undefined);
   const [currentId, setCurrentId] = useState(pending?.entryId ?? entries.at(-1)?.id ?? "");
+  // An exercise added from outside (a suggestion taken) becomes the current one.
+  useEffect(() => { if (pending?.entryId) setCurrentId(pending.entryId); }, [pending?.entryId]);
   const current = entries.find((e) => e.id === currentId) ?? entries.at(-1);
   const item = current ? byId.get(current.exercise) : undefined;
   const measure = item?.measure ?? "reps";
@@ -283,6 +288,7 @@ export function SessionScreen({ log, session, plan, library, recent, index, unit
         </>
       ) : null}
 
+      {suggestPanel ?? <Button xl onClick={onSuggest}>Suggest next</Button>}
       <input className="field" type="search" aria-label="Type next" placeholder="Type next" autoComplete="off" value={next}
         onChange={(e) => setNext(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && hits[0]?.full) void addNext(hits[0].item); }} />
       {next.trim() ? (
