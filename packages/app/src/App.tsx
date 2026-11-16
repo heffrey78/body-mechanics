@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { ENGINE_VERSION, NotSetUp, Vault, indexBenchmark, portsRoundTrip } from "@bm/engine";
+import { COMMIT_EMAIL, COMMIT_NAME, Committer, ENGINE_VERSION, NotSetUp, Vault, indexBenchmark, loadProfile, portsRoundTrip, type Profile } from "@bm/engine";
 import { dataDir, hostPlatform, hostPorts, smokeReport, smokeStorage } from "./host.ts";
 import { useTheme } from "./theme/theme.ts";
 import { ThemeScreen } from "./screens/ThemeScreen.tsx";
 import { TimerCheck } from "./screens/TimerCheck.tsx";
 import { SetupScreen } from "./screens/SetupScreen.tsx";
 import { StorageCheck } from "./screens/StorageCheck.tsx";
-import { ExportCard } from "./screens/ExportCard.tsx";
+import { MoreScreen } from "./screens/MoreScreen.tsx";
+import { CreditsScreen } from "./screens/CreditsScreen.tsx";
 import { workerPool } from "./workers/pool.ts";
 import { BottomTabs, Button, type TabId } from "./ui/components.tsx";
 
@@ -19,12 +20,40 @@ async function recordsRoot(): Promise<string> {
 export function App() {
   const [theme, setTheme] = useTheme();
   const [tab, setTab] = useState<TabId>("home");
-  const [sub, setSub] = useState<"theme" | null>(null);
+  const [sub, setSub] = useState<"theme" | "credits" | null>(null);
   const [platform, setPlatform] = useState("…");
   const [ports, setPorts] = useState("…");
   // The encrypted records (#25): "unknown" until checked, "setup" on first run, "ready" once open.
   const [records, setRecords] = useState<"unknown" | "setup" | "ready" | "browser">("unknown");
   const [vault, setVault] = useState<Vault | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [committer, setCommitter] = useState<Committer | null>(null);
+
+  /** The records are open (#25, #27): load the profile, apply its theme, and commit in the background (#28). */
+  const opened = async (v: Vault) => {
+    setVault(v);
+    const { git } = hostPorts();
+    // Records set up by an early test build have no repository yet: make one, committing as the app.
+    if (!(await git.isRepo(v.root))) {
+      await git.init(v.root, "main");
+      await git.setConfig(v.root, "user.name", COMMIT_NAME);
+      await git.setConfig(v.root, "user.email", COMMIT_EMAIL);
+    }
+    const c = new Committer(git, v.root);
+    setCommitter(c);
+    const { profile: p, created } = await loadProfile(v, { theme });
+    setProfile(p);
+    setTheme(p.theme);
+    if (created) c.changed("Profile");
+  };
+
+  /** A change to the profile: written, encrypted, and committed once things are quiet. */
+  const saveProfile = async (next: Profile) => {
+    setProfile(next);
+    if (!vault) return;
+    await vault.write(next);
+    committer?.changed("Profile");
+  };
 
   useEffect(() => {
     void (async () => {
@@ -39,7 +68,7 @@ export function App() {
       setPorts(check);
       if (p !== "browser") {
         try {
-          setVault(await Vault.open(hostPorts(), await recordsRoot()));
+          await opened(await Vault.open(hostPorts(), await recordsRoot()));
           setRecords("ready");
         } catch (e) {
           if (e instanceof NotSetUp) setRecords("setup");
@@ -75,8 +104,8 @@ export function App() {
       <div className="screen">
         <SetupScreen
           onCreate={async (passphrase) => {
-            const { vault, recoveryKey } = await Vault.create(hostPorts(), await recordsRoot(), passphrase);
-            setVault(vault);
+            const { vault: v, recoveryKey } = await Vault.create(hostPorts(), await recordsRoot(), passphrase);
+            await opened(v);
             return recoveryKey;
           }}
           onDone={() => setRecords("ready")}
@@ -85,17 +114,26 @@ export function App() {
     );
   }
   if (tab === "more" && sub === "theme") {
-    body = <ThemeScreen choice={theme} onChange={setTheme} onBack={() => setSub(null)} />;
+    body = (
+      <ThemeScreen
+        choice={theme}
+        onChange={(t) => {
+          setTheme(t);
+          if (profile) void saveProfile({ ...profile, theme: t });
+        }}
+        onBack={() => setSub(null)}
+      />
+    );
+  } else if (tab === "more" && sub === "credits") {
+    body = <CreditsScreen onBack={() => setSub(null)} />;
   } else if (tab === "more") {
     body = (
-      <div className="pad">
-        <h1 className="title">More</h1>
-        <div className="card" style={{ padding: 0, gap: 0 }}>
-          <Button variant="ghost" onClick={() => setSub("theme")}>Theme ›</Button>
-        </div>
-        <ExportCard vault={vault} units="kg" />
-        <span className="muted">Units and credits come with the profile (#27).</span>
-      </div>
+      <MoreScreen
+        vault={vault}
+        units={profile?.units ?? "kg"}
+        onUnits={(units) => { if (profile) void saveProfile({ ...profile, units }); }}
+        onOpen={setSub}
+      />
     );
   } else if (tab === "home") {
     body = (

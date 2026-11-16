@@ -165,3 +165,18 @@ describe.runIf(git)("committing", () => {
     expect(await committer.now()).toBeUndefined(); // .local/ is ignored
   });
 });
+
+describe("the profile", () => {
+  it("is made with defaults the first time and read back after", async () => {
+    const { loadProfile, showLoad, toKg } = await import("../src/index.ts");
+    const { ports, vault: v } = await newVault();
+    const first = await loadProfile(v, { units: "lb" });
+    expect(first.created).toBe(true);
+    expect(first.profile).toMatchObject({ type: "profile", units: "lb", theme: { name: "clinic", mode: "system" } });
+    const again = await loadProfile(await Vault.open(ports, "/r"));
+    expect(again).toMatchObject({ created: false, profile: { id: first.profile.id, units: "lb" } });
+    expect(showLoad(16, "kg")).toBe("16 kg");
+    expect(showLoad(16, "lb")).toBe("35.5 lb");
+    expect(toKg(35, "lb")).toBeCloseTo(15.876, 3);
+  });
+});
