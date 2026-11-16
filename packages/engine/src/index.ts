@@ -6,3 +6,4 @@ export const ENGINE_VERSION = "0.1.0";
 export * from "./records/index.ts";
 export * from "./ports/index.ts";
 export * from "./vault/index.ts";
+export * from "./catalogue/index.ts";

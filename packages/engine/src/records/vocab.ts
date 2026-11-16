@@ -15,7 +15,7 @@ export const SIDED_REGIONS: readonly Region[] = [
 /** Equipment, shared by locations and exercises (#15). An exercise with none needs nothing. */
 export const EQUIPMENT = [
   "floor", "wall", "chair", "desk", "step", "bench", "mat", "band", "dumbbells",
-  "kettlebell", "barbell", "pullup-bar", "cable", "foam-roller",
+  "kettlebell", "barbell", "pullup-bar", "cable", "foam-roller", "machine",
 ] as const;
 export type Equipment = (typeof EQUIPMENT)[number];
 
