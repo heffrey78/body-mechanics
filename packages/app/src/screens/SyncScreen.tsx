@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import type { AccountStatus, DeviceCode, GitHub } from "@bm/engine";
+import type { AccountStatus, DeviceCode, GitHub, SyncStatus } from "@bm/engine";
 import { Button, Card } from "../ui/components.tsx";
 
 /**
  * More › Sync (#38): sign in to GitHub with a code, then create the private repository your records
  * sync through (or see which one they do). The records are encrypted before they leave the device.
  */
-export function SyncScreen({ github, remote, available, onCreate, onSyncNow, syncText, onBack }: {
+export function SyncScreen({ github, remote, available, onCreate, onSyncNow, syncText, status: sync, onSyncOn, onBack }: {
   github: GitHub;
   /** The records' remote, once there is one. */
   remote: string | null;
@@ -15,6 +15,8 @@ export function SyncScreen({ github, remote, available, onCreate, onSyncNow, syn
   onCreate: (name: string) => Promise<void>;
   onSyncNow: () => Promise<void>;
   syncText: string | null;
+  status: SyncStatus;
+  onSyncOn: (on: boolean) => Promise<void>;
   onBack: () => void;
 }) {
   const [status, setStatus] = useState<AccountStatus | null>(null);
@@ -90,8 +92,13 @@ export function SyncScreen({ github, remote, available, onCreate, onSyncNow, syn
           <Card>
             <span className="label">Your records sync with</span>
             <span className="strong" style={{ wordBreak: "break-all" }}>{remote.replace(/^https:\/\/github\.com\//, "").replace(/\.git$/, "")}</span>
-            {syncText ? <span className="muted" role="status">{syncText}</span> : null}
-            <Button variant="primary" disabled={busy} onClick={() => void run(onSyncNow)}>{busy ? "Syncing…" : "Sync now"}</Button>
+            <span className={sync.state === "failed" || sync.state === "needs-sign-in" ? "warn-text" : "muted"} role="status">{syncText ?? describe(sync)}</span>
+            <Button variant="primary" disabled={busy || sync.state === "syncing"} onClick={() => void run(onSyncNow)}>{sync.state === "syncing" ? "Syncing…" : "Sync now"}</Button>
+            <label style={{ display: "flex", gap: 10, alignItems: "center" }}>
+              <input type="checkbox" checked={sync.state !== "off"} style={{ width: 22, height: 22 }} onChange={(e) => void run(() => onSyncOn(e.target.checked))} />
+              <span>Sync automatically, every few minutes and after each session</span>
+            </label>
+            {sync.state === "off" ? <span className="muted">Sync is off on this device. Everything stays here; turning it on again catches up.</span> : null}
           </Card>
         ) : (
           <Card>
@@ -112,4 +119,23 @@ export function SyncScreen({ github, remote, available, onCreate, onSyncNow, syn
       {error ? <span className="warn-text" role="alert">{error}</span> : null}
     </div>
   );
+}
+
+const time = (ms: number) => new Date(ms).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+
+/** The sync status in words (#39). */
+export function describe(s: SyncStatus): string {
+  switch (s.state) {
+    case "off": return "Sync is off.";
+    case "syncing": return "Syncing…";
+    case "offline": return `GitHub couldn't be reached at ${time(s.at)}. It'll try again.`;
+    case "needs-sign-in": return "GitHub no longer accepts this device's sign-in. Sign out and in again.";
+    case "failed": return `Sync failed at ${time(s.at)}: ${s.reason}`;
+    case "idle": {
+      if (!s.at || !s.last || s.last.status !== "synced") return "Waiting to sync.";
+      const l = s.last;
+      const what = l.merged ? "Merged with another device's changes" : l.pulled ? "Brought in another device's changes" : l.pushed ? "Sent this device's changes" : "Up to date";
+      return `${what} at ${time(s.at)}.`;
+    }
+  }
 }

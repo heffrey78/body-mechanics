@@ -85,3 +85,25 @@ it.runIf(git)("two devices edit the same session offline; after syncing, both ha
     }
   }
 });
+
+it.runIf(git)("sync off and on again loses nothing: what was logged while off goes up when it's back on (#39)", async () => {
+  const { Syncer } = await import("../src/index.ts");
+  const remote = join(tmp, "remote-off.git");
+  execFileSync("git", ["init", "-q", "--bare", "-b", "main", remote]);
+  const dir = join(tmp, "device-off");
+  const v = (await Vault.create({ files: nodeFiles, secrets: memorySecretsPort(), git: git! }, dir, PASS, { scryptLogN: 10 })).vault;
+  await git!.addRemote(dir, "origin", remote);
+  const committer = new Committer(git!, dir);
+  const syncer = new Syncer(() => sync(git!, v, committer), { beforeRun: () => committer.idle() });
+  await syncer.start();
+  syncer.stop();
+  const s: Session = { type: "session", v: 1, id: "soffsoffsoffsoff", startedAt: "2026-11-17T07:00:00.000Z", entries: [] };
+  const path = await v.write(s);
+  committer.changed("Session while sync was off");
+  await syncer.now(); // off: nothing goes up
+  expect(execFileSync("git", ["--git-dir", remote, "ls-tree", "-r", "--name-only", "main"]).toString()).not.toContain(path);
+  expect(await v.read(path)).toEqual(s); // and nothing local is lost
+  await syncer.start();
+  expect(syncer.status.state).toBe("idle");
+  expect(execFileSync("git", ["--git-dir", remote, "ls-tree", "-r", "--name-only", "main"]).toString()).toContain(path);
+});

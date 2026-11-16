@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   COMMIT_EMAIL, COMMIT_NAME, Committer, ENGINE_VERSION, NotSetUp, RecordIndex, SessionLog, Vault, clearDraft, createExercise, deviceClock,
-  GitHub, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
+  GitHub, Syncer, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
   portsRoundTrip, routineFromSession, saveDraft,
-  type Clock, type Location, type Suggestion, type TargetUpdate, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
+  type Clock, type Location, type Suggestion, type SyncStatus, type TargetUpdate, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
 } from "@bm/engine";
 import { dataDir, hostPlatform, hostPorts, httpPort, smokeReport, smokeStorage } from "./host.ts";
 import { SyncScreen } from "./screens/SyncScreen.tsx";
@@ -38,6 +38,8 @@ export function App() {
   const github = useMemo(() => new GitHub(httpPort, hostPorts().secrets), []);
   const [remote, setRemote] = useState<string | null>(null);
   const [syncText, setSyncText] = useState<string | null>(null);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>({ state: "off" });
+  const [syncer, setSyncer] = useState<Syncer | null>(null);
   const [locations, setLocations] = useState<Location[]>([]);
   const [location, setLocation] = useState<string | null>(null);
   // Suggest next (#43): open or not, the answers before a session starts, what's been turned down.
@@ -189,15 +191,35 @@ export function App() {
     setTheme(prof.profile.theme);
   };
 
-  /** Sync with the remote now (#38; on a timer in #39). */
-  const syncNow = async () => {
+  // The background syncer (#39): made once the records, the committer and a remote are there; on
+  // unless this device turned it off (kept in .local/, so it's per device).
+  useEffect(() => {
     if (!vault || !committer || !remote) return;
-    const auth = await github.gitAuth(remote);
-    const out = await sync(hostPorts().git, vault, committer, auth ? { auth } : {});
-    if (out.status !== "synced") return;
-    if (out.pulled) await reload(vault);
-    const what = out.merged ? "Merged with another device's changes" : out.pulled ? "Brought in changes from another device" : out.pushed ? "Sent this device's changes" : "Already up to date";
-    setSyncText(`${what} at ${new Date().toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}.${out.flags.length ? ` ${out.flags.length} edit(s) were kept over deletions.` : ""}`);
+    const sy = new Syncer(async () => {
+      const auth = await github.gitAuth(remote);
+      const out = await sync(hostPorts().git, vault, committer, auth ? { auth } : {});
+      if (out.status === "synced") {
+        if (out.pulled) await reload(vault);
+        if (out.flags.length) setSummary(`Synced: ${out.flags.length === 1 ? "one edit was" : `${out.flags.length} edits were`} kept over a deletion made on another device.`);
+      }
+      return out;
+    }, { beforeRun: () => committer.idle(), onStatus: setSyncStatus });
+    setSyncer(sy);
+    void vault.readLocal<{ on: boolean }>("sync.json").then((pref) => { if (pref?.on !== false) void sy.start(); });
+    return () => sy.stop();
+  }, [vault, committer, remote, github]);
+
+  const syncNow = async () => {
+    if (!syncer) return;
+    setSyncText(null);
+    if (!syncer.on) await syncer.start();
+    else await syncer.now();
+  };
+  const setSyncOn = async (on: boolean) => {
+    if (!vault || !syncer) return;
+    await vault.writeLocal("sync.json", { on });
+    if (on) void syncer.start();
+    else syncer.stop();
   };
 
   /** Recent exercises: the last ten distinct ones logged. */
@@ -332,7 +354,7 @@ export function App() {
   } else if (tab === "more" && sub === "sync") {
     body = (
       <SyncScreen
-        github={github} remote={remote} available={platform !== "browser"} syncText={syncText}
+        github={github} remote={remote} available={platform !== "browser"} syncText={syncText} status={syncStatus} onSyncOn={setSyncOn}
         onCreate={async (name) => {
           if (!vault) return;
           const repo = await github.createRepo(name);
@@ -340,6 +362,7 @@ export function App() {
           setRemote(repo.cloneUrl);
           const auth = await github.gitAuth(repo.cloneUrl);
           if (committer) await sync(hostPorts().git, vault, committer, auth ? { auth } : {});
+          await vault.writeLocal("sync.json", { on: true });
           setSyncText(`Your records are on GitHub at ${repo.fullName}, encrypted.`);
         }}
         onSyncNow={syncNow}
@@ -438,6 +461,7 @@ export function App() {
           setRefused(new Set());
           setHomeAnswers(null);
           setSuggesting(false);
+          void syncer?.now();
           if (vault) void clearDraft(vault);
           const sets = s.entries.reduce((n, e) => n + e.sets.filter((x) => !x.deleted).length, 0);
           setSummary(`Saved: ${s.entries.length} ${s.entries.length === 1 ? "exercise" : "exercises"}, ${sets} ${sets === 1 ? "set" : "sets"}.`);
