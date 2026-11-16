@@ -8,3 +8,4 @@ export * from "./ports/index.ts";
 export * from "./vault/index.ts";
 export * from "./catalogue/index.ts";
 export * from "./store/mod.ts";
+export * from "./search/index.ts";

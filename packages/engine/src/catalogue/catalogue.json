@@ -149,7 +149,10 @@
   {
    "id": "bm:hip-flexor-stretch",
    "name": "Hip flexor stretch",
-   "aliases": [],
+   "aliases": [
+    "psoas stretch",
+    "kneeling lunge stretch"
+   ],
    "instructions": "Kneel in a lunge position with one knee on the floor and the other foot in front, hands on your hips.\nKeep your torso upright, squeeze the glute of the back leg and push your hips forward until you feel a stretch at the front of the hip and thigh. Hold, then switch sides.",
    "measure": "time",
    "sided": true,
@@ -291,6 +294,8 @@
    "id": "bm:calf-stretch-step",
    "name": "Calf stretch on a step",
    "aliases": [
+    "achilles stretch",
+    "heel drop",
     "Step Calf Stretch",
     "Heel Drop Calf Stretch",
     "Calf Stretch off a Step"

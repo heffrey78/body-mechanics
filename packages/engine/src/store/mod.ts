@@ -7,3 +7,4 @@ export { mergeRecords, type MergeResult } from "./merge.ts";
 export { sync, mergeWith, type SyncOutcome, type SyncOptions } from "./sync.ts";
 export { exportAll, setsCsv } from "./export.ts";
 export { loadProfile, showLoad, toKg } from "./profile.ts";
+export { SessionLog, deviceClock, loadLibrary, createExercise, type Amount, type LibraryItem } from "./session-log.ts";
