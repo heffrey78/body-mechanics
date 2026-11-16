@@ -107,3 +107,24 @@ it.runIf(git)("sync off and on again loses nothing: what was logged while off go
   expect(syncer.status.state).toBe("idle");
   expect(execFileSync("git", ["--git-dir", remote, "ls-tree", "-r", "--name-only", "main"]).toString()).toContain(path);
 });
+
+it.runIf(git)("a second device joins with the recovery key and reads every record (#40, D2)", async () => {
+  const remote = join(tmp, "remote-join.git");
+  execFileSync("git", ["init", "-q", "--bare", "-b", "main", remote]);
+  const first = join(tmp, "first");
+  const made = await Vault.create({ files: nodeFiles, secrets: memorySecretsPort(), git: git! }, first, PASS, { scryptLogN: 10 });
+  await git!.addRemote(first, "origin", remote);
+  const paths: string[] = [];
+  for (let n = 0; n < 5; n++) {
+    paths.push(await made.vault.write({ type: "session", v: 1, id: `sjoin${"abcde"[n]}aaaaaaaaaa`, startedAt: `2026-11-1${n}T07:00:00.000Z`, entries: [] }));
+  }
+  await sync(git!, made.vault, new Committer(git!, first));
+
+  const second = join(tmp, "second");
+  await git!.clone(remote, second);
+  const secrets = memorySecretsPort();
+  const joined = await Vault.join({ files: nodeFiles, secrets, git: git! }, second, made.recoveryKey);
+  for (const p of paths) expect(await joined.read(p)).toEqual(await made.vault.read(p));
+  expect(await secrets.get("age-identity")).toBe(made.recoveryKey.trim());
+  await expect(Vault.join({ files: nodeFiles, secrets: memorySecretsPort(), git: git! }, second, "not the passphrase")).rejects.toThrow();
+});

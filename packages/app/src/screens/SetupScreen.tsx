@@ -5,14 +5,13 @@ import { Button, Card } from "../ui/components.tsx";
  * First run (#25): set up the encrypted records with a passphrase, then show the recovery key once.
  * Joining from another device needs sync (#29); until then this device starts its own records.
  */
-export function SetupScreen({ onCreate, onDone }: { onCreate: (passphrase: string) => Promise<string>; onDone: () => void }) {
+export function SetupScreen({ onCreate, onDone, onJoin }: { onCreate: (passphrase: string) => Promise<string>; onDone: () => void; onJoin: () => void }) {
   const [pass, setPass] = useState("");
   const [again, setAgain] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [recovery, setRecovery] = useState("");
   const [copied, setCopied] = useState(false);
-  const [joinNote, setJoinNote] = useState(false);
 
   const problem = pass.length > 0 && pass.length < 8 ? "At least 8 characters." : again.length > 0 && again !== pass ? "The two don't match." : "";
   const ready = pass.length >= 8 && again === pass && !busy;
@@ -57,8 +56,7 @@ export function SetupScreen({ onCreate, onDone }: { onCreate: (passphrase: strin
       <input id="again" className="field" type="password" autoComplete="new-password" value={again} onChange={(e) => setAgain(e.target.value)} />
       {problem || error ? <span className="warn-text" role="alert">{problem || error}</span> : null}
       <Button variant="primary" xl disabled={!ready} onClick={() => void create()}>{busy ? "Securing your key…" : "Set up"}</Button>
-      <Button variant="ghost" onClick={() => setJoinNote(true)}>I already use Body Mechanics on another device</Button>
-      {joinNote ? <span className="muted">Joining another device's records comes with sync, later in Build 1. For now, set up records here.</span> : null}
+      <Button variant="ghost" onClick={onJoin}>I already use Body Mechanics on another device</Button>
     </div>
   );
 }

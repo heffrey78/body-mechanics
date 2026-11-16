@@ -7,6 +7,7 @@ import {
 } from "@bm/engine";
 import { dataDir, hostPlatform, hostPorts, httpPort, smokeReport, smokeStorage } from "./host.ts";
 import { SyncScreen } from "./screens/SyncScreen.tsx";
+import { JoinScreen } from "./screens/JoinScreen.tsx";
 import { useTheme } from "./theme/theme.ts";
 import { ThemeScreen } from "./screens/ThemeScreen.tsx";
 import { TimerCheck } from "./screens/TimerCheck.tsx";
@@ -40,6 +41,7 @@ export function App() {
   const [syncText, setSyncText] = useState<string | null>(null);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>({ state: "off" });
   const [syncer, setSyncer] = useState<Syncer | null>(null);
+  const [joining, setJoining] = useState(false);
   const [locations, setLocations] = useState<Location[]>([]);
   const [location, setLocation] = useState<string | null>(null);
   // Suggest next (#43): open or not, the answers before a session starts, what's been turned down.
@@ -324,6 +326,31 @@ export function App() {
   }, []);
 
   let body;
+  if (records === "setup" && joining) {
+    return (
+      <div className="screen">
+        <JoinScreen
+          github={github} available={platform !== "browser"} onBack={() => setJoining(false)}
+          onJoin={async (repo, secret, progress) => {
+            const root = await recordsRoot();
+            const ports = hostPorts();
+            // A clone from an earlier try is reused; otherwise clone, encrypted as it is on GitHub.
+            if (!(await ports.git.isRepo(root))) {
+              const auth = await github.gitAuth(repo.cloneUrl);
+              progress("Copying your records from GitHub…");
+              await ports.git.clone(repo.cloneUrl, root, { ...(auth ? { auth } : {}), onProgress: (p) => progress(`Copying your records from GitHub: ${p.stage}…`) });
+            }
+            progress("Unlocking…");
+            const v = await Vault.join(ports, root, secret);
+            await v.writeLocal("sync.json", { on: true });
+            await opened(v);
+            setRecords("ready");
+            setJoining(false);
+          }}
+        />
+      </div>
+    );
+  }
   if (records === "setup") {
     return (
       <div className="screen">
@@ -336,6 +363,7 @@ export function App() {
             return recoveryKey;
           }}
           onDone={() => setRecords("ready")}
+          onJoin={() => setJoining(true)}
         />
       </div>
     );
