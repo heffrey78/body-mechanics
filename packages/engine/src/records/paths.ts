@@ -13,6 +13,10 @@ export function recordPath(record: AnyRecord): string {
       return "profile.yaml.age";
     case "exercise":
       return `exercises/${record.id}.yaml.age`;
+    case "routine":
+      return `routines/${record.id}.yaml.age`;
+    case "location":
+      return `locations/${record.id}.yaml.age`;
     case "session": {
       const [year, month] = record.startedAt.split("-");
       return `sessions/${year}/${month}/${record.id}.yaml.age`;

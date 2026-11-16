@@ -9,3 +9,4 @@ export { exportAll, setsCsv } from "./export.ts";
 export { loadProfile, showLoad, toKg } from "./profile.ts";
 export { SessionLog, deviceClock, loadLibrary, createExercise, type Amount, type LibraryItem } from "./session-log.ts";
 export { nextSet, describeSet, FIELD, type NextSet } from "./next-set.ts";
+export { loadRoutines, loadLocations, starterLocations } from "./plans.ts";

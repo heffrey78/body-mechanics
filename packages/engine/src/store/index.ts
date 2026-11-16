@@ -45,11 +45,12 @@ export interface SessionSummary {
   startedAt: string;
   finishedAt?: string;
   location?: string;
+  routine?: string;
   entries: EntrySummary[];
 }
 
 const CACHE = "index.json.age";
-const CACHE_VERSION = 1;
+const CACHE_VERSION = 2;
 
 interface CacheFile {
   v: number;
@@ -61,6 +62,7 @@ export function summarize(path: string, s: Session): SessionSummary {
     path, id: s.id, startedAt: s.startedAt,
     ...(s.finishedAt ? { finishedAt: s.finishedAt } : {}),
     ...(s.location ? { location: s.location } : {}),
+    ...(s.routine ? { routine: s.routine } : {}),
     entries: s.entries.filter((e) => !e.deleted).map((e) => ({
       exercise: e.exercise,
       ...(e.effort ? { effort: e.effort } : {}),
@@ -159,6 +161,11 @@ export class RecordIndex {
   }
 
   /** Sessions by ISO week (Monday first), newest week first, for History (#33). */
+  /** Sessions run from a routine (#36), newest first. */
+  runs(routine: string): SessionSummary[] {
+    return this.sessions().filter((s) => s.routine === routine);
+  }
+
   weeks(): { week: string; sessions: SessionSummary[] }[] {
     const groups = new Map<string, SessionSummary[]>();
     for (const s of this.sessions()) {

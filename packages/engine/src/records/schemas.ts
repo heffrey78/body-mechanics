@@ -1,6 +1,6 @@
 /**
- * The record schemas for Build 1 (#24), from the data model D1 (#14): profile, custom exercise and
- * session (with its entries and sets), plus the plain format.yaml. Each record is one YAML file (D2,
+ * The record schemas, from the data model D1 (#14): profile, custom exercise, session (with its
+ * entries and sets), routine and location (#34), plus the plain format.yaml. Each record is one YAML file (D2,
  * #16). Every object that two devices might edit carries `edits`: an edit stamp per field, for the
  * record merge (#29). Loads are always kilograms; the profile's units are only how they're shown.
  */
@@ -134,6 +134,7 @@ export const Session = z.strictObject({
   id,
   startedAt: iso,
   finishedAt: iso.optional(),
+  /** The location record's id (#41). */
   location: z.string().max(80).optional(),
   answers: z
     .strictObject({ minutes: z.number().int().positive().max(600).optional(), sweat: z.union([z.literal(0), z.literal(1), z.literal(2)]).optional() })
@@ -146,6 +147,59 @@ export const Session = z.strictObject({
 });
 export type Session = z.infer<typeof Session>;
 
+// ---------------------------------------------------------------- routine (#34)
+
+/**
+ * One exercise in a routine, with its targets. The amount (reps, seconds or metres, by the exercise's
+ * measure) is per side for a one-sided exercise.
+ */
+export const RoutineItem = z
+  .strictObject({
+    id,
+    exercise: exerciseRef,
+    sets: z.number().int().min(1).max(20),
+    reps: nonNegInt.optional(),
+    seconds: nonNegInt.optional(),
+    metres: z.number().nonnegative().optional(),
+    loadKg: kg.optional(),
+    restSeconds: z.number().int().min(0).max(900).optional(),
+    note: z.string().max(200).optional(),
+    deleted: z.literal(true).optional(),
+    edits,
+  })
+  .superRefine((x, ctx) => {
+    const n = [x.reps, x.seconds, x.metres].filter((v) => v !== undefined).length;
+    if (n > 1) ctx.addIssue({ code: "custom", message: "at most one of reps, seconds or metres" });
+  });
+export type RoutineItem = z.infer<typeof RoutineItem>;
+
+export const Routine = z.strictObject({
+  type: z.literal("routine"),
+  v: z.literal(FORMAT_VERSION),
+  id,
+  name: z.string().min(1).max(80),
+  note: z.string().max(1000).optional(),
+  items: z.array(RoutineItem),
+  deleted: z.literal(true).optional(),
+  edits,
+});
+export type Routine = z.infer<typeof Routine>;
+
+// ---------------------------------------------------------------- location (#34, #3)
+
+export const Location = z.strictObject({
+  type: z.literal("location"),
+  v: z.literal(FORMAT_VERSION),
+  id,
+  name: z.string().min(1).max(80),
+  equipment: z.array(z.enum(EQUIPMENT)),
+  /** How much sweat is fine here, by default (#3): 0 none, 1 a little, 2 bring it. */
+  sweat: z.union([z.literal(0), z.literal(1), z.literal(2)]),
+  deleted: z.literal(true).optional(),
+  edits,
+});
+export type Location = z.infer<typeof Location>;
+
 // ---------------------------------------------------------------- format.yaml (plain, not encrypted)
 
 export const Format = z.strictObject({
@@ -155,6 +209,6 @@ export const Format = z.strictObject({
 });
 export type Format = z.infer<typeof Format>;
 
-export const RECORD_SCHEMAS = { profile: Profile, exercise: Exercise, session: Session } as const;
+export const RECORD_SCHEMAS = { profile: Profile, exercise: Exercise, session: Session, routine: Routine, location: Location } as const;
 export type RecordType = keyof typeof RECORD_SCHEMAS;
-export type AnyRecord = Profile | Exercise | Session;
+export type AnyRecord = Profile | Exercise | Session | Routine | Location;
