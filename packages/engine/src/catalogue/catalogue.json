@@ -34,7 +34,7 @@
    "authors": [
     "wger contributors"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:childs-pose",
@@ -74,7 +74,7 @@
    "authors": [
     "wger contributors"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:seated-spinal-twist",
@@ -108,7 +108,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:hamstring-stretch",
@@ -125,7 +125,8 @@
     "calf"
    ],
    "strains": [
-    "lowerback"
+    "lowerback",
+    "hamstrings"
    ],
    "kinds": [
     "mobility"
@@ -144,7 +145,7 @@
    "authors": [
     "SMS"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:hip-flexor-stretch",
@@ -180,7 +181,7 @@
    "authors": [
     "Davidgj32"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:90-90-hip-switch",
@@ -217,7 +218,7 @@
    "authors": [
     "wger contributors"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:pigeon-stretch",
@@ -252,7 +253,7 @@
    "authors": [
     "Davidgj32"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:figure-four-stretch",
@@ -288,7 +289,7 @@
    "authors": [
     "Davidgj32"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:calf-stretch-step",
@@ -327,7 +328,7 @@
    "authors": [
     "trs1800"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:ankle-circles",
@@ -356,7 +357,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:doorway-chest-stretch",
@@ -389,7 +390,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:wall-slides",
@@ -422,7 +423,7 @@
    "authors": [
     "Whythebigpaws"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:wall-angels",
@@ -455,7 +456,7 @@
    "authors": [
     "bbayuwega"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:chin-tuck",
@@ -488,7 +489,7 @@
    "authors": [
     "wger contributors"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:neck-side-stretch",
@@ -523,7 +524,7 @@
    "authors": [
     "wger contributors"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:levator-scapulae-stretch",
@@ -556,7 +557,7 @@
    "authors": [
     "wger contributors"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:wrist-flexor-stretch",
@@ -586,7 +587,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:wrist-extensor-stretch",
@@ -616,7 +617,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:thoracic-extension",
@@ -649,7 +650,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:open-book",
@@ -683,7 +684,7 @@
    "authors": [
     "teus_ergaster"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:thread-the-needle",
@@ -716,7 +717,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:worlds-greatest-stretch",
@@ -751,7 +752,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:cobra",
@@ -789,7 +790,7 @@
    "authors": [
     "hpmbala@gmail.com"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:sphinx",
@@ -824,7 +825,7 @@
    "authors": [
     "Joculari"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:quad-stretch",
@@ -859,7 +860,7 @@
    "authors": [
     "tobias08"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:butterfly-stretch",
@@ -893,7 +894,7 @@
    "authors": [
     "Croak6728"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:frog-stretch",
@@ -928,7 +929,7 @@
    "authors": [
     "Croak6728"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:couch-stretch",
@@ -964,7 +965,7 @@
    "authors": [
     "Croak6728"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:lat-stretch",
@@ -995,7 +996,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:cross-body-shoulder-stretch",
@@ -1026,7 +1027,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:triceps-stretch",
@@ -1059,7 +1060,7 @@
    "authors": [
     "Lynn_McIntyre"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:deep-squat-hold",
@@ -1093,7 +1094,7 @@
    "authors": [
     "Original exercise instructions prepared for nalhilal"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:downward-dog",
@@ -1130,7 +1131,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:hip-circles",
@@ -1160,7 +1161,7 @@
    "authors": [
     "Davidgj32"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:arm-circles",
@@ -1194,7 +1195,7 @@
    "authors": [
     "wger contributors"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:pelvic-tilt",
@@ -1231,7 +1232,7 @@
    "authors": [
     "Raj"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:knee-to-chest",
@@ -1264,7 +1265,7 @@
    "authors": [
     "hpmbala@gmail.com"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:piriformis-stretch",
@@ -1299,7 +1300,7 @@
    "authors": [
     "Pete-E automation"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:toe-touch",
@@ -1336,7 +1337,7 @@
    "authors": [
     "captive0592"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:goblet-squat",
@@ -1376,7 +1377,7 @@
    "authors": [
     "ataraxie67"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:bodyweight-squat",
@@ -1413,7 +1414,7 @@
     "admin",
     "hektkaso"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:box-squat",
@@ -1451,7 +1452,7 @@
    "authors": [
     "clafal"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:split-squat",
@@ -1487,7 +1488,7 @@
    "authors": [
     "Anastasious"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:bulgarian-split-squat",
@@ -1527,7 +1528,7 @@
    "authors": [
     "wger contributors"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:reverse-lunge",
@@ -1563,7 +1564,7 @@
    "authors": [
     "wger contributors"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:walking-lunge",
@@ -1603,7 +1604,7 @@
    "authors": [
     "wger.de"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:step-up",
@@ -1642,7 +1643,7 @@
    "authors": [
     "wger contributors"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:romanian-deadlift",
@@ -1681,7 +1682,7 @@
    "authors": [
     "AlucardEvil40"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:single-leg-rdl",
@@ -1721,7 +1722,7 @@
     "admin",
     "captive0592"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:deadlift",
@@ -1762,7 +1763,7 @@
    "authors": [
     "wger.de"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:hip-thrust",
@@ -1798,7 +1799,7 @@
    "authors": [
     "Bret Contreras"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:glute-bridge",
@@ -1833,7 +1834,7 @@
    "authors": [
     "tdprice12"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:single-leg-glute-bridge",
@@ -1869,7 +1870,7 @@
    "authors": [
     "Happy"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:good-morning",
@@ -1906,7 +1907,7 @@
    "authors": [
     "captive0592"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:calf-raise",
@@ -1938,7 +1939,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:single-leg-calf-raise",
@@ -1975,7 +1976,7 @@
    "authors": [
     "McMarcel13"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:wall-sit",
@@ -2012,7 +2013,7 @@
    "authors": [
     "clafal"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:leg-press",
@@ -2048,7 +2049,7 @@
    "authors": [
     "BFad07"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:leg-extension",
@@ -2082,7 +2083,7 @@
    "authors": [
     "BFad07"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:leg-curl",
@@ -2116,7 +2117,7 @@
    "authors": [
     "BFad07"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:nordic-curl",
@@ -2151,7 +2152,7 @@
    "authors": [
     "karly"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:lateral-lunge",
@@ -2184,7 +2185,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:cossack-squat",
@@ -2219,7 +2220,7 @@
    "authors": [
     "clafal"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:sumo-squat",
@@ -2255,7 +2256,7 @@
    "authors": [
     "sophialj"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:kettlebell-swing",
@@ -2293,7 +2294,7 @@
    "authors": [
     "clafal"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:sit-to-stand",
@@ -2327,7 +2328,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:clamshell",
@@ -2360,7 +2361,7 @@
    "authors": [
     "teus_ergaster"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:side-lying-hip-abduction",
@@ -2395,7 +2396,7 @@
    "authors": [
     "wakanda90"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:band-monster-walk",
@@ -2433,7 +2434,7 @@
    "authors": [
     "trs1800"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:terminal-knee-extension",
@@ -2466,7 +2467,7 @@
    "authors": [
     "Rehab Hero"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:straight-leg-raise",
@@ -2498,7 +2499,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:spanish-squat",
@@ -2529,7 +2530,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:tibialis-raise",
@@ -2564,7 +2565,7 @@
    "authors": [
     "cynomops"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:copenhagen-plank",
@@ -2602,7 +2603,7 @@
    "authors": [
     "RiccaBaro"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:push-up",
@@ -2641,7 +2642,7 @@
    "authors": [
     "Settebello"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:incline-push-up",
@@ -2680,7 +2681,7 @@
    "authors": [
     "anon1337"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:knee-push-up",
@@ -2720,7 +2721,7 @@
    "authors": [
     "PaukOne"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:bench-press",
@@ -2757,7 +2758,7 @@
    "authors": [
     "sistab2"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:overhead-press",
@@ -2794,7 +2795,7 @@
    "authors": [
     "Vazco"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:dumbbell-shoulder-press",
@@ -2835,7 +2836,7 @@
    "authors": [
     "wger.de"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:landmine-press",
@@ -2871,7 +2872,7 @@
    "authors": [
     "Torsten Linnecke"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:pull-up",
@@ -2910,7 +2911,7 @@
    "authors": [
     "wger.de"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:chin-up",
@@ -2950,7 +2951,7 @@
    "authors": [
     "BFad07"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:inverted-row",
@@ -2986,7 +2987,7 @@
    "authors": [
     "Gavru"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:bent-over-row",
@@ -3024,7 +3025,7 @@
    "authors": [
     "lleeaa"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:one-arm-row",
@@ -3063,7 +3064,7 @@
    "authors": [
     "sebk"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:seated-cable-row",
@@ -3096,7 +3097,7 @@
    "authors": [
     "Franpol"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:lat-pulldown",
@@ -3135,7 +3136,7 @@
    "authors": [
     "tuckerm"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:face-pull",
@@ -3171,7 +3172,7 @@
    "authors": [
     "54str"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:band-pull-apart",
@@ -3207,7 +3208,7 @@
    "authors": [
     "schwolfar"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:band-row",
@@ -3245,7 +3246,7 @@
    "authors": [
     "trs1800"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:reverse-fly",
@@ -3278,7 +3279,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:lateral-raise",
@@ -3317,7 +3318,7 @@
    "authors": [
     "wger.de"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:front-raise",
@@ -3355,7 +3356,7 @@
    "authors": [
     "Manu, wikipedia"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:biceps-curl",
@@ -3386,7 +3387,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:hammer-curl",
@@ -3422,7 +3423,7 @@
    "authors": [
     "wger.de"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:dips",
@@ -3461,7 +3462,7 @@
    "authors": [
     "wger.de"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:overhead-triceps-extension",
@@ -3495,7 +3496,7 @@
    "authors": [
     "benjamin.yildiz@proton.me"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:triceps-pushdown",
@@ -3528,7 +3529,7 @@
    "authors": [
     "anto.kreegyr"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:shrug",
@@ -3565,7 +3566,7 @@
    "authors": [
     "wger.de"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:band-external-rotation",
@@ -3595,7 +3596,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:band-internal-rotation",
@@ -3625,7 +3626,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:ytw-raise",
@@ -3660,7 +3661,7 @@
    "authors": [
     "probablyforging"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:scapular-push-up",
@@ -3694,7 +3695,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:dead-hang",
@@ -3733,7 +3734,7 @@
    "authors": [
     "2dPREtEZP221u68Akf0JImv5L48"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:farmer-carry",
@@ -3773,7 +3774,7 @@
    "authors": [
     "philip"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:suitcase-carry",
@@ -3809,7 +3810,7 @@
    "authors": [
     "aboksz"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:plank",
@@ -3845,7 +3846,7 @@
    "authors": [
     "YYCfit / BFad07"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:side-plank",
@@ -3881,7 +3882,7 @@
    "authors": [
     "http://www.bodybuilding.com/"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:dead-bug",
@@ -3911,7 +3912,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:bird-dog",
@@ -3947,7 +3948,7 @@
    "authors": [
     "Settebello"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:mcgill-curl-up",
@@ -3977,7 +3978,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:hollow-hold",
@@ -4012,7 +4013,7 @@
    "authors": [
     "Behrooz"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:crunch",
@@ -4049,7 +4050,7 @@
    "authors": [
     "wger.de"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:bicycle-crunch",
@@ -4087,7 +4088,7 @@
    "authors": [
     "hpmbala@gmail.com"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:russian-twist",
@@ -4121,7 +4122,7 @@
    "authors": [
     "lion"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:pallof-press",
@@ -4154,7 +4155,7 @@
    "authors": [
     "prevail90"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:ab-wheel",
@@ -4192,7 +4193,7 @@
    "authors": [
     "lhegedus"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:hanging-leg-raise",
@@ -4230,7 +4231,7 @@
    "authors": [
     "robhoyt"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:lying-leg-raise",
@@ -4268,7 +4269,7 @@
    "authors": [
     "wger.de"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:mountain-climber",
@@ -4306,7 +4307,7 @@
    "authors": [
     "wger contributors"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:bear-crawl",
@@ -4342,7 +4343,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:superman",
@@ -4379,7 +4380,7 @@
    "authors": [
     "baldurmen"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:back-extension",
@@ -4417,7 +4418,7 @@
    "authors": [
     "wger.de"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:reverse-crunch",
@@ -4449,7 +4450,7 @@
    "authors": [
     "eufvksruh"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:flutter-kicks",
@@ -4485,7 +4486,7 @@
    "authors": [
     "nate303303"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:single-leg-stand",
@@ -4515,7 +4516,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:single-leg-stand-eyes-closed",
@@ -4552,7 +4553,7 @@
    "authors": [
     "trs1800"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:heel-to-toe-walk",
@@ -4581,7 +4582,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:single-leg-reach",
@@ -4614,7 +4615,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:bird-dog-hold",
@@ -4649,7 +4650,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:tall-kneeling-press",
@@ -4684,7 +4685,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:bottoms-up-kb-hold",
@@ -4718,7 +4719,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:y-balance",
@@ -4751,7 +4752,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:jumping-jacks",
@@ -4786,7 +4787,7 @@
    "authors": [
     "student1234"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:burpee",
@@ -4827,7 +4828,7 @@
    "authors": [
     "er0355"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:high-knees",
@@ -4864,7 +4865,7 @@
    "authors": [
     "wger contributors"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:jump-rope",
@@ -4901,7 +4902,7 @@
    "authors": [
     "wger contributors"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:stair-climb",
@@ -4935,7 +4936,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:rowing-machine",
@@ -4972,7 +4973,7 @@
    "authors": [
     "Boertie"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:cycling",
@@ -5008,7 +5009,7 @@
    "authors": [
     "BFad07"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:jogging",
@@ -5044,7 +5045,7 @@
    "authors": [
     "Papazit"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:jump-squat",
@@ -5083,7 +5084,7 @@
    "authors": [
     "OGhTebfCxhexZXuf35mUxV9C--A"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:skater-hops",
@@ -5117,7 +5118,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   }
  ]
 }
