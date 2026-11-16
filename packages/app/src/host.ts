@@ -42,3 +42,9 @@ export async function smokeReport(report: string): Promise<void> {
 export async function smokeStorage(): Promise<number | null> {
   return isTauri() ? invoke<number | null>("smoke_storage") : null;
 }
+
+/** A new folder for an export (#30): in Downloads where the app can write there. */
+export function exportDir(): Promise<string> {
+  const stamp = new Date().toISOString().slice(0, 16).replace("T", " ").replace(":", ".");
+  return invoke<string>("export_dir", { stamp });
+}

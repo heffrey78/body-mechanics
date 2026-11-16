@@ -30,6 +30,15 @@ fn data_dir(state: State<'_, App>) -> String {
     state.root.to_string_lossy().into_owned()
 }
 
+/// Where an export goes (#30): a new folder in Downloads, or in the app's own folder where there's no
+/// Downloads to write to.
+#[tauri::command]
+fn export_dir(app: tauri::AppHandle, state: State<'_, App>, stamp: String) -> String {
+    let name = format!("Body Mechanics export {stamp}");
+    let base = app.path().download_dir().ok().filter(|d| std::fs::create_dir_all(d).is_ok() && d.metadata().map(|m| !m.permissions().readonly()).unwrap_or(false));
+    base.unwrap_or_else(|| state.root.join("exports")).join(name).to_string_lossy().into_owned()
+}
+
 /// One git port operation (git2-port's `call`): its answer, or `{ code, message }`. A clone's or a
 /// fetch's progress goes to `progress` as it comes.
 #[tauri::command]
@@ -192,7 +201,7 @@ pub fn run() {
             app.manage(App { root, watches: files::Watches::default(), events: Arc::default() });
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![host_platform, data_dir, git, listen, port, timer_start, timer_stop, smoke_storage, smoke_report])
+        .invoke_handler(tauri::generate_handler![host_platform, data_dir, export_dir, git, listen, port, timer_start, timer_stop, smoke_storage, smoke_report])
         .run(tauri::generate_context!())
         .expect("Body Mechanics failed to start");
 }

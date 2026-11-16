@@ -6,6 +6,7 @@ import { ThemeScreen } from "./screens/ThemeScreen.tsx";
 import { TimerCheck } from "./screens/TimerCheck.tsx";
 import { SetupScreen } from "./screens/SetupScreen.tsx";
 import { StorageCheck } from "./screens/StorageCheck.tsx";
+import { ExportCard } from "./screens/ExportCard.tsx";
 import { workerPool } from "./workers/pool.ts";
 import { BottomTabs, Button, type TabId } from "./ui/components.tsx";
 
@@ -23,7 +24,7 @@ export function App() {
   const [ports, setPorts] = useState("…");
   // The encrypted records (#25): "unknown" until checked, "setup" on first run, "ready" once open.
   const [records, setRecords] = useState<"unknown" | "setup" | "ready" | "browser">("unknown");
-  const [, setVault] = useState<Vault | null>(null);
+  const [vault, setVault] = useState<Vault | null>(null);
 
   useEffect(() => {
     void (async () => {
@@ -92,7 +93,8 @@ export function App() {
         <div className="card" style={{ padding: 0, gap: 0 }}>
           <Button variant="ghost" onClick={() => setSub("theme")}>Theme ›</Button>
         </div>
-        <span className="muted">Units, credits and export come later in Build 1.</span>
+        <ExportCard vault={vault} units="kg" />
+        <span className="muted">Units and credits come with the profile (#27).</span>
       </div>
     );
   } else if (tab === "home") {

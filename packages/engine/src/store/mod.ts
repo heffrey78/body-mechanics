@@ -5,3 +5,4 @@ export { readRecordFast } from "./fast-read.ts";
 export { indexBenchmark } from "./bench.ts";
 export { mergeRecords, type MergeResult } from "./merge.ts";
 export { sync, mergeWith, type SyncOutcome, type SyncOptions } from "./sync.ts";
+export { exportAll, setsCsv } from "./export.ts";
