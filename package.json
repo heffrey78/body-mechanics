@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "check": "tsc -b packages/engine packages/engine/test packages/app",
+    "check": "tsc -b packages/engine packages/engine/test packages/app packages/app/test",
     "test": "vitest run",
     "dev": "npm run dev -w @bm/app",
     "build": "npm run build -w @bm/app",
