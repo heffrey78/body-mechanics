@@ -180,3 +180,27 @@ describe("the profile", () => {
     expect(toKg(35, "lb")).toBeCloseTo(15.876, 3);
   });
 });
+
+describe("progress (#33)", () => {
+  it("gives the best set per session, marks modified sessions, and each side's best for one-sided exercises", async () => {
+    const { files, vault: v } = await newVault();
+    const s1 = session(1, "2026-11-02", "bm:goblet-squat", 12);
+    s1.entries[0]!.modifiers = [{ kind: "load", id: "lighter" }];
+    await v.write(s1);
+    await v.write(session(2, "2026-11-09", "bm:goblet-squat", 14));
+    const stretch: Session = {
+      type: "session", v: 1, id: id(3), startedAt: "2026-11-10T07:00:00.000Z",
+      entries: [{ id: id(3, "e"), exercise: "bm:calf-stretch-step", modifiers: [], sets: [
+        { id: id(3, "x"), at: "2026-11-10T07:01:00.000Z", left: { seconds: 30 }, right: { seconds: 22 } },
+        { id: id(3, "y"), at: "2026-11-10T07:03:00.000Z", left: { seconds: 28 }, right: { seconds: 26 } },
+      ] }],
+    };
+    await v.write(stretch);
+    const { index } = await RecordIndex.build(v, files);
+    const squat = index.progress("bm:goblet-squat");
+    expect(squat.map((p) => [p.best, p.set.reps, p.set.loadKg, p.modified])).toEqual([[120, 10, 12, true], [140, 10, 14, false]]);
+    const calf = index.progress("bm:calf-stretch-step");
+    expect(calf).toHaveLength(1);
+    expect(calf[0]).toMatchObject({ best: 26, unit: "s", left: 30, right: 26 });
+  });
+});

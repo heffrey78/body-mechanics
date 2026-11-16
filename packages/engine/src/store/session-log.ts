@@ -109,8 +109,11 @@ export class SessionLog {
   /** Finish: the session gets its end, and is committed now. */
   async finish(): Promise<Session> {
     const s = this.#need();
-    s.finishedAt = this.#now().toISOString();
-    s.edits = { ...(s.edits ?? {}), finishedAt: this.#clock.tick() };
+    // A session reopened from history to correct keeps its own end.
+    if (!s.finishedAt) {
+      s.finishedAt = this.#now().toISOString();
+      s.edits = { ...(s.edits ?? {}), finishedAt: this.#clock.tick() };
+    }
     const sets = s.entries.reduce((n, e) => n + e.sets.filter((x) => !x.deleted).length, 0);
     await this.#save();
     await this.#committer?.now(`Session ${s.startedAt.slice(0, 10)}: ${s.entries.length} exercises, ${sets} sets`);

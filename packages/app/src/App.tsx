@@ -15,6 +15,7 @@ import { CreditsScreen } from "./screens/CreditsScreen.tsx";
 import { HomeScreen } from "./screens/HomeScreen.tsx";
 import { NewMovement } from "./screens/NewMovement.tsx";
 import { SessionScreen, type Pending } from "./screens/SessionScreen.tsx";
+import { HistoryScreen } from "./screens/HistoryScreen.tsx";
 import { workerPool } from "./workers/pool.ts";
 import { BottomTabs, Button, type TabId } from "./ui/components.tsx";
 
@@ -216,6 +217,21 @@ export function App() {
         units={profile?.units ?? "kg"}
         onUnits={(units) => { if (profile) void saveProfile({ ...profile, units }); }}
         onOpen={setSub}
+      />
+    );
+  } else if (tab === "history") {
+    body = (
+      <HistoryScreen
+        vault={vault} index={index} library={library} units={profile?.units ?? "kg"} canEdit={!session}
+        onEdit={(s) => {
+          if (!log) return;
+          log.resume(s);
+          setSummary(null);
+          changed(s, null);
+          setPending(null);
+          setHome({ screen: "session" });
+          setTab("home");
+        }}
       />
     );
   } else if (tab === "home" && home.screen === "new") {

@@ -26,6 +26,19 @@ export interface EntrySummary {
   sets: SetSummary[];
 }
 
+export interface ProgressPoint {
+  startedAt: string;
+  sessionPath: string;
+  best: number;
+  unit: "kg·reps" | "reps" | "s" | "m";
+  /** The best set itself. */
+  set: SetSummary;
+  /** Done with a modifier (#9): not like for like. */
+  modified: boolean;
+  /** One-sided: each side's best amount. */
+  left?: number;
+  right?: number;
+}
 export interface SessionSummary {
   path: string;
   id: string;
@@ -156,23 +169,37 @@ export class RecordIndex {
   }
 
   /** An exercise's best set per session, oldest first, for progress (#33): load × reps, or the longest hold or distance. */
-  progress(exercise: string): { startedAt: string; best: number; unit: "kg·reps" | "reps" | "s" | "m"; modified: boolean }[] {
-    const out: { startedAt: string; best: number; unit: "kg·reps" | "reps" | "s" | "m"; modified: boolean }[] = [];
+  /**
+   * The best set per session for an exercise (#33): by load × reps where there's load, else reps,
+   * seconds or metres (a one-sided set counts its weaker side). One-sided exercises also get each
+   * side's best, for the balance table. Oldest first.
+   */
+  progress(exercise: string): ProgressPoint[] {
+    const out: ProgressPoint[] = [];
+    const amount = (a: { reps?: number; seconds?: number; metres?: number } | undefined) => (a ? a.reps ?? a.seconds ?? a.metres ?? 0 : 0);
     for (const s of [...this.sessions()].reverse()) {
       for (const e of s.entries.filter((x) => x.exercise === exercise)) {
-        let best = 0, unit: "kg·reps" | "reps" | "s" | "m" = "reps";
+        let best = 0, unit: ProgressPoint["unit"] = "reps", bestSet: SetSummary | undefined;
+        let left: number | undefined, right: number | undefined;
         for (const set of e.sets) {
-          const amount = (a: { reps?: number; seconds?: number; metres?: number }) => a.reps ?? a.seconds ?? a.metres ?? 0;
-          const v = set.left || set.right ? Math.min(amount(set.left ?? {}), amount(set.right ?? {})) : amount(set);
+          const sided = !!(set.left || set.right);
+          const v = sided ? Math.min(amount(set.left), amount(set.right)) : amount(set);
           const sample = set.left ?? set.right ?? set;
           unit = sample.seconds !== undefined ? "s" : sample.metres !== undefined ? "m" : set.loadKg ? "kg·reps" : "reps";
-          best = Math.max(best, unit === "kg·reps" ? (set.loadKg ?? 0) * v : v);
+          const score = unit === "kg·reps" ? (set.loadKg ?? 0) * v : v;
+          if (!bestSet || score > best) { best = score; bestSet = set; }
+          if (sided) {
+            left = Math.max(left ?? 0, amount(set.left));
+            right = Math.max(right ?? 0, amount(set.right));
+          }
         }
-        out.push({ startedAt: s.startedAt, best, unit, modified: e.modified });
+        if (!bestSet) continue;
+        out.push({ startedAt: s.startedAt, sessionPath: s.path, best, unit, set: bestSet, modified: e.modified, ...(left !== undefined ? { left } : {}), ...(right !== undefined ? { right } : {}) });
       }
     }
     return out;
   }
+
 }
 
 /** "2026-W47" for an ISO date-time. */

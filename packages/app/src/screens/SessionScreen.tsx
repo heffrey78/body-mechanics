@@ -78,7 +78,11 @@ export function SessionScreen({ log, session, library, recent, index, units, pen
   const run = async (fn: () => Promise<void>) => {
     if (busy) return;
     setBusy(true);
-    try { await fn(); onChanged(log.session ?? session); } finally { setBusy(false); }
+    try {
+      await fn();
+      // Finishing closes the session: nothing left to report as changed.
+      if (log.session) onChanged(log.session);
+    } finally { setBusy(false); }
   };
 
   const startRest = async (seconds = REST_SECONDS, already = 0) => {
@@ -154,6 +158,12 @@ export function SessionScreen({ log, session, library, recent, index, units, pen
       {current && p ? (
         <div className="card" aria-label="Current exercise">
           <h2 className="title" style={{ fontSize: 22 }}>{item?.name ?? current.exercise}</h2>
+          {(() => {
+            const last = index?.lastTime(current.exercise, session.startedAt);
+            if (!last) return null;
+            const sets = last.entry.sets.map((x) => describeSet({ id: "x", ...x } as LoggedSet, measure, load)).join(", ");
+            return <span className="muted">Last time ({new Date(last.session.startedAt).toLocaleDateString(undefined, { day: "numeric", month: "short" })}): {sets}</span>;
+          })()}
           {current.sets.filter((s) => !s.deleted).map((s, i) => (
             <SetLine key={s.id} n={i + 1} set={s} text={describeSet(s, measure, load)} open={editing === s.id} measure={measure} units={units}
               onOpen={() => setEditing(editing === s.id ? null : s.id)}
