@@ -118,6 +118,10 @@ export class Vault {
       if (!wrapped) throw new NotSetUp("This repository has no keys/identity.age.");
       identity = await unwrapIdentity(wrapped, passphraseOrRecoveryKey);
     }
+    if (ports.git) {
+      await ports.git.setConfig(root, "user.name", COMMIT_NAME);
+      await ports.git.setConfig(root, "user.email", COMMIT_EMAIL);
+    }
     await secrets.set(IDENTITY_SECRET, identity);
     return new Vault(files, root, identity, await recipientOf(identity));
   }
@@ -185,6 +189,17 @@ export class Vault {
 
   async removeLocal(name: string): Promise<void> {
     await this.#files.remove(this.#files.join(this.root, LOCAL_DIR, name));
+  }
+
+  /** A record's file bytes, encrypted (for the merge, #29). */
+  async encrypt(record: AnyRecord): Promise<Uint8Array> {
+    return seal(this.#recipient, serializeRecord(record));
+  }
+
+  /** A record from its file's bytes, decrypted and read strictly (for the merge, #29). */
+  async decrypt(bytes: Uint8Array): Promise<AnyRecord> {
+    if (!isSealed(bytes)) throw new Error("isn't encrypted");
+    return parseRecord(new TextDecoder().decode(await open(this.#identity, bytes)));
   }
 
   /** A record by its path from the root, decrypted and checked; undefined if there's no file. */

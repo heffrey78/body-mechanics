@@ -3,3 +3,5 @@ export { Committer, realSchedule, type Schedule } from "./committer.ts";
 export { saveDraft, loadDraft, clearDraft, type Draft } from "./draft.ts";
 export { readRecordFast } from "./fast-read.ts";
 export { indexBenchmark } from "./bench.ts";
+export { mergeRecords, type MergeResult } from "./merge.ts";
+export { sync, mergeWith, type SyncOutcome, type SyncOptions } from "./sync.ts";
