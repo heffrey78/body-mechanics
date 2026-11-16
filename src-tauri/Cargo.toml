@@ -38,3 +38,8 @@ git2-port = { path = "../crates/git2-port", features = ["vendored-openssl"] }
 # and still signed with a debug key for sideloading (as writer's mobile app does).
 [profile.dev.package."*"]
 opt-level = 2
+
+# No debug symbols in that build: with them the APK's library is 200 MB, too big to pass around.
+[profile.dev]
+debug = false
+strip = "debuginfo"
