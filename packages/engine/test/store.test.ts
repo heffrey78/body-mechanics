@@ -152,8 +152,10 @@ describe.runIf(git)("committing", () => {
     await v.write(session(1, "2026-11-16"));
     committer.changed("Session, 16 Nov");
     await advance(20_000);
+    await committer.idle();
     expect(await git!.log(root)).toHaveLength(1); // not yet: still within the quiet period
     await advance(15_000);
+    await committer.idle();
     expect(await git!.log(root)).toHaveLength(2);
 
     await v.write(session(2, "2026-11-17"));

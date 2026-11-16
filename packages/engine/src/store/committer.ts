@@ -47,6 +47,15 @@ export class Committer {
     this.#timer = this.#schedule.set(() => void this.now(), wait);
   }
 
+  /** Resolves once no commit is running (sync waits on it, #39). */
+  async idle(): Promise<void> {
+    let seen: Promise<unknown>;
+    do {
+      seen = this.#running;
+      await seen.catch(() => undefined);
+    } while (seen !== this.#running);
+  }
+
   /** Commit what's changed now; resolves with the commit's id, or undefined if there was nothing. */
   now(message?: string): Promise<string | undefined> {
     if (this.#timer !== undefined) this.#schedule.clear(this.#timer);
