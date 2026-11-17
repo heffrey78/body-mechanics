@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Clock, catalogue, RecordIndex, SessionLog, Vault, createExercise, deviceClock, loadLibrary, memoryFilesPort, memorySecretsPort, search, type Session } from "../src/index.ts";
+import { Clock, catalogue, modifiersOf, routineFromSession, RecordIndex, SessionLog, Vault, createExercise, deviceClock, loadLibrary, memoryFilesPort, memorySecretsPort, search, type Session } from "../src/index.ts";
 
 async function setup() {
   const files = memoryFilesPort();
@@ -41,6 +41,26 @@ describe("logging a session (#31, #32)", () => {
     const back = (await (await Vault.open(ports, "/r")).read(`sessions/${s.startedAt.slice(0, 4)}/${s.startedAt.slice(5, 7)}/${s.id}.yaml.age`)) as Session;
     expect(back).toMatchObject({ location: "llllllllllllllll", answers: { minutes: 10, sweat: 0 }, focus: { area: ["neck", "shoulder"], kinds: ["mobility"] } });
     expect(back.edits?.answers).toMatch(/~dddddddddddddddd$/);
+  });
+
+  it("keeps how an exercise was done: modifiers mark it modified, and a routine made from it keeps them (#51)", async () => {
+    const { vault, index } = await setup();
+    let t = Date.parse("2026-11-17T07:00:00.000Z");
+    const log = new SessionLog(vault, new Clock("dddddddddddddddd", () => t), { index, now: () => new Date(t) });
+    const s = await log.start("bm:goblet-squat", { modifiers: modifiersOf(["slow-lowering"]) });
+    const e = s.entries[0]!;
+    expect(e.modifiers).toEqual([{ kind: "tempo", id: "slow-lowering" }]);
+    await log.setModifiers(e.id, modifiersOf(["slow-lowering", "to-box", "not-a-modifier"]));
+    t += 60_000; await log.logSet(e.id, { reps: 10, loadKg: 12 });
+    const band = await log.addEntry("bm:pull-up", modifiersOf(["band-assisted"]));
+    t += 60_000; await log.logSet(band.id, { reps: 6 });
+    const done = await log.finish();
+    expect(done.entries[0]!.modifiers.map((m) => m.id)).toEqual(["slow-lowering", "to-box"]);
+    expect(done.entries[0]!.edits?.["modifiers"]).toBeDefined();
+    expect(index.progress("bm:pull-up")[0]!.modified).toBe(true);
+    expect(index.sessions()[0]!.entries.map((x) => x.modified)).toEqual([true, true]);
+    const r = routineFromSession(done, "Gentle", () => "reps");
+    expect(r.items.map((i) => i.modifiers?.map((m) => m.id))).toEqual([["slow-lowering", "to-box"], ["band-assisted"]]);
   });
 
   it("keeps one device id across restarts", async () => {

@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { EFFORTS, describeSet, nextSet, nextStep, planStatus, progression, search, showLoad, toKg, FIELD, type Effort, type Entry, type LibraryItem, type LoggedSet, type RecordIndex, type RoutineItem, type Session, type SessionLog } from "@bm/engine";
 import { elapsedSeconds, pageCue, startTimer, stopTimer, type RunningTimer } from "../timer.ts";
-import { Button, Chip, Segmented, Stepper, Timer } from "../ui/components.tsx";
+import { Button, Chip, Segmented, Stepper, Tag, Timer } from "../ui/components.tsx";
+import { ModifierPicker, modifierText } from "../ui/ModifierPicker.tsx";
 
 const REST_SECONDS = 60;
 const EFFORT_LABEL: Record<Effort, string> = { easy: "Easy", right: "About right", hard: "Hard", pain: "Painful" };
@@ -59,6 +60,8 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, lib
   const [editing, setEditing] = useState<string | null>(null);
   const [next, setNext] = useState("");
   const [busy, setBusy] = useState(false);
+  const [modifying, setModifying] = useState(false);
+  useEffect(() => setModifying(false), [currentId]);
   // The current exercise in the middle of the screen whenever it changes (#44).
   const middle = useRef<HTMLDivElement>(null);
   useEffect(() => { middle.current?.scrollIntoView({ block: "center", behavior: "smooth" }); }, [current?.id]);
@@ -133,7 +136,7 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, lib
     if (!n) return;
     setEditing(null);
     if (n.entryId) { setCurrentId(n.entryId); return; }
-    const e = await log.addEntry(n.item.exercise);
+    const e = await log.addEntry(n.item.exercise, n.item.modifiers ?? []);
     setCurrentId(e.id);
   };
   const openStep = (itemId: string) => run(async () => {
@@ -141,7 +144,7 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, lib
     if (!st) return;
     setEditing(null);
     if (st.entryId) setCurrentId(st.entryId);
-    else setCurrentId((await log.addEntry(st.item.exercise)).id);
+    else setCurrentId((await log.addEntry(st.item.exercise, st.item.modifiers ?? [])).id);
   });
 
   const startHold = async () => {
@@ -283,6 +286,14 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, lib
               )}
             </>
           )}
+          {current.modifiers.length || modifying ? <span className="label">How you're doing it</span> : null}
+          {current.modifiers.length && !modifying ? <div className="chips"><Tag warn>{modifierText(current.modifiers)}</Tag></div> : null}
+          {modifying ? (
+            <>
+              <ModifierPicker value={current.modifiers} onChange={(m) => void run(() => log.setModifiers(current.id, m))} />
+              <Button onClick={() => setModifying(false)}>Done</Button>
+            </>
+          ) : !hold ? <Button variant="ghost" onClick={() => setModifying(true)}>{current.modifiers.length ? "Change how you're doing it" : "Doing it differently? Add a modifier"}</Button> : null}
           <span className="label">Effort</span>
           <Segmented label="Effort" value={current.effort ?? ("" as Effort)} onChange={(e) => void run(() => log.setEffort(current.id, e))}
             options={EFFORTS.map((id) => ({ id, label: EFFORT_LABEL[id] }))} />

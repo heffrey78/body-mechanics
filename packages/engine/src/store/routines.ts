@@ -64,7 +64,10 @@ export function routineFromSession(session: Session, name: string, measureOf: (e
     const amounts = sets.map((s) => (s.left || s.right ? Math.min(s.left?.[f] ?? 0, s.right?.[f] ?? 0) : s[f] ?? 0));
     const loads = sets.map((s) => s.loadKg ?? 0);
     const load = Math.max(...loads);
-    items.push({ id: newId(), exercise: e.exercise, sets: Math.min(sets.length, 20), [f]: Math.max(...amounts), ...(load > 0 ? { loadKg: load } : {}) });
+    items.push({
+      id: newId(), exercise: e.exercise, sets: Math.min(sets.length, 20), [f]: Math.max(...amounts), ...(load > 0 ? { loadKg: load } : {}),
+      ...(e.modifiers.length ? { modifiers: e.modifiers } : {}),
+    });
   }
   return { type: "routine", v: 1, id: newId(), name, items };
 }

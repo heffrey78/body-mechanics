@@ -7,7 +7,7 @@
 import { Clock } from "../records/hlc.ts";
 import { newId } from "../records/ids.ts";
 import type { Effort, Equipment, Kind, Measure, Region } from "../records/vocab.ts";
-import type { Entry, Exercise, LoggedSet, Session } from "../records/schemas.ts";
+import type { Entry, Exercise, LoggedSet, Modifier, Session } from "../records/schemas.ts";
 import { catalogue, type CatalogueEntry } from "../catalogue/index.ts";
 import type { Vault } from "../vault/vault.ts";
 import type { Committer } from "./committer.ts";
@@ -52,14 +52,14 @@ export class SessionLog {
   }
 
   /** A new session, its first exercise already in it (#2: start by typing what you're doing). */
-  async start(exercise: string, options: { location?: string; routine?: string } = {}): Promise<Session> {
+  async start(exercise: string, options: { location?: string; routine?: string; modifiers?: Modifier[] } = {}): Promise<Session> {
     this.#session = {
       type: "session", v: 1, id: newId(), startedAt: this.#now().toISOString(),
       ...(options.location ? { location: options.location } : {}),
       ...(options.routine ? { routine: options.routine } : {}),
       entries: [],
     };
-    await this.addEntry(exercise);
+    await this.addEntry(exercise, options.modifiers);
     return this.#session;
   }
 
@@ -77,9 +77,9 @@ export class SessionLog {
     await this.#save();
   }
 
-  async addEntry(exercise: string): Promise<Entry> {
+  async addEntry(exercise: string, modifiers: Modifier[] = []): Promise<Entry> {
     const s = this.#need();
-    const entry: Entry = { id: newId(), exercise, modifiers: [], sets: [] };
+    const entry: Entry = { id: newId(), exercise, modifiers, sets: [] };
     s.entries.push(entry);
     await this.#save(`Session ${s.startedAt.slice(0, 10)}`);
     return entry;
@@ -111,6 +111,14 @@ export class SessionLog {
     const set = this.#set(entryId, setId);
     set.deleted = true;
     set.edits = { ...(set.edits ?? {}), deleted: this.#clock.tick() };
+    await this.#save();
+  }
+
+  /** How an exercise is being done (#51): its sets count as modified in history and progress. */
+  async setModifiers(entryId: string, modifiers: Modifier[]): Promise<void> {
+    const e = this.#entry(entryId);
+    e.modifiers = modifiers;
+    e.edits = { ...(e.edits ?? {}), modifiers: this.#clock.tick() };
     await this.#save();
   }
 

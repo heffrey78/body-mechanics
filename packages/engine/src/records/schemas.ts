@@ -164,6 +164,8 @@ export const RoutineItem = z
     metres: z.number().nonnegative().optional(),
     loadKg: kg.optional(),
     restSeconds: z.number().int().min(0).max(900).optional(),
+    /** How it's done (#51): carried onto the session's entry when the routine runs. */
+    modifiers: z.array(Modifier).optional(),
     note: z.string().max(200).optional(),
     deleted: z.literal(true).optional(),
     edits,

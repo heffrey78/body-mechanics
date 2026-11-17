@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   COMMIT_EMAIL, COMMIT_NAME, Committer, ENGINE_VERSION, NotSetUp, RecordIndex, SessionLog, Vault, clearDraft, createExercise, deviceClock,
-  GitHub, Syncer, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, loadBody, newMark, newCondition, editBody, checkIn, resolveMark, reopenMark, isDue, isActive, type Body, type Mark, type Condition, type CheckInFields, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
+  GitHub, Syncer, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, loadBody, newMark, newCondition, editBody, modifiersOf, checkIn, resolveMark, reopenMark, isDue, isActive, type Body, type Mark, type Condition, type CheckInFields, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
   portsRoundTrip, routineFromSession, saveDraft,
   type Clock, type Location, type Suggestion, type SyncStatus, type TargetUpdate, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
 } from "@bm/engine";
@@ -169,12 +169,13 @@ export function App() {
     setSummary(null);
     const dose = (entryId: string): Pending => ({ entryId, amount: x.amount, ...(x.loadKg !== undefined ? { loadKg: x.loadKg } : {}) });
     if (log.session) {
-      const e = await log.addEntry(x.item.id);
+      const e = await log.addEntry(x.item.id, modifiersOf(x.modifiers));
       setPending(dose(e.id));
       changed(log.session, dose(e.id));
     } else {
       const a = homeAnswers;
-      const s = await log.start(x.item.id, a?.location ? { location: a.location } : location ? { location } : {});
+      const where = a?.location ?? location;
+      const s = await log.start(x.item.id, { ...(where ? { location: where } : {}), modifiers: modifiersOf(x.modifiers) });
       if (a) await log.setAnswers(a);
       setRefused(new Set());
       setPlan(null);
@@ -281,7 +282,7 @@ export function App() {
     setSummary(null);
     setPending(null);
     setPlan(live);
-    changed(await log.start(live[0]!.exercise, { ...(routine ? { routine } : {}), ...(location ? { location } : {}) }), null, live);
+    changed(await log.start(live[0]!.exercise, { ...(routine ? { routine } : {}), ...(location ? { location } : {}), modifiers: live[0]!.modifiers ?? [] }), null, live);
     setHome({ screen: "session" });
     setTab("home");
   };

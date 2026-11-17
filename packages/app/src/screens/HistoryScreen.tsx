@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { describeSet, showLoad, type LibraryItem, type LoggedSet, type ProgressPoint, type RecordIndex, type Session, type Vault } from "@bm/engine";
+import { modifierText } from "../ui/ModifierPicker.tsx";
 import { Button, Tag } from "../ui/components.tsx";
 
 const EFFORT_LABEL: Record<string, string> = { easy: "Easy", right: "About right", hard: "Hard", pain: "Painful" };
@@ -101,7 +102,7 @@ function SessionDetail({ places, vault, path, name, byId, units, canEdit, onEdit
               </button>
               <div className="chips" style={{ gap: 6 }}>
                 {e.effort ? <Tag>{EFFORT_LABEL[e.effort]}</Tag> : null}
-                {e.modifiers.map((m) => <Tag key={m.id} warn>{m.value ? `${m.id} ${m.value}` : m.id}</Tag>)}
+                {e.modifiers.length ? <Tag warn>{modifierText(e.modifiers)}</Tag> : null}
               </div>
               {e.sets.filter((x) => !x.deleted).map((x: LoggedSet, i) => (
                 <div key={x.id} className="set-row"><span className="muted">Set {i + 1}</span><span className="strong num">{describeSet(x, byId.get(e.exercise)?.measure ?? "reps", load)}</span></div>

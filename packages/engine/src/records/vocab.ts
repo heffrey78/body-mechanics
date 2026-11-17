@@ -84,3 +84,8 @@ export function modifierInfo(id: string): { kind: ModifierKind; label: string } 
   }
   return undefined;
 }
+
+/** Modifier ids as records keep them ({kind, id}), from the vocabulary. */
+export function modifiersOf(ids: readonly string[]): { kind: ModifierKind; id: string }[] {
+  return ids.flatMap((id) => { const m = modifierInfo(id); return m ? [{ kind: m.kind, id }] : []; });
+}

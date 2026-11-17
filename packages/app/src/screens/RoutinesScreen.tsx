@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { newItem, search, showLoad, toKg, FIELD, type LibraryItem, type RecordIndex, type Routine, type RoutineItem } from "@bm/engine";
+import { ModifierPicker, modifierText } from "../ui/ModifierPicker.tsx";
 import { Button, Stepper, Tag } from "../ui/components.tsx";
 
 /** Wide enough for the desktop's table (#35). */
@@ -144,7 +145,13 @@ function RoutineEditor({ routine, library, units, sessionOpen, onSave, onStart, 
                 const shownLoad = i.loadKg ? (units === "kg" ? i.loadKg : Math.round(i.loadKg * 2.2046226218 * 2) / 2) : "";
                 return (
                   <tr key={i.id}>
-                    <td><span className="strong">{x?.name ?? i.exercise}</span>{x?.sided ? <> <Tag>each side</Tag></> : null}</td>
+                    <td>
+                      <span className="strong">{x?.name ?? i.exercise}</span>{x?.sided ? <> <Tag>each side</Tag></> : null}
+                      <details>
+                        <summary className="muted" style={{ fontSize: 13 }}>{i.modifiers?.length ? modifierText(i.modifiers) : "How it's done"}</summary>
+                        <ModifierPicker value={i.modifiers ?? []} onChange={(mods) => patch(i.id, { modifiers: mods.length ? mods : undefined })} />
+                      </details>
+                    </td>
                     <td><input type="number" min={1} max={20} aria-label="Sets" value={i.sets} onChange={(e) => patch(i.id, { sets: Math.max(1, Math.min(20, Number(e.target.value) || 1)) })} /></td>
                     <td><input type="number" min={0} aria-label="Target" value={i[f] ?? ""} onChange={(e) => patch(i.id, { [f]: e.target.value === "" ? undefined : Math.max(0, Number(e.target.value)) })} /> {amountUnit(m)}</td>
                     <td><input type="number" min={0} step={units === "kg" ? 1 : 2.5} aria-label="Load" value={shownLoad} onChange={(e) => patch(i.id, { loadKg: Number(e.target.value) > 0 ? toKg(Number(e.target.value), units) : undefined })} /></td>
@@ -172,6 +179,7 @@ function RoutineEditor({ routine, library, units, sessionOpen, onSave, onStart, 
                 <span style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                   <span className="strong">{x?.name ?? i.exercise}</span>
                   <span className="muted num" style={{ fontSize: 13 }}>{describeItem(i, x, units)}{i.restSeconds !== undefined ? ` · rest ${i.restSeconds} s` : ""}</span>
+                  {i.modifiers?.length ? <span className="muted" style={{ fontSize: 13 }}>{modifierText(i.modifiers)}</span> : null}
                 </span>
                 <span className="muted">{open ? "▴" : "▾"}</span>
               </button>
@@ -182,6 +190,10 @@ function RoutineEditor({ routine, library, units, sessionOpen, onSave, onStart, 
                     onLess={() => patch(i.id, { [f]: Math.max(0, (i[f] ?? 0) - step(m)) })} onMore={() => patch(i.id, { [f]: (i[f] ?? 0) + step(m) })} />
                   <Stepper label="Load" value={shown(i.loadKg)} onLess={() => stepLoad(i, -1)} onMore={() => stepLoad(i, 1)} />
                   <Stepper label="Rest" value={`${i.restSeconds ?? 60} s`} onLess={() => patch(i.id, { restSeconds: Math.max(0, (i.restSeconds ?? 60) - 15) })} onMore={() => patch(i.id, { restSeconds: Math.min(900, (i.restSeconds ?? 60) + 15) })} />
+                  <details>
+                    <summary className="muted">{i.modifiers?.length ? `How it's done: ${modifierText(i.modifiers)}` : "How it's done"}</summary>
+                    <ModifierPicker value={i.modifiers ?? []} onChange={(mods) => patch(i.id, { modifiers: mods.length ? mods : undefined })} />
+                  </details>
                   <div className="chips" style={{ justifyContent: "space-between" }}>
                     <span className="chips">
                       <button type="button" className="mini" aria-label="Move up" disabled={n === 0} onClick={() => move(i.id, -1)}>↑</button>
