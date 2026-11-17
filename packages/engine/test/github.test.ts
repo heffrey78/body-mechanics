@@ -36,6 +36,35 @@ describe("signing in to GitHub (#38)", () => {
     expect(await gh.status()).toEqual({ signedIn: true, account: { login: "ada", id: 7, name: "Ada" } });
   });
 
+  it("keeps polling through a lost network, and keeps a token issued just before it went (Android backgrounding)", async () => {
+    let online = true;
+    const answers = [{ error: "authorization_pending" }, { access_token: "gho_token" }];
+    const { http: fake } = fakeGitHub({
+      "POST /login/device/code": () => ({ json: { device_code: "dc", user_code: "ABCD-1234", verification_uri: "https://github.com/login/device", interval: 5 } }),
+      "POST /login/oauth/access_token": () => ({ json: answers.shift() }),
+      "GET /user": () => (online ? { json: { login: "ada" } } : { status: 500 }),
+    });
+    // The network drops right after GitHub hands over the token, before the account is looked up.
+    const http: HttpPort = {
+      async request(req) {
+        if (!online) throw new Error("failed to lookup address information");
+        const res = await fake.request(req);
+        if (req.url.endsWith("/login/oauth/access_token") && res.body.includes("access_token")) online = false;
+        return res;
+      },
+    };
+    const secrets = memorySecretsPort();
+    const gh = new GitHub(http, secrets);
+    await gh.startDevice();
+    expect(await gh.pollDevice()).toEqual({ status: "pending", interval: 5 });
+    await expect(gh.pollDevice()).rejects.toMatchObject({ code: "OFFLINE" });
+    await expect(gh.pollDevice()).rejects.toMatchObject({ code: "OFFLINE" });
+    expect(await secrets.get("github-token")).toBeUndefined();
+    online = true;
+    expect(await gh.pollDevice()).toEqual({ status: "done", account: { login: "ada" } });
+    expect(await secrets.get("github-token")).toBe("gho_token");
+  });
+
   it("gives git the token for github.com only", async () => {
     const secrets = memorySecretsPort();
     await secrets.set("github-token", "gho_token");

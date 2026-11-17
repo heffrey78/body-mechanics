@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { AccountStatus, DeviceCode, GitHub } from "@bm/engine";
+import { GitHubError, type AccountStatus, type DeviceCode, type GitHub } from "@bm/engine";
 import { Button, Card } from "../ui/components.tsx";
 
 /** GitHub sign-in by device code (#38, #40): the status, and the code while it's being entered. */
@@ -13,15 +13,27 @@ export function useGitHubSignIn(github: GitHub, available: boolean) {
     if (available) void github.status().then(setStatus).catch((e: unknown) => setError(String(e)));
   }, [github, available]);
 
-  // Ask GitHub every few seconds whether the code has been entered.
+  // Ask GitHub every few seconds whether the code has been entered. The code is usually entered in a
+  // browser on this same phone, and Android cuts a backgrounded app off the network, so polling waits
+  // while the app is hidden, asks straight away when it's back, and takes "can't reach GitHub" as a
+  // reason to ask again, not a failure. The code's own expiry ends it.
   useEffect(() => {
     if (!code || polling.current) return;
     polling.current = true;
     let stop = false;
     let wait = code.interval;
+    let wake: (() => void) | null = null;
+    const hidden = () => document.visibilityState === "hidden";
+    const onVisible = () => { if (!hidden()) wake?.(); };
+    document.addEventListener("visibilitychange", onVisible);
+    const pause = (ms: number) => new Promise<void>((r) => {
+      const t = setTimeout(() => { wake = null; r(); }, ms);
+      wake = () => { clearTimeout(t); wake = null; r(); };
+    });
     const tick = async () => {
       while (!stop) {
-        await new Promise((r) => setTimeout(r, wait * 1000));
+        await pause(wait * 1000);
+        while (!stop && hidden()) await pause(60_000);
         if (stop) break;
         try {
           const r = await github.pollDevice();
@@ -29,6 +41,7 @@ export function useGitHubSignIn(github: GitHub, available: boolean) {
           if (r.status === "done") setStatus({ signedIn: true, account: r.account });
           else setError(r.status === "denied" ? "The sign-in was turned down on GitHub." : "The code expired. Try again.");
         } catch (e) {
+          if (e instanceof GitHubError && e.code === "OFFLINE") continue;
           setError(e instanceof Error ? e.message : String(e));
         }
         break;
@@ -37,7 +50,7 @@ export function useGitHubSignIn(github: GitHub, available: boolean) {
       polling.current = false;
     };
     void tick();
-    return () => { stop = true; polling.current = false; };
+    return () => { stop = true; wake?.(); polling.current = false; document.removeEventListener("visibilitychange", onVisible); };
   }, [code, github]);
 
   const start = async () => {

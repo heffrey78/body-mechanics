@@ -72,6 +72,8 @@ export class GitHub {
   #account: GitHubAccount | undefined;
   #expired = false;
   #device: { deviceCode: string; interval: number; expiresAt: number } | undefined;
+  /** A token GitHub has issued whose account couldn't be looked up yet (the network went away between). */
+  #issued: string | undefined;
   readonly #now: () => number;
 
   constructor(http: HttpPort, secrets: SecretsPort, { clientId = GITHUB_CLIENT_ID, now = () => Date.now() }: { clientId?: string; now?: () => number } = {}) {
@@ -102,6 +104,7 @@ export class GitHub {
 
   /** Start the device flow: you enter the code at the verification address. */
   async startDevice(): Promise<DeviceCode> {
+    this.#issued = undefined;
     const res = await this.#post(`${WEB}/login/device/code`, { client_id: this.#clientId, scope: SCOPES.join(" ") });
     const body = json<{ device_code?: string; user_code?: string; verification_uri?: string; expires_in?: number; interval?: number; error_description?: string }>(res);
     if (res.status >= 400 || !body.device_code || !body.user_code || !body.verification_uri) {
@@ -115,6 +118,7 @@ export class GitHub {
 
   /** Ask GitHub once whether the code has been entered. */
   async pollDevice(): Promise<PollResult> {
+    if (this.#issued) return this.#finish(this.#issued);
     const device = this.#device;
     if (!device) return { status: "none" };
     if (this.#now() > device.expiresAt) {
@@ -127,12 +131,8 @@ export class GitHub {
     const body = json<{ access_token?: string; error?: string; interval?: number; error_description?: string }>(res);
     if (body.access_token) {
       this.#device = undefined;
-      const account = await this.#who(body.access_token, { remember: false });
-      if (!account) throw new GitHubError("GITHUB", "GitHub didn't accept the new sign-in. Try again.");
-      await this.#secrets.set(TOKEN_SECRET, body.access_token);
-      this.#account = account;
-      this.#expired = false;
-      return { status: "done", account };
+      this.#issued = body.access_token;
+      return this.#finish(body.access_token);
     }
     switch (body.error) {
       case "authorization_pending":
@@ -149,6 +149,17 @@ export class GitHub {
       default:
         throw new GitHubError("GITHUB", `GitHub didn't finish the sign-in: ${body.error_description ?? body.error ?? res.status}`);
     }
+  }
+
+  /** Look up whose the new token is, then keep it. Offline, the token waits for the next poll. */
+  async #finish(token: string): Promise<PollResult> {
+    const account = await this.#who(token, { remember: false });
+    this.#issued = undefined;
+    if (!account) throw new GitHubError("GITHUB", "GitHub didn't accept the new sign-in. Try again.");
+    await this.#secrets.set(TOKEN_SECRET, token);
+    this.#account = account;
+    this.#expired = false;
+    return { status: "done", account };
   }
 
   /** Your repositories, most recently pushed first (up to 300). */
@@ -186,6 +197,7 @@ export class GitHub {
   /** Forget the token (it can be revoked at github.com › Settings › Applications). */
   async signOut(): Promise<void> {
     this.#device = undefined;
+    this.#issued = undefined;
     this.#account = undefined;
     await this.#secrets.delete(TOKEN_SECRET);
   }

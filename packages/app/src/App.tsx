@@ -211,6 +211,17 @@ export function App() {
     return () => sy.stop();
   }, [vault, committer, remote, github]);
 
+  // Android cuts a backgrounded app off the network, so a sync that ran while hidden reads as offline:
+  // coming back to the app tries again straight away instead of waiting out the interval.
+  useEffect(() => {
+    if (!syncer) return;
+    const onVisible = () => {
+      if (document.visibilityState === "visible" && syncer.on && syncer.status.state === "offline") void syncer.now();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, [syncer]);
+
   const syncNow = async () => {
     if (!syncer) return;
     setSyncText(null);
