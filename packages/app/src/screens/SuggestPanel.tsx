@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { AREAS, KINDS, showLoad, suggest, type Kind, type LibraryItem, type Location, type RecordIndex, type Region, type Suggestion } from "@bm/engine";
+import { AREAS, KINDS, concerns, modifierInfo, showLoad, suggest, type Body, type Kind, type LibraryItem, type Location, type RecordIndex, type Region, type Suggestion } from "@bm/engine";
 import { Button, Chip, Segmented, Tag } from "../ui/components.tsx";
 import { KIND_LABEL } from "../ui/labels.ts";
 import { SWEAT_WORDS } from "./LocationsScreen.tsx";
@@ -30,7 +30,7 @@ export function describeDose(s: Suggestion, units: "kg" | "lb"): string {
  * focus), then straight to a suggestion with the same answers. Start takes it; Another idea moves
  * down the ranks; Not this turns it down for the session; Change answers goes back to the questions.
  */
-export function SuggestPanel({ answers, defaultLocation, locations, library, index, done, startedAt, seed, refused, units, onAnswers, onRefuse, onAccept, onClose }: {
+export function SuggestPanel({ answers, defaultLocation, locations, library, index, body, done, startedAt, seed, refused, units, onAnswers, onRefuse, onAccept, onClose }: {
   /** This session's answers, or null when they haven't been given yet. */
   answers: SuggestAnswers | null;
   /** Where Home says you are, for the first question. */
@@ -38,6 +38,8 @@ export function SuggestPanel({ answers, defaultLocation, locations, library, ind
   locations: Location[];
   library: LibraryItem[];
   index: RecordIndex | null;
+  /** Marks and conditions (#47). */
+  body: Body;
   done: string[];
   /** When the session started (for time left); undefined before one has. */
   startedAt?: string;
@@ -60,12 +62,12 @@ export function SuggestPanel({ answers, defaultLocation, locations, library, ind
     return suggest(
       { ...(location ? { location } : {}), ...(minutesLeft !== undefined ? { minutesLeft } : {}), sweat: answers.sweat, area: answers.area, kinds: answers.kinds },
       {
-        library, done, refused, units, now: new Date(), seed,
+        library, done, refused, units, now: new Date(), seed, body: concerns(body),
         history: (index?.sessions() ?? []).filter((s) => Date.parse(s.startedAt) >= fortnight && (!startedAt || s.startedAt !== startedAt)),
         lastTime: (x) => index?.lastTime(x, startedAt)?.entry,
       },
     );
-  }, [answers, locations, library, index, done, refused, units, seed, startedAt]);
+  }, [answers, locations, library, index, body, done, refused, units, seed, startedAt]);
 
   if (asking || !answers) {
     return <Questions initial={answers} defaultLocation={defaultLocation} locations={locations} onDone={(a) => { onAnswers(a); setRank(0); setAsking(false); }} onClose={onClose} />;
@@ -81,6 +83,8 @@ export function SuggestPanel({ answers, defaultLocation, locations, library, ind
         <>
           <h2 className="title" style={{ fontSize: 22 }}>{s.item.name}</h2>
           <span className="strong num">{describeDose(s, units)}</span>
+          {s.modifiers.length ? <span className="tag" style={{ alignSelf: "flex-start" }}>{s.modifiers.map((m) => modifierInfo(m)?.label ?? m).join(" · ")}</span> : null}
+          {s.caution ? <span className="warn-text">{s.caution}</span> : null}
           <ul style={{ margin: 0, paddingLeft: 20, display: "flex", flexDirection: "column", gap: 4 }} aria-label="Why this">
             {s.reasons.map((r) => <li key={r} className="muted">{r}</li>)}
           </ul>

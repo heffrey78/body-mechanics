@@ -6,7 +6,9 @@
  *   3. Scoring: focus, kinds (a balanced mix when none are chosen), region variety in the session,
  *      variety against recent history, the sweat asked for.
  *   4. Reasons: every score term and filter outcome that matters becomes a "why this" line.
- * The avoid and modify steps for marks and conditions (#4, #5) slot in between 1 and 2 in Build 3.
+ * The body (#47) works between 1 and 2: an exercise to avoid is dropped, one to modify is swapped
+ * for its gentler version (if that fits too) or keeps its modifiers, and one that helps an active
+ * mark or condition scores up, more when the mark is in the focus and not yet helped this session.
  */
 import type { Kind, Region } from "../records/vocab.ts";
 import type { Location } from "../records/schemas.ts";
@@ -14,6 +16,7 @@ import type { LibraryItem } from "../store/session-log.ts";
 import type { EntrySummary, SessionSummary } from "../store/index.ts";
 import { progression } from "../store/progression.ts";
 import { FIELD } from "../store/next-set.ts";
+import { assess, describeConcern, helpersFor, type Concern } from "../body/assess.ts";
 
 export const AREAS: Record<"upper" | "lower" | "core", Region[]> = {
   upper: ["neck", "shoulder", "chest", "upperback", "upperarm", "forearm"],
@@ -46,6 +49,8 @@ export interface Context {
   now: Date;
   /** Breaks ties, so equal suggestions vary between sessions but not within one (the session id). */
   seed?: string;
+  /** The body's active marks and conditions (#47), from concerns(). */
+  body?: readonly Concern[];
 }
 
 export interface Suggestion {
@@ -58,6 +63,12 @@ export interface Suggestion {
   reasons: string[];
   /** Estimated minutes, rest included. */
   minutes: number;
+  /** Modifier ids for the body (#47): how to do it more gently. */
+  modifiers: string[];
+  /** The exercise this gentler one stands in for (#47). */
+  insteadOf?: LibraryItem;
+  /** A caution for a painful area it works (#47). */
+  caution?: string;
 }
 
 const KIND_WORD: Record<Kind, string> = { mobility: "Mobility", strength: "Strength", endurance: "Endurance", balance: "Balance" };
@@ -103,19 +114,44 @@ export function suggest(answers: Answers, ctx: Context): Suggestion[] {
   const lastDone = new Map<string, number>();
   for (const s of ctx.history) for (const e of s.entries) if (!lastDone.has(e.exercise)) lastDone.set(e.exercise, Date.parse(s.startedAt));
 
-  // 1. Hard filters.
-  type Cand = { item: LibraryItem; d: ReturnType<typeof dose>; minutes: number };
+  // 1. Hard filters, then the body (#47).
+  const body = ctx.body ?? [];
+  type Cand = { item: LibraryItem; d: ReturnType<typeof dose>; minutes: number; modifiers: string[]; body: string[]; insteadOf?: LibraryItem; caution?: string };
+  const fits = (item: LibraryItem) => {
+    if (!item.works.length) return false; // never suggest a movement without a body region (#3)
+    if (doneSet.has(item.id) || ctx.refused.has(item.id)) return false;
+    if (item.sweat > answers.sweat) return false;
+    return !answers.location || equipped(item.equipment, have);
+  };
   const hard: Cand[] = [];
-  for (const item of ctx.library) {
-    if (!item.works.length) continue; // never suggest a movement without a body region (#3)
-    if (doneSet.has(item.id) || ctx.refused.has(item.id)) continue;
-    if (item.sweat > answers.sweat) continue;
-    if (answers.location && !equipped(item.equipment, have)) continue;
+  for (const original of ctx.library) {
+    if (!fits(original)) continue;
+    const a = assess(original, body);
+    if (a.action === "avoid") continue;
+    let item = original;
+    let insteadOf: LibraryItem | undefined;
+    let modifiers = a.modifiers;
+    if (a.swap) {
+      const swap = byId.get(a.swap);
+      const own = swap ? assess(swap, body) : undefined;
+      if (swap && own && fits(swap) && own.action !== "avoid") {
+        item = swap;
+        insteadOf = original;
+        // The swap rule's modifiers, else what the stand-in itself needs (a bodyweight squat still loads the knee).
+        modifiers = a.swapModifiers.length ? a.swapModifiers : own.modifiers;
+      }
+    }
     const d = dose(item, ctx.lastTime(item.id), ctx.units);
     const minutes = minutesFor(item, d.sets, d.amount);
     if (answers.minutesLeft !== undefined && minutes > answers.minutesLeft) continue;
-    hard.push({ item, d, minutes });
+    const caution = a.action === "caution" ? a.reasons[0] : undefined;
+    const lines = a.action === "caution" ? [] : [...a.reasons];
+    if (insteadOf) lines.unshift(`In place of ${insteadOf.name}, for your ${a.affects.map(describeConcern).join(" and ")}`);
+    hard.push({ item, d, minutes, modifiers, body: lines, ...(insteadOf ? { insteadOf } : {}), ...(caution ? { caution } : {}) });
   }
+  // What helps each concern, and which concerns this session has already helped.
+  const helpers = body.map((c) => ({ c, ids: helpersFor(c) }));
+  const helpedToday = new Set(helpers.filter((h) => ctx.done.some((d) => h.ids.includes(d))).map((h) => h.c.id + h.c.region));
 
   // 2. Soft filters: the focus, unless nothing would be left.
   const inArea = (x: LibraryItem) => !answers.area.length || x.works.some((r) => answers.area.includes(r));
@@ -126,9 +162,22 @@ export function suggest(answers: Answers, ctx: Context): Suggestion[] {
   if (!pool.length) { pool = hard; relaxed = "Nothing here matches your focus"; }
 
   // 3. Scoring, with the reasons.
-  const out: Suggestion[] = pool.map(({ item, d, minutes }) => {
+  const out: Suggestion[] = pool.map(({ item, d, minutes, modifiers, body: bodyLines, insteadOf, caution }) => {
     let score = 0;
     const reasons: string[] = [];
+    // Helping the body comes first (#4): a mark inside the focus, and one not yet helped today, more.
+    const helped: string[] = [];
+    for (const { c, ids } of helpers) {
+      const at = ids.indexOf(item.id);
+      if (at < 0) continue;
+      const inFocus = !answers.area.length || answers.area.includes(c.region);
+      const fresh = !helpedToday.has(c.id + c.region);
+      score += (fresh ? 3 : 1) + (inFocus ? 1.5 : 0) + (ids.length - at) / ids.length;
+      helped.push(describeConcern(c));
+    }
+    if (helped.length) reasons.push(`Helps your ${[...new Set(helped)].join(" and ")}`);
+    reasons.push(...bodyLines);
+    if (caution) { reasons.push(caution); score -= 0.5; }
     const focusHit = item.works.filter((r) => answers.area.includes(r));
     if (answers.area.length && focusHit.length) {
       score += answers.area.includes(item.works[0]!) ? 3 : 1.5;
@@ -168,10 +217,22 @@ export function suggest(answers: Answers, ctx: Context): Suggestion[] {
     if (answers.minutesLeft !== undefined) reasons.push(`About ${minutes} min`);
     if (d.note) reasons.push(d.note);
     if (relaxed) reasons.push(relaxed);
-    return { item, sets: d.sets, amount: d.amount, ...(d.loadKg !== undefined ? { loadKg: d.loadKg } : {}), score: Math.round(score * 100) / 100, reasons, minutes };
+    return {
+      item, sets: d.sets, amount: d.amount, ...(d.loadKg !== undefined ? { loadKg: d.loadKg } : {}), score: Math.round(score * 100) / 100, reasons, minutes,
+      modifiers, ...(insteadOf ? { insteadOf } : {}), ...(caution ? { caution } : {}),
+    };
   });
   const tie = (id: string) => hash(`${ctx.seed ?? ""}:${id}`);
-  return out.sort((a, b) => b.score - a.score || tie(a.item.id) - tie(b.item.id) || a.item.name.localeCompare(b.item.name));
+  const ranked = out.sort((a, b) => b.score - a.score || tie(a.item.id) - tie(b.item.id) || a.item.name.localeCompare(b.item.name));
+  // A gentler version can also be a candidate in its own right: show it once, as the stand-in (which
+  // says why), at the better of the two scores.
+  const best = new Map<string, Suggestion>();
+  for (const x of ranked) {
+    const had = best.get(x.item.id);
+    if (!had) best.set(x.item.id, x);
+    else if (x.insteadOf && !had.insteadOf) best.set(x.item.id, { ...x, score: Math.max(x.score, had.score) });
+  }
+  return [...best.values()].sort((a, b) => b.score - a.score || tie(a.item.id) - tie(b.item.id) || a.item.name.localeCompare(b.item.name));
 }
 
 /** FNV-1a: a small, stable string hash for tie-breaking. */

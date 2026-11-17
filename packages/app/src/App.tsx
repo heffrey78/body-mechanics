@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   COMMIT_EMAIL, COMMIT_NAME, Committer, ENGINE_VERSION, NotSetUp, RecordIndex, SessionLog, Vault, clearDraft, createExercise, deviceClock,
-  GitHub, Syncer, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
+  GitHub, Syncer, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, loadBody, type Body, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
   portsRoundTrip, routineFromSession, saveDraft,
   type Clock, type Location, type Suggestion, type SyncStatus, type TargetUpdate, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
 } from "@bm/engine";
@@ -45,6 +45,8 @@ export function App() {
   const [syncer, setSyncer] = useState<Syncer | null>(null);
   const [joining, setJoining] = useState(false);
   const [locations, setLocations] = useState<Location[]>([]);
+  /** Marks and conditions (#45): Suggest next and plans work around them (#47). */
+  const [bodyRecords, setBodyRecords] = useState<Body>({ marks: [], conditions: [] });
   const [location, setLocation] = useState<string | null>(null);
   // Suggest next (#43): open or not, the answers before a session starts, what's been turned down.
   const [suggesting, setSuggesting] = useState(false);
@@ -92,10 +94,11 @@ export function App() {
     setProfile(p);
     setTheme(p.theme);
     if (created) c?.changed("Profile");
-    const [lib, built, clock, rs, ls] = await Promise.all([loadLibrary(v), RecordIndex.build(v, files), deviceClock(v), loadRoutines(v), loadLocations(v)]);
+    const [lib, built, clock, rs, ls, bd] = await Promise.all([loadLibrary(v), RecordIndex.build(v, files), deviceClock(v), loadRoutines(v), loadLocations(v), loadBody(v)]);
     setLibrary(lib);
     setRoutines(rs);
     setLocations(ls);
+    setBodyRecords(bd);
     // The last location used is where the next session starts (#41).
     const lastAt = built.index.sessions().find((x) => x.location)?.location;
     setLocation(lastAt && ls.some((l) => l.id === lastAt) ? lastAt : null);
@@ -169,7 +172,7 @@ export function App() {
   const suggestPanel = suggesting && log ? (
     <SuggestPanel
       answers={session ? sessionAnswers(session) : homeAnswers}
-      defaultLocation={location} locations={locations} library={library} index={index}
+      defaultLocation={location} locations={locations} library={library} index={index} body={bodyRecords}
       done={session ? session.entries.filter((e) => !e.deleted).map((e) => e.exercise) : []}
       {...(session ? { startedAt: session.startedAt } : {})}
       seed={session?.id ?? new Date().toISOString().slice(0, 10)} refused={refused} units={profile?.units ?? "kg"}
@@ -186,11 +189,12 @@ export function App() {
 
   /** After a sync brought in other devices' records: read the lists and the index again. */
   const reload = async (v: Vault) => {
-    const [lib, built, rs, ls, prof] = await Promise.all([loadLibrary(v), RecordIndex.build(v, hostPorts().files), loadRoutines(v), loadLocations(v), loadProfile(v)]);
+    const [lib, built, rs, ls, prof, bd] = await Promise.all([loadLibrary(v), RecordIndex.build(v, hostPorts().files), loadRoutines(v), loadLocations(v), loadProfile(v), loadBody(v)]);
     setLibrary(lib);
     setIndex(built.index);
     setRoutines(rs);
     setLocations(ls);
+    setBodyRecords(bd);
     setProfile(prof.profile);
     setTheme(prof.profile.theme);
   };
