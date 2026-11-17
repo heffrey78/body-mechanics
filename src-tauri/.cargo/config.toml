@@ -1,0 +1,8 @@
+# Android 15+ phones with 16 KB memory pages (the owner's Pixel 10 Pro) warn about, and will refuse,
+# native libraries aligned to 4 KB pages. NDK r28's linker aligns to 16 KB already; this says so for
+# any NDK. (A RUSTFLAGS in the environment would replace it, so CI also checks the built APK.)
+[target.aarch64-linux-android]
+rustflags = ["-C", "link-arg=-Wl,-z,max-page-size=16384"]
+
+[target.x86_64-linux-android]
+rustflags = ["-C", "link-arg=-Wl,-z,max-page-size=16384"]

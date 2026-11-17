@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:
-      NDK_VERSION: 27.2.12479018
+      NDK_VERSION: 28.2.13676358
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -104,6 +104,19 @@ jobs:
           echo "BM_ANDROID_DEBUG_KEYSTORE=$HOME/.android/debug.keystore" >> "$GITHUB_ENV"
       - run: scripts/android-build.sh aarch64
       - run: cp "$(find src-tauri/gen/android/app/build/outputs/apk -name '*.apk' | head -n 1)" body-mechanics-android.apk
+      - name: 16 KB pages (Android 15+)
+        run: |
+          # Every native library's LOAD segments aligned to 16 KB, and stored 16 KB-aligned in the APK.
+          READELF="$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf"
+          mkdir -p so && unzip -o -q body-mechanics-android.apk 'lib/*' -d so
+          for f in so/lib/*/*.so; do
+            for a in $("$READELF" -lW "$f" | awk '$1 == "LOAD" { print $NF }'); do
+              (( a >= 16384 )) || { echo "$f has a LOAD segment aligned to $a, not 16 KB"; exit 1; }
+            done
+          done
+          zipalign=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -n 1)zipalign
+          "$zipalign" -c -P 16 -v 4 body-mechanics-android.apk > zipalign.txt || { tail -n 20 zipalign.txt; exit 1; }
+          tail -n 1 zipalign.txt
       - uses: actions/upload-artifact@v4
         with:
           name: android-apk
