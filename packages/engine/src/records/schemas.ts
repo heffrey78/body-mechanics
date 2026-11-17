@@ -1,13 +1,14 @@
 /**
  * The record schemas, from the data model D1 (#14): profile, custom exercise, session (with its
- * entries and sets), routine and location (#34), plus the plain format.yaml. Each record is one YAML file (D2,
+ * entries and sets), routine and location (#34), mark and condition with their check-ins (#45), plus
+ * the plain format.yaml. Each record is one YAML file (D2,
  * #16). Every object that two devices might edit carries `edits`: an edit stamp per field, for the
  * record merge (#29). Loads are always kilograms; the profile's units are only how they're shown.
  */
 import { z } from "zod";
 import { HLC_PATTERN } from "./hlc.ts";
 import { ID_PATTERN } from "./ids.ts";
-import { EFFORTS, EQUIPMENT, KINDS, MEASURES, MODIFIER_KINDS, REGIONS, THEMES, THEME_MODES, UNITS } from "./vocab.ts";
+import { BOTHERS, EFFORTS, EQUIPMENT, KINDS, MARK_KINDS, MEASURES, MODIFIER_KINDS, RED_FLAGS, REGIONS, SIDED_REGIONS, SIDES, THEMES, THEME_MODES, UNITS } from "./vocab.ts";
 
 export const FORMAT_VERSION = 1;
 
@@ -200,6 +201,80 @@ export const Location = z.strictObject({
 });
 export type Location = z.infer<typeof Location>;
 
+// ---------------------------------------------------------------- the body: marks and conditions (#45, D1)
+
+/** A day ("2026-11-16"), or for a condition's start a month or a year ("2019-06", "2019"). */
+const day = z.iso.date();
+const roughDate = z.string().regex(/^\d{4}(-\d{2}(-\d{2})?)?$/, "a year, a month or a day: 2019, 2019-06, 2019-06-14");
+const severity = z.union([z.literal(1), z.literal(2), z.literal(3)]);
+
+/**
+ * How a mark or condition is now (D1 CheckIn). The first one is made with the mark; the latest is its
+ * current state. Kept in the record's own list, so two devices' check-ins merge by id.
+ */
+export const CheckIn = z.strictObject({
+  id,
+  at: iso,
+  severity,
+  bothers: z.array(z.enum(BOTHERS)).default([]),
+  redFlags: z.array(z.enum(RED_FLAGS)).default([]),
+  note: z.string().max(500).optional(),
+  deleted: z.literal(true).optional(),
+  edits,
+});
+export type CheckIn = z.infer<typeof CheckIn>;
+
+const sideFits = (region: string, side: string) => (SIDED_REGIONS as readonly string[]).includes(region) ? side !== "none" : side === "none";
+const sideMessage = "a sided region needs left, right or both; any other region takes none";
+
+/** How a region feels now (#4): meant to be resolved. */
+export const Mark = z
+  .strictObject({
+    type: z.literal("mark"),
+    v: z.literal(FORMAT_VERSION),
+    id,
+    region: z.enum(REGIONS),
+    side: z.enum(SIDES),
+    kind: z.enum(MARK_KINDS),
+    onset: day,
+    note: z.string().max(1000).optional(),
+    checkins: z.array(CheckIn).min(1),
+    resolvedAt: iso.optional(),
+    /** Set when it was turned into a condition (#49). */
+    becameCondition: id.optional(),
+    deleted: z.literal(true).optional(),
+    edits,
+  })
+  .superRefine((m, ctx) => {
+    if (!sideFits(m.region, m.side)) ctx.addIssue({ code: "custom", path: ["side"], message: sideMessage });
+  });
+export type Mark = z.infer<typeof Mark>;
+
+export const ConditionRegion = z
+  .strictObject({ region: z.enum(REGIONS), side: z.enum(SIDES) })
+  .superRefine((r, ctx) => {
+    if (!sideFits(r.region, r.side)) ctx.addIssue({ code: "custom", path: ["side"], message: sideMessage });
+  });
+export type ConditionRegion = z.infer<typeof ConditionRegion>;
+
+/** A long-lived fact kept on the profile (#5): an old surgery, hypermobility. No regions: the whole body. */
+export const Condition = z.strictObject({
+  type: z.literal("condition"),
+  v: z.literal(FORMAT_VERSION),
+  id,
+  name: z.string().min(1).max(120),
+  /** A shared condition type its rules come from (#46), e.g. "acl-repair". */
+  kind: z.string().regex(/^[a-z0-9-]+$/).max(60).optional(),
+  regions: z.array(ConditionRegion),
+  since: roughDate,
+  until: roughDate.optional(),
+  note: z.string().max(1000).optional(),
+  checkins: z.array(CheckIn).default([]),
+  deleted: z.literal(true).optional(),
+  edits,
+});
+export type Condition = z.infer<typeof Condition>;
+
 // ---------------------------------------------------------------- format.yaml (plain, not encrypted)
 
 export const Format = z.strictObject({
@@ -209,6 +284,6 @@ export const Format = z.strictObject({
 });
 export type Format = z.infer<typeof Format>;
 
-export const RECORD_SCHEMAS = { profile: Profile, exercise: Exercise, session: Session, routine: Routine, location: Location } as const;
+export const RECORD_SCHEMAS = { profile: Profile, exercise: Exercise, session: Session, routine: Routine, location: Location, mark: Mark, condition: Condition } as const;
 export type RecordType = keyof typeof RECORD_SCHEMAS;
-export type AnyRecord = Profile | Exercise | Session | Routine | Location;
+export type AnyRecord = Profile | Exercise | Session | Routine | Location | Mark | Condition;

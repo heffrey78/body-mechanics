@@ -36,3 +36,27 @@ export type Units = (typeof UNITS)[number];
 
 export const THEMES = ["clinic", "studio", "utility"] as const;
 export const THEME_MODES = ["system", "light", "dark"] as const;
+
+// ---------------------------------------------------------------- the body (#4, #5, D1)
+
+/** What a body-map mark is (#4). */
+export const MARK_KINDS = ["pain", "stiffness", "weakness", "injury"] as const;
+export type MarkKind = (typeof MARK_KINDS)[number];
+
+/** 1 mild, 2 moderate, 3 severe. */
+export const SEVERITIES = [1, 2, 3] as const;
+export type Severity = (typeof SEVERITIES)[number];
+
+/** The person's own sides; a region that isn't sided is "none". */
+export const SIDES = ["left", "right", "both", "none"] as const;
+export type Side = (typeof SIDES)[number];
+
+/** When a mark or condition bothers you (#4). */
+export const BOTHERS = [
+  "mornings", "sitting", "standing", "walking", "bending", "overhead", "under-load", "after-exercise", "at-night", "all-the-time",
+] as const;
+export type Bother = (typeof BOTHERS)[number];
+
+/** Red flags (#4): any of these sends the person to a professional, and keeps that area gentle. */
+export const RED_FLAGS = ["numbness", "swelling", "after-fall", "night-pain", "getting-weaker"] as const;
+export type RedFlag = (typeof RED_FLAGS)[number];
