@@ -5,6 +5,7 @@ import {
   portsRoundTrip, routineFromSession, saveDraft,
   type Clock, type Location, type Suggestion, type SyncStatus, type TargetUpdate, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
 } from "@bm/engine";
+import { isTauri } from "@tauri-apps/api/core";
 import { dataDir, hostPlatform, hostPorts, httpPort, smokeReport, smokeStorage } from "./host.ts";
 import { SyncScreen } from "./screens/SyncScreen.tsx";
 import { JoinScreen } from "./screens/JoinScreen.tsx";
@@ -36,7 +37,8 @@ export function App() {
   const [tab, setTab] = useState<TabId>("home");
   const [sub, setSub] = useState<"theme" | "credits" | "checks" | "locations" | "sync" | null>(null);
   // GitHub sync (#38): the connection, the records' remote, and what the last sync did.
-  const github = useMemo(() => new GitHub(httpPort, hostPorts().secrets), []);
+  // In a plain browser there are no host ports: sign-in is off there (`available`), and its secrets live in memory.
+  const github = useMemo(() => new GitHub(httpPort, isTauri() ? hostPorts().secrets : memorySecretsPort()), []);
   const [remote, setRemote] = useState<string | null>(null);
   const [syncText, setSyncText] = useState<string | null>(null);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>({ state: "off" });

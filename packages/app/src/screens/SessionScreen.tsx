@@ -16,9 +16,10 @@ export interface Pending {
 }
 
 /**
- * Logging a session (#32): the current exercise's card (steppers, or a hold that runs until Stop;
+ * Logging a session (#32): the current exercise's card (steppers, or a timer that runs until Stop;
  * one-sided sets left then right), the rest timer after each set (+30 s, Skip), effort once per
  * exercise, every set tappable to correct or delete, and Type next / recent chips for what's next.
+ * The card sits in the middle (#44): what's done above it, what's still to do below.
  */
 export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, library, recent, index, units, pending, onPending, onChanged, onFinished, onHome }: {
   /** Suggest next (#43), shown in place when open. */
@@ -58,6 +59,9 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, lib
   const [editing, setEditing] = useState<string | null>(null);
   const [next, setNext] = useState("");
   const [busy, setBusy] = useState(false);
+  // The current exercise in the middle of the screen whenever it changes (#44).
+  const middle = useRef<HTMLDivElement>(null);
+  useEffect(() => { middle.current?.scrollIntoView({ block: "center", behavior: "smooth" }); }, [current?.id]);
 
   // The steppers: the draft if it's for this exercise, else the next set's defaults.
   const defaults = (e: Entry | undefined): Pending | null => {
@@ -172,6 +176,44 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, lib
   const amountText = (n: number) => (measure === "reps" ? `${n}` : measure === "time" ? `${n} s` : `${n} m`);
   const minutes = Math.floor((now - Date.parse(session.startedAt)) / 60_000);
 
+  // Done above the card, still to do below (#44). Planned exercises go by their plan status; anything
+  // else is done once it has a set.
+  const setCount = (e: Entry) => e.sets.filter((x) => !x.deleted).length;
+  const setsWord = (n: number) => `${n} ${n === 1 ? "set" : "sets"}`;
+  const nameOf = (exercise: string) => byId.get(exercise)?.name ?? exercise;
+  const open = (id: string) => { setEditing(null); setCurrentId(id); };
+  const doneRows: Row[] = [];
+  const nextRows: Row[] = [];
+  for (const e of entries) {
+    if (e.id === current?.id) continue;
+    const st = steps.find((x) => x.entryId === e.id);
+    if (st) {
+      const off = skipped.has(st.item.id) && !st.complete;
+      if (st.complete || off) doneRows.push({ key: e.id, name: nameOf(e.exercise), detail: `${st.complete ? "✓ " : ""}${st.done}/${st.item.sets}${off ? " · skipped" : ""}`, onOpen: () => open(e.id) });
+    } else if (setCount(e)) {
+      doneRows.push({ key: e.id, name: nameOf(e.exercise), detail: `✓ ${setsWord(setCount(e))}`, onOpen: () => open(e.id) });
+    } else {
+      nextRows.push({ key: e.id, name: nameOf(e.exercise), detail: "added", onOpen: () => open(e.id) });
+    }
+  }
+  for (const st of steps) {
+    if (st.entryId === current?.id) continue;
+    const off = skipped.has(st.item.id);
+    if (!st.entryId && off) doneRows.push({ key: st.item.id, name: nameOf(st.item.exercise), detail: "skipped", muted: true, onOpen: () => void openStep(st.item.id) });
+    if (!st.complete && !off) {
+      nextRows.push({
+        key: st.item.id, name: nameOf(st.item.exercise), detail: `${st.done}/${st.item.sets}`, onOpen: () => void openStep(st.item.id),
+        onSkip: () => setSkipped(new Set(skipped).add(st.item.id)),
+      });
+    }
+  }
+  const currentStep = stepOf(current);
+  const skipCurrent = currentStep && !currentStep.complete && !skipped.has(currentStep.item.id) ? () => {
+    const next = new Set(skipped).add(currentStep.item.id);
+    setSkipped(next);
+    void run(() => advance(currentStep.item.id, next));
+  } : undefined;
+
   return (
     <div className="pad">
       <div className="hrow">
@@ -180,6 +222,9 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, lib
         <Button variant="secondary" disabled={busy || !!hold} onClick={() => void run(async () => { if (rest) { setRest(null); await stopTimer(); } onPending(null); onFinished(await log.finish()); })}>Finish</Button>
       </div>
 
+      {doneRows.length ? <RowList label="Done" rows={doneRows} /> : null}
+
+      <div ref={middle} style={{ display: "flex", flexDirection: "column", gap: "inherit", scrollMarginTop: 16, scrollMarginBottom: 16 }}>
       {rest ? (
         <div className="card" aria-label="Rest">
           <span className="label">Rest</span>
@@ -195,7 +240,7 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, lib
         <div className="card" aria-label="Current exercise">
           <div className="hrow" style={{ minHeight: 0, alignItems: "flex-start" }}>
             <h2 className="title" style={{ fontSize: 22 }}>{item?.name ?? current.exercise}</h2>
-            {stepOf(current) ? <span className="muted num" style={{ whiteSpace: "nowrap", paddingTop: 4 }}>Set {Math.min(stepOf(current)!.done + 1, stepOf(current)!.item.sets)} of {stepOf(current)!.item.sets}</span> : null}
+            {currentStep ? <span className="muted num" style={{ whiteSpace: "nowrap", paddingTop: 4 }}>Set {Math.min(currentStep.done + 1, currentStep.item.sets)} of {currentStep.item.sets}</span> : null}
           </div>
           {(() => {
             const target = stepOf(current)?.item;
@@ -220,7 +265,7 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, lib
           {item?.sided ? <span className="label">{p.left === undefined ? "Left side" : `Right side · left was ${amountText(p.left)}`}</span> : null}
           {hold ? (
             <>
-              <Timer seconds={elapsedSeconds(hold, now)} label="Hold" />
+              <Timer seconds={elapsedSeconds(hold, now)} label="Time" />
               <span className="muted" style={{ textAlign: "center" }}>Target {amountText(hold.spec.targetSeconds)}</span>
               <Button variant="stop" xl onClick={() => void stopHold()}>Stop</Button>
             </>
@@ -232,7 +277,7 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, lib
                 <Stepper label="Load" value={shownLoad ? `${shownLoad} ${units}` : "None"} onLess={() => stepLoad(-1)} onMore={() => stepLoad(1)} />
               ) : null}
               {measure === "time" ? (
-                <Button variant="primary" xl disabled={busy} onClick={() => void startHold()}>{item?.sided ? `Start ${p.left === undefined ? "left" : "right"} hold` : "Start hold"}</Button>
+                <Button variant="primary" xl disabled={busy} onClick={() => void startHold()}>{item?.sided ? `Start ${p.left === undefined ? "left" : "right"} side` : "Start exercise"}</Button>
               ) : (
                 <Button variant="primary" xl disabled={busy} onClick={() => void done(p.amount)}>{item?.sided ? `Log ${p.left === undefined ? "left" : "right"}` : "Log set"}</Button>
               )}
@@ -241,52 +286,12 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, lib
           <span className="label">Effort</span>
           <Segmented label="Effort" value={current.effort ?? ("" as Effort)} onChange={(e) => void run(() => log.setEffort(current.id, e))}
             options={EFFORTS.map((id) => ({ id, label: EFFORT_LABEL[id] }))} />
+          {skipCurrent && !hold ? <Button variant="ghost" onClick={skipCurrent}>Skip this exercise</Button> : null}
         </div>
       ) : null}
+      </div>
 
-      {plan ? (
-        <>
-          <span className="label">The plan</span>
-          <div className="card" style={{ padding: 0, gap: 0 }}>
-            {steps.map((st) => {
-              const isCurrent = !!st.entryId && st.entryId === current?.id;
-              return (
-                <div key={st.item.id} className="hrow" style={{ borderBottom: "1px solid var(--line)", minHeight: 52 }}>
-                  <button type="button" className="result" style={{ borderBottom: 0, flexGrow: 1 }} aria-current={isCurrent} onClick={() => void openStep(st.item.id)}>
-                    <span className={isCurrent ? "strong" : skipped.has(st.item.id) ? "muted" : ""}>{byId.get(st.item.exercise)?.name ?? st.item.exercise}</span>
-                    <span className="muted num">{st.complete ? "✓ " : ""}{st.done}/{st.item.sets}{skipped.has(st.item.id) && !st.complete ? " · skipped" : ""}</span>
-                  </button>
-                  {!st.complete && !skipped.has(st.item.id) ? (
-                    <button type="button" className="btn ghost" style={{ minHeight: 44, marginRight: 8 }} onClick={() => {
-                      const next = new Set(skipped).add(st.item.id);
-                      setSkipped(next);
-                      if (isCurrent) void run(() => advance(st.item.id, next));
-                    }}>Skip</button>
-                  ) : null}
-                </div>
-              );
-            })}
-            {entries.filter((e) => !steps.some((st) => st.entryId === e.id)).map((e) => (
-              <button key={e.id} type="button" className="result" aria-current={e.id === current?.id} onClick={() => { setEditing(null); setCurrentId(e.id); }}>
-                <span className={e.id === current?.id ? "strong" : ""}>{byId.get(e.exercise)?.name ?? e.exercise} <span className="muted">· added</span></span>
-                <span className="muted num">{e.sets.filter((x) => !x.deleted).length}</span>
-              </button>
-            ))}
-          </div>
-        </>
-      ) : entries.length > 1 ? (
-        <>
-          <span className="label">This session</span>
-          <div className="card" style={{ padding: 0, gap: 0 }}>
-            {entries.map((e) => (
-              <button key={e.id} type="button" className="result" aria-current={e.id === current?.id} onClick={() => { setEditing(null); setCurrentId(e.id); }}>
-                <span className={e.id === current?.id ? "strong" : ""}>{byId.get(e.exercise)?.name ?? e.exercise}</span>
-                <span className="muted num">{((n) => `${n} ${n === 1 ? "set" : "sets"}`)(e.sets.filter((s) => !s.deleted).length)}</span>
-              </button>
-            ))}
-          </div>
-        </>
-      ) : null}
+      {nextRows.length ? <RowList label="Up next" rows={nextRows} /> : null}
 
       {suggestPanel ?? <Button xl onClick={onSuggest}>Suggest next</Button>}
       <input className="field" type="search" aria-label="Type next" placeholder="Type next" autoComplete="off" value={next}
@@ -300,6 +305,28 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, lib
         <div className="chips">{recent.filter((r) => !entries.some((e) => e.exercise === r.id)).slice(0, 6).map((r) => <Chip key={r.id} onClick={() => void addNext(r)}>{r.name}</Chip>)}</div>
       ) : null}
     </div>
+  );
+}
+
+interface Row { key: string; name: string; detail: string; muted?: boolean; onOpen: () => void; onSkip?: () => void }
+
+/** Exercises around the current one (#44): tap to make one current; ones still to do can be skipped. */
+function RowList({ label, rows }: { label: string; rows: Row[] }) {
+  return (
+    <>
+      <span className="label">{label}</span>
+      <div className="card" style={{ padding: 0, gap: 0 }} aria-label={label}>
+        {rows.map((r) => (
+          <div key={r.key} className="hrow" style={{ borderBottom: "1px solid var(--line)", minHeight: 52 }}>
+            <button type="button" className="result" style={{ borderBottom: 0, flexGrow: 1 }} onClick={r.onOpen}>
+              <span className={r.muted ? "muted" : ""}>{r.name}</span>
+              <span className="muted num">{r.detail}</span>
+            </button>
+            {r.onSkip ? <button type="button" className="btn ghost" style={{ minHeight: 44, marginRight: 8 }} onClick={r.onSkip}>Skip</button> : null}
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
 
