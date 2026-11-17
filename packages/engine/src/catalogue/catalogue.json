@@ -5155,7 +5155,7 @@
   }
  ],
  "rules": {
-  "review": "pending",
+  "review": "approved",
   "helps": [
    {
     "region": "lowerback",

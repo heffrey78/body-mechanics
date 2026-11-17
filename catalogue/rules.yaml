@@ -16,7 +16,7 @@
 #   - conditions: a condition's avoid list is always avoided; anything else that strains its
 #     regions is modified as for a mild mark.
 
-review: pending
+review: approved
 
 # ---------------------------------------------------------------- what helps a mark
 helps:
