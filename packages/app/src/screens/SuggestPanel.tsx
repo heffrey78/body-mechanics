@@ -101,7 +101,7 @@ export function SuggestPanel({ answers, defaultLocation, locations, library, ind
   );
 }
 
-function Questions({ initial, defaultLocation, locations, onDone, onClose }: {
+export function Questions({ initial, defaultLocation, locations, onDone, onClose }: {
   initial: SuggestAnswers | null; defaultLocation: string | null; locations: Location[]; onDone: (a: SuggestAnswers) => void; onClose: () => void;
 }) {
   const [location, setLocation] = useState<string | undefined>(initial ? initial.location : defaultLocation ?? undefined);

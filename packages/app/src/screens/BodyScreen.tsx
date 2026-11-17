@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import {
-  BOTHERS, MARK_KINDS, RED_FLAGS, SIDED_REGIONS, currentState, history, isActive, isDue, offersCondition, redFlags,
+  BOTHERS, MARK_KINDS, RED_FLAGS, SIDED_REGIONS, alreadyModified, assess, concerns, currentState, helpersFor, history, isActive, isDue, offersCondition, redFlags, reviewRoutine,
+  type LibraryItem, type Routine, type RoutineFlag,
   type Body, type Bother, type CheckIn, type CheckInFields, type Condition, type Mark, type MarkKind, type RedFlag, type Region, type Severity, type Side,
 } from "@bm/engine";
 import { Button, Chip, MarkBadge } from "../ui/components.tsx";
@@ -60,8 +61,12 @@ type View =
  * The Body tab (#48): a front and back figure to mark how a region feels, a list of what's marked with
  * check-ins due, each mark's history, check-ins and resolving. Conditions show here too (#49).
  */
-export function BodyScreen({ body, open, onNewMark, onCheckIn, onResolve, onReopen, onBecomeCondition }: {
+export function BodyScreen({ body, library, routines, open, onNewMark, onCheckIn, onResolve, onReopen, onBecomeCondition, onUseModified }: {
   body: Body;
+  library: LibraryItem[];
+  routines: Routine[];
+  /** Change a routine item as a flag says (#50). */
+  onUseModified: (r: Routine, f: RoutineFlag) => void;
   /** Open this mark or condition straight away (from Home's check-in card). */
   open?: string | null;
   /** Make and save a mark; returns its id. */
@@ -92,11 +97,15 @@ export function BodyScreen({ body, open, onNewMark, onCheckIn, onResolve, onReop
   if (view.v === "mark" && mark) {
     return <MarkDetail mark={mark} onBack={() => setView({ v: "map" })} onCheckIn={() => setView({ v: "checkin", id: mark.id })}
       onResolve={() => onResolve(mark)} onReopen={() => onReopen(mark)}
-      onBecomeCondition={() => setView({ v: "condition", id: onBecomeCondition(mark) })} />;
+      onBecomeCondition={() => setView({ v: "condition", id: onBecomeCondition(mark) })}>
+      <Advice subject={mark} body={body} library={library} routines={routines} onUseModified={onUseModified} />
+    </MarkDetail>;
   }
   const condition = view.v === "condition" ? body.conditions.find((c) => c.id === view.id) : undefined;
   if (condition) {
-    return <ConditionDetail condition={condition} onBack={() => setView({ v: "map" })} onCheckIn={(f) => onCheckIn(condition, f)} />;
+    return <ConditionDetail condition={condition} onBack={() => setView({ v: "map" })} onCheckIn={(f) => onCheckIn(condition, f)}>
+      <Advice subject={condition} body={body} library={library} routines={routines} onUseModified={onUseModified} />
+    </ConditionDetail>;
   }
 
   const slots = face === "front" ? FRONT : BACK;
@@ -252,7 +261,7 @@ function History({ items }: { items: { at: string; severity: Severity }[] }) {
   );
 }
 
-function MarkDetail({ mark, onBack, onCheckIn, onResolve, onReopen, onBecomeCondition }: { mark: Mark; onBack: () => void; onCheckIn: () => void; onResolve: () => void; onReopen: () => void; onBecomeCondition: () => void }) {
+function MarkDetail({ mark, onBack, onCheckIn, onResolve, onReopen, onBecomeCondition, children }: { mark: Mark; onBack: () => void; onCheckIn: () => void; onResolve: () => void; onReopen: () => void; onBecomeCondition: () => void; children?: ReactNode }) {
   const [confirm, setConfirm] = useState(false);
   const s = currentState(mark);
   const now = new Date();
@@ -277,6 +286,7 @@ function MarkDetail({ mark, onBack, onCheckIn, onResolve, onReopen, onBecomeCond
       ) : null}
       {mark.becameCondition ? <span className="muted">This became a condition.</span> : null}
       <History items={history(mark)} />
+      {mark.resolvedAt ? null : children}
       {mark.resolvedAt ? (
         <Button onClick={onReopen}>It's back</Button>
       ) : confirm ? (
@@ -294,7 +304,7 @@ function MarkDetail({ mark, onBack, onCheckIn, onResolve, onReopen, onBecomeCond
   );
 }
 
-function ConditionDetail({ condition, onBack, onCheckIn }: { condition: Condition; onBack: () => void; onCheckIn: (f: CheckInFields) => void }) {
+function ConditionDetail({ condition, onBack, onCheckIn, children }: { condition: Condition; onBack: () => void; onCheckIn: (f: CheckInFields) => void; children?: ReactNode }) {
   const [checking, setChecking] = useState(false);
   if (checking) {
     return <MarkSheet title={condition.name} last={currentState(condition)} onCancel={() => setChecking(false)} onSave={(f) => { onCheckIn(f); setChecking(false); }} />;
@@ -308,7 +318,52 @@ function ConditionDetail({ condition, onBack, onCheckIn }: { condition: Conditio
       {condition.note ? <span>“{condition.note}”</span> : null}
       {flags.length ? <span className="warn-text">You noted: {flags.map((f) => RED_FLAG_LABEL[f].toLowerCase()).join(", ")}. {RED_FLAG_ADVICE}</span> : null}
       {condition.checkins.length ? <History items={history(condition)} /> : <span className="muted">No check-ins yet. Check in when it's bothering you, and the app will ask weekly after that.</span>}
+      {children}
       <Button variant="primary" onClick={() => setChecking(true)}>Check in</Button>
     </div>
   );
 }
+
+/**
+ * What a mark or condition means for training (#50): what helps it (minus anything the body rules out),
+ * and the person's routine items it changes, with Use modified.
+ */
+function Advice({ subject, body, library, routines, onUseModified }: {
+  subject: Mark | Condition; body: Body; library: LibraryItem[]; routines: Routine[]; onUseModified: (r: Routine, f: RoutineFlag) => void;
+}) {
+  const byId = useMemo(() => new Map(library.map((x) => [x.id, x])), [library]);
+  const all = useMemo(() => concerns(body), [body]);
+  const mine = all.filter((c) => c.id === subject.id);
+  const helps = [...new Set(mine.flatMap((c) => helpersFor(c)))]
+    .map((id) => byId.get(id)).filter((x): x is LibraryItem => !!x && assess(x, all).action !== "avoid").slice(0, 5);
+  const flags = routines.flatMap((r) => reviewRoutine(r.items, library, mine).map((f) => ({ r, f, done: alreadyModified(r.items.find((i) => i.id === f.itemId)!, f.assessment) })));
+  if (!mine.length) return null;
+  return (
+    <>
+      {helps.length ? (
+        <div className="card" aria-label="Helps">
+          <span className="label">Helps</span>
+          {helps.map((x) => <span key={x.id}>{x.name} <span className="muted" style={{ fontSize: 13 }}>· {x.kinds.join(", ")}</span></span>)}
+          <span className="muted" style={{ fontSize: 13 }}>Suggest next and planned sessions lead with these.</span>
+        </div>
+      ) : null}
+      {flags.length ? (
+        <div className="card" aria-label="In your routines">
+          <span className="label">In your routines</span>
+          {flags.map(({ r, f, done }) => {
+            const a = f.assessment;
+            const name = (id: string) => byId.get(id)?.name ?? id;
+            const what = done ? "done gently ✓" : a.action === "avoid" ? "left out for now" : a.action === "modify" ? (a.swap ? `gentler: ${name(a.swap)}` : "do it more gently") : "keep it light";
+            return (
+              <div key={r.id + f.itemId} className="hrow" style={{ minHeight: 0, alignItems: "center" }}>
+                <span><span className="strong">{name(f.exercise)}</span> <span className="muted" style={{ fontSize: 13 }}>in {r.name}: {what}</span></span>
+                {a.action === "modify" && !done ? <Button variant="ghost" onClick={() => onUseModified(r, f)}>Use modified</Button> : null}
+              </div>
+            );
+          })}
+        </div>
+      ) : null}
+    </>
+  );
+}
+

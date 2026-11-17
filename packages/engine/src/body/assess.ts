@@ -9,8 +9,10 @@
  */
 import { bodyRules } from "../catalogue/index.ts";
 import type { BodyRules } from "../catalogue/schema.ts";
-import type { Condition, Mark } from "../records/schemas.ts";
-import { type MarkKind, type Region, type Severity, type Side } from "../records/vocab.ts";
+import type { Condition, Mark, RoutineItem } from "../records/schemas.ts";
+import { modifiersOf, type MarkKind, type Measure, type Region, type Severity, type Side } from "../records/vocab.ts";
+import { FIELD } from "../store/next-set.ts";
+import { newItem } from "../store/routines.ts";
 import { currentState, isActive, type Body } from "../store/body.ts";
 import type { LibraryItem } from "../store/session-log.ts";
 
@@ -155,8 +157,15 @@ export interface RoutineFlag {
   assessment: Assessment;
 }
 
+/** True when a routine item already does what its assessment asks: no swap left, every modifier on it. */
+export function alreadyModified(item: { exercise: string; modifiers?: readonly { id: string }[] | undefined }, a: Assessment): boolean {
+  if (a.action !== "modify" || (a.swap && a.swap !== item.exercise)) return false;
+  const have = new Set((item.modifiers ?? []).map((m) => m.id));
+  return a.modifiers.every((m) => have.has(m));
+}
+
 /** The items in a routine that the body's concerns change, in the routine's order (#4: flag them). */
-export function reviewRoutine(items: readonly { id: string; exercise: string; deleted?: true }[], library: readonly LibraryItem[], cs: readonly Concern[], rules: BodyRules = bodyRules()): RoutineFlag[] {
+export function reviewRoutine(items: readonly { id: string; exercise: string; deleted?: true | undefined }[], library: readonly LibraryItem[], cs: readonly Concern[], rules: BodyRules = bodyRules()): RoutineFlag[] {
   const byId = new Map(library.map((x) => [x.id, x]));
   const out: RoutineFlag[] = [];
   for (const it of items) {
@@ -167,4 +176,26 @@ export function reviewRoutine(items: readonly { id: string; exercise: string; de
     if (a.action !== "ok") out.push({ itemId: it.id, exercise: it.exercise, assessment: a });
   }
   return out;
+}
+
+/**
+ * "Use modified" (#50): a routine item changed as its assessment says: swapped for the gentler exercise
+ * (with the swap's modifiers), or the same exercise with the modifiers. A swap measured differently
+ * (reps for seconds) starts from that measure's targets.
+ */
+export function applyModified(item: RoutineItem, a: Assessment, measureOf: (exercise: string) => Measure): RoutineItem {
+  const mods = (ids: readonly string[]) => modifiersOf(ids);
+  if (a.swap && a.swap !== item.exercise) {
+    const { reps: _r, seconds: _s, metres: _m, modifiers: _mo, ...rest } = item;
+    const same = measureOf(a.swap) === measureOf(item.exercise);
+    const base = same ? item : newItem(a.swap, measureOf(a.swap));
+    const f = FIELD[measureOf(a.swap)];
+    return {
+      ...rest, exercise: a.swap, ...(same ? {} : { sets: base.sets }), [f]: base[f],
+      ...(a.swapModifiers.length ? { modifiers: mods(a.swapModifiers) } : {}),
+    } as RoutineItem;
+  }
+  const merged = [...(item.modifiers ?? [])];
+  for (const m of mods(a.modifiers)) if (!merged.some((x) => x.id === m.id)) merged.push(m);
+  return { ...item, ...(merged.length ? { modifiers: merged } : {}) };
 }

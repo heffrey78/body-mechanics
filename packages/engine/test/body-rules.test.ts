@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  AREAS, assess, catalogue, concerns, describeConcern, helpersFor, newCondition, newMark, reviewRoutine, starterLocations, suggest,
+  AREAS, applyModified, assess, buildPlan, catalogue, concerns, describeConcern, helpersFor, recipe, newCondition, newMark, reviewRoutine, starterLocations, suggest,
   type Concern, type Context, type LibraryItem, type Location,
 } from "../src/index.ts";
 
@@ -109,5 +109,53 @@ describe("the body in the engine (#47)", () => {
     const next = suggest({ location: gym, sweat: 1, area: [], kinds: [] }, ctx(cs, { done: [first.item.id] }))[0]!;
     const which = (id: string) => cs.filter((c) => helpersFor(c).includes(id)).map(describeConcern);
     expect(which(first.item.id)).not.toEqual(which(next.item.id));
+  });
+});
+
+describe("a session plan around the body (#50)", () => {
+  const acl = newCondition({ name: "ACL repair", kind: "acl-repair", regions: [{ region: "knee", side: "left" }], since: "2019" });
+  const cs = () => concerns({ marks: [mark("lowerback", "none", "stiffness", 1), mark("shoulder", "right", "pain", 1)], conditions: [acl] }, now);
+
+  it("upper body: leads with what helps the shoulder, names it where it's strained, and lists the knee as not affected", () => {
+    const plan = buildPlan({ location: gym, sweat: 1, area: AREAS.upper, kinds: [] }, ctx(cs()));
+    expect(plan.sections.map((s) => [s.label, s.items.length])).toEqual([["Warm-up", 2], ["Main", 3], ["Finish", 1]]);
+    const items = plan.sections.flatMap((s) => s.items);
+    expect(items[0]!.reasons[0]).toMatch(/^Helps your right shoulder pain/);
+    for (const s of items) if (s.item.strains.includes("shoulder")) expect(s.reasons.join(" "), s.item.name).toMatch(/right shoulder pain/);
+    expect(new Set(items.map((s) => s.item.id)).size).toBe(items.length);
+    expect(plan.notAffected.map(describeConcern)).toContain("left knee (ACL repair)");
+  });
+
+  it("shares several kinds out in the order mobility, balance, strength, endurance, with a warm-up when mobility isn't asked for", () => {
+    expect(recipe(["endurance", "strength"]).map((s) => [s.label, s.count])).toEqual([["Warm-up", 1], ["Strength", 3], ["Endurance", 2]]);
+    expect(recipe(["strength", "mobility", "balance"]).map((s) => [s.label, s.count])).toEqual([["Mobility", 2], ["Balance", 2], ["Strength", 2]]);
+    const plan = buildPlan({ location: gym, sweat: 2, area: [], kinds: ["balance", "strength"] }, ctx(cs()));
+    expect(plan.sections.map((s) => s.label)).toEqual(["Warm-up", "Balance", "Strength"]);
+    for (const s of plan.sections.find((x) => x.label === "Balance")!.items) expect(s.item.kinds).toContain("balance");
+  });
+
+  it("swaps: a skipped exercise gives way to the next best, and a moderate mark keeps its area out of the plan", () => {
+    const answers = { location: gym, sweat: 1 as const, area: AREAS.upper, kinds: [] };
+    const first = buildPlan(answers, ctx(cs())).sections[0]!.items[0]!;
+    const again = buildPlan(answers, ctx(cs()), new Set([first.item.id])).sections[0]!.items[0]!;
+    expect(again.item.id).not.toBe(first.item.id);
+    const sore = concerns({ marks: [mark("shoulder", "right", "pain", 2)], conditions: [] }, now);
+    for (const s of buildPlan(answers, ctx(sore)).sections.flatMap((x) => x.items)) expect(s.item.strains, s.item.name).not.toContain("shoulder");
+  });
+});
+
+describe("Use modified (#50)", () => {
+  const measureOf = (x: string) => byId.get(x)!.measure;
+  it("swaps to the gentler exercise keeping the targets, or adds the modifiers; a different measure starts afresh", () => {
+    const back = body(mark("lowerback", "none", "stiffness", 1));
+    const dl = { id: "iaaaaaaaaaaaaaaa", exercise: "bm:deadlift", sets: 3, reps: 8, loadKg: 60, restSeconds: 120 };
+    expect(applyModified(dl, assess(ex("deadlift"), back), measureOf)).toEqual({ ...dl, exercise: "bm:romanian-deadlift", modifiers: [{ kind: "load", id: "lighter" }] });
+    const rdl = { id: "ibbbbbbbbbbbbbbb", exercise: "bm:romanian-deadlift", sets: 3, reps: 10 };
+    expect(applyModified(rdl, assess(ex("romanian-deadlift"), back), measureOf).modifiers?.map((m) => m.id)).toEqual(["lighter", "short-range"]);
+    // Hollow hold (seconds) → dead bug (reps): the dead bug's own starting targets.
+    const hollow = { id: "icccccccccccccccc".slice(0, 16), exercise: "bm:hollow-hold", sets: 4, seconds: 45 };
+    const out = applyModified(hollow, assess(ex("hollow-hold"), back), measureOf);
+    expect(out).toMatchObject({ exercise: "bm:dead-bug", sets: 3, reps: 10 });
+    expect(out.seconds).toBeUndefined();
   });
 });

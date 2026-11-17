@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   COMMIT_EMAIL, COMMIT_NAME, Committer, ENGINE_VERSION, NotSetUp, RecordIndex, SessionLog, Vault, clearDraft, createExercise, deviceClock,
-  GitHub, Syncer, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, loadBody, newMark, newCondition, editBody, modifiersOf, checkIn, resolveMark, reopenMark, isDue, isActive, type Body, type Mark, type Condition, type CheckInFields, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
+  GitHub, Syncer, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, loadBody, newMark, newCondition, editBody, modifiersOf, applyModified, checkIn, resolveMark, reopenMark, isDue, isActive, type Body, type Mark, type Condition, type CheckInFields, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
   portsRoundTrip, routineFromSession, saveDraft,
   type Clock, type Location, type Suggestion, type SyncStatus, type TargetUpdate, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
 } from "@bm/engine";
@@ -19,6 +19,7 @@ import { CreditsScreen } from "./screens/CreditsScreen.tsx";
 import { HomeScreen } from "./screens/HomeScreen.tsx";
 import { BodyScreen, markTitle, type NewMarkFields } from "./screens/BodyScreen.tsx";
 import { ConditionsScreen } from "./screens/ConditionsScreen.tsx";
+import { PlanScreen } from "./screens/PlanScreen.tsx";
 import { NewMovement } from "./screens/NewMovement.tsx";
 import { SessionScreen, type Pending } from "./screens/SessionScreen.tsx";
 import { HistoryScreen } from "./screens/HistoryScreen.tsx";
@@ -56,7 +57,7 @@ export function App() {
   const [suggesting, setSuggesting] = useState(false);
   const [homeAnswers, setHomeAnswers] = useState<SuggestAnswers | null>(null);
   const [refused, setRefused] = useState<Set<string>>(new Set());
-  const [home, setHome] = useState<{ screen: "start" } | { screen: "new"; name: string } | { screen: "session" }>({ screen: "start" });
+  const [home, setHome] = useState<{ screen: "start" } | { screen: "new"; name: string } | { screen: "session" } | { screen: "plan" }>({ screen: "start" });
   const [library, setLibrary] = useState<LibraryItem[]>([]);
   const [index, setIndex] = useState<RecordIndex | null>(null);
   const [log, setLog] = useState<SessionLog | null>(null);
@@ -467,7 +468,7 @@ export function App() {
   } else if (tab === "routines") {
     body = (
       <RoutinesScreen
-        routines={routines} library={library} index={index} units={profile?.units ?? "kg"} sessionOpen={!!session}
+        routines={routines} library={library} index={index} body={bodyRecords} units={profile?.units ?? "kg"} sessionOpen={!!session}
         onSave={saveRoutine}
         onDelete={(r) => saveRoutine({ ...r, deleted: true })}
         onNew={() => { const r = newRoutine("New routine"); saveRoutine(r); return r; }}
@@ -500,6 +501,9 @@ export function App() {
         }}
       />
     );
+  } else if (tab === "home" && home.screen === "plan") {
+    body = <PlanScreen defaultLocation={location} locations={locations} library={library} index={index} body={bodyRecords} units={profile?.units ?? "kg"}
+      onStart={(items) => void startPlan(items)} onBack={() => setHome({ screen: "start" })} />;
   } else if (tab === "home" && home.screen === "new") {
     body = (
       <NewMovement
@@ -594,7 +598,7 @@ export function App() {
           );
         })()}
         <HomeScreen
-          suggestPanel={suggestPanel} onSuggest={() => setSuggesting(true)}
+          suggestPanel={suggestPanel} onSuggest={() => setSuggesting(true)} onPlan={() => setHome({ screen: "plan" })}
           library={library} recent={recent} sessionOpen={!!session}
           locations={locations} location={location} onLocation={setLocation}
           onStart={(x) => void startWith(x)}
@@ -605,7 +609,11 @@ export function App() {
     );
   } else if (tab === "body") {
     body = (
-      <BodyScreen key={bodyOpen ?? "map"} body={bodyRecords} open={bodyOpen}
+      <BodyScreen key={bodyOpen ?? "map"} body={bodyRecords} open={bodyOpen} library={library} routines={routines}
+        onUseModified={(r, f) => {
+          const byId = new Map(library.map((x) => [x.id, x]));
+          saveRoutine({ ...r, items: r.items.map((i) => (i.id === f.itemId ? applyModified(i, f.assessment, (x) => byId.get(x)?.measure ?? "reps") : i)) });
+        }}
         onNewMark={(f: NewMarkFields) => {
           const m = newMark(f);
           saveBody(m, `Mark: ${markTitle(m)}`);

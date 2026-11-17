@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { newItem, search, showLoad, toKg, FIELD, type LibraryItem, type RecordIndex, type Routine, type RoutineItem } from "@bm/engine";
+import { alreadyModified, applyModified, concerns, newItem, reviewRoutine, search, showLoad, toKg, FIELD, type Body, type LibraryItem, type RecordIndex, type Routine, type RoutineFlag, type RoutineItem } from "@bm/engine";
 import { ModifierPicker, modifierText } from "../ui/ModifierPicker.tsx";
 import { Button, Stepper, Tag } from "../ui/components.tsx";
 
@@ -32,10 +32,12 @@ export function describeItem(item: RoutineItem, x: LibraryItem | undefined, unit
  * Routines (#35): the list, and the editor: cards that expand on the phone, a table on the desktop.
  * Every change is saved as it's made (`onSave`), stamped for the merge by the caller.
  */
-export function RoutinesScreen({ routines, library, index, units, sessionOpen, onSave, onDelete, onNew, onStart }: {
+export function RoutinesScreen({ routines, library, index, body, units, sessionOpen, onSave, onDelete, onNew, onStart }: {
   routines: Routine[];
   library: LibraryItem[];
   index: RecordIndex | null;
+  /** Marks and conditions: items they change are flagged (#50). */
+  body: Body;
   units: "kg" | "lb";
   sessionOpen: boolean;
   onSave: (r: Routine) => void;
@@ -46,7 +48,7 @@ export function RoutinesScreen({ routines, library, index, units, sessionOpen, o
   const [open, setOpen] = useState<string | null>(null);
   const routine = routines.find((r) => r.id === open);
   if (routine) {
-    return <RoutineEditor routine={routine} library={library} units={units} sessionOpen={sessionOpen} onSave={onSave} onStart={() => onStart(routine)}
+    return <RoutineEditor routine={routine} library={library} body={body} units={units} sessionOpen={sessionOpen} onSave={onSave} onStart={() => onStart(routine)}
       onDelete={() => { onDelete(routine); setOpen(null); }} onBack={() => setOpen(null)} />;
   }
   const byId = new Map(library.map((x) => [x.id, x]));
@@ -78,8 +80,8 @@ export function RoutinesScreen({ routines, library, index, units, sessionOpen, o
   );
 }
 
-function RoutineEditor({ routine, library, units, sessionOpen, onSave, onStart, onDelete, onBack }: {
-  routine: Routine; library: LibraryItem[]; units: "kg" | "lb"; sessionOpen: boolean;
+function RoutineEditor({ routine, library, body, units, sessionOpen, onSave, onStart, onDelete, onBack }: {
+  routine: Routine; library: LibraryItem[]; body: Body; units: "kg" | "lb"; sessionOpen: boolean;
   onSave: (r: Routine) => void; onStart: () => void; onDelete: () => void; onBack: () => void;
 }) {
   const wide = useWide();
@@ -90,6 +92,13 @@ function RoutineEditor({ routine, library, units, sessionOpen, onSave, onStart, 
   const [confirm, setConfirm] = useState(false);
   const hits = useMemo(() => search(q, library, 5), [q, library]);
   const items = routine.items.filter((i) => !i.deleted);
+  // What the body changes here (#50), with Use modified.
+  const flags = useMemo(() => new Map(reviewRoutine(items, library, concerns(body)).map((f) => [f.itemId, f])), [items, library, body]);
+  const useFlag = (f: RoutineFlag) => setItems(items.map((i) => (i.id === f.itemId ? applyModified(i, f.assessment, (x) => byId.get(x)?.measure ?? "reps") : i)));
+  const flagLine = (i: RoutineItem) => {
+    const f = flags.get(i.id);
+    return f ? <FlagLine flag={f} done={alreadyModified(i, f.assessment)} name={(x) => byId.get(x)?.name ?? x} onUse={() => useFlag(f)} /> : null;
+  };
 
   const setItems = (next: RoutineItem[]) => {
     // Deleted items stay as tombstones, after the live ones.
@@ -147,6 +156,7 @@ function RoutineEditor({ routine, library, units, sessionOpen, onSave, onStart, 
                   <tr key={i.id}>
                     <td>
                       <span className="strong">{x?.name ?? i.exercise}</span>{x?.sided ? <> <Tag>each side</Tag></> : null}
+                      {flagLine(i)}
                       <details>
                         <summary className="muted" style={{ fontSize: 13 }}>{i.modifiers?.length ? modifierText(i.modifiers) : "How it's done"}</summary>
                         <ModifierPicker value={i.modifiers ?? []} onChange={(mods) => patch(i.id, { modifiers: mods.length ? mods : undefined })} />
@@ -183,6 +193,7 @@ function RoutineEditor({ routine, library, units, sessionOpen, onSave, onStart, 
                 </span>
                 <span className="muted">{open ? "▴" : "▾"}</span>
               </button>
+              {flagLine(i)}
               {open ? (
                 <>
                   <Stepper label="Sets" value={String(i.sets)} onLess={() => patch(i.id, { sets: Math.max(1, i.sets - 1) })} onMore={() => patch(i.id, { sets: Math.min(20, i.sets + 1) })} />
@@ -223,6 +234,21 @@ function RoutineEditor({ routine, library, units, sessionOpen, onSave, onStart, 
           <div className="pair"><Button variant="stop" onClick={onDelete}>Delete</Button><Button onClick={() => setConfirm(false)}>Keep</Button></div>
         </div>
       ) : <Button variant="ghost" onClick={() => setConfirm(true)}>Delete routine</Button>}
+    </div>
+  );
+}
+
+/** A routine item the body changes (#50): why, and Use modified when there's a gentler way. */
+function FlagLine({ flag, done, name, onUse }: { flag: RoutineFlag; done: boolean; name: (exercise: string) => string; onUse: () => void }) {
+  const a = flag.assessment;
+  if (done) return <span className="muted" style={{ fontSize: 13, marginTop: 4 }}>Done gently for your {a.affects.length ? a.reasons[0]!.replace(/^Strains your /, "").replace(/ \(mild\).*$/, "").replace(/:.*$/, "") : "body"} ✓</span>;
+  const what = a.action === "avoid" ? "Leave it out for now"
+    : a.action === "modify" ? (a.swap ? `Gentler: ${name(a.swap)}` : `Go easy: ${modifierText(a.modifiers.map((id) => ({ id })))}`)
+    : "Keep it light and pain-free";
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 4, marginTop: 4 }}>
+      <span className="warn-text" style={{ fontSize: 13 }}>{a.reasons[0]}. {what}.</span>
+      {a.action === "modify" ? <div><Button variant="ghost" onClick={onUse}>Use modified</Button></div> : null}
     </div>
   );
 }
