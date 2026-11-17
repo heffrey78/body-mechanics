@@ -177,7 +177,8 @@ export function suggest(answers: Answers, ctx: Context): Suggestion[] {
     }
     if (helped.length) reasons.push(`Helps your ${[...new Set(helped)].join(" and ")}`);
     reasons.push(...bodyLines);
-    if (caution) { reasons.push(caution); score -= 0.5; }
+    // The caution is shown on its own (Suggestion.caution), not among the reasons.
+    if (caution) score -= 0.5;
     const focusHit = item.works.filter((r) => answers.area.includes(r));
     if (answers.area.length && focusHit.length) {
       score += answers.area.includes(item.works[0]!) ? 3 : 1.5;

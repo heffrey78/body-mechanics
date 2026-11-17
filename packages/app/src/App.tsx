@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   COMMIT_EMAIL, COMMIT_NAME, Committer, ENGINE_VERSION, NotSetUp, RecordIndex, SessionLog, Vault, clearDraft, createExercise, deviceClock,
-  GitHub, Syncer, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, loadBody, type Body, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
+  GitHub, Syncer, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, loadBody, newMark, checkIn, resolveMark, reopenMark, isDue, isActive, type Body, type Mark, type Condition, type CheckInFields, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
   portsRoundTrip, routineFromSession, saveDraft,
   type Clock, type Location, type Suggestion, type SyncStatus, type TargetUpdate, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
 } from "@bm/engine";
@@ -17,6 +17,7 @@ import { StorageCheck } from "./screens/StorageCheck.tsx";
 import { MoreScreen } from "./screens/MoreScreen.tsx";
 import { CreditsScreen } from "./screens/CreditsScreen.tsx";
 import { HomeScreen } from "./screens/HomeScreen.tsx";
+import { BodyScreen, markTitle, type NewMarkFields } from "./screens/BodyScreen.tsx";
 import { NewMovement } from "./screens/NewMovement.tsx";
 import { SessionScreen, type Pending } from "./screens/SessionScreen.tsx";
 import { HistoryScreen } from "./screens/HistoryScreen.tsx";
@@ -47,6 +48,8 @@ export function App() {
   const [locations, setLocations] = useState<Location[]>([]);
   /** Marks and conditions (#45): Suggest next and plans work around them (#47). */
   const [bodyRecords, setBodyRecords] = useState<Body>({ marks: [], conditions: [] });
+  /** A mark or condition to open on the Body tab (from Home's check-in card). */
+  const [bodyOpen, setBodyOpen] = useState<string | null>(null);
   const [location, setLocation] = useState<string | null>(null);
   // Suggest next (#43): open or not, the answers before a session starts, what's been turned down.
   const [suggesting, setSuggesting] = useState(false);
@@ -143,6 +146,16 @@ export function App() {
     if (stamped.deleted && location === stamped.id) setLocation(null);
     void vault.write(stamped).then(() => committer?.changed(`Location: ${stamped.name}`));
   };
+
+  /** Save a mark or condition (#48): kept in state, written encrypted, committed. */
+  const saveBody = (next: Mark | Condition, message: string) => {
+    if (!vault) return;
+    setBodyRecords((b) => next.type === "mark"
+      ? { ...b, marks: [...b.marks.filter((m) => m.id !== next.id), next].sort((x, y) => x.onset.localeCompare(y.onset)) }
+      : { ...b, conditions: [...b.conditions.filter((c) => c.id !== next.id), next].sort((x, y) => x.name.localeCompare(y.name)) });
+    void vault.write(next).then(() => committer?.changed(message));
+  };
+  const bodyName = (x: Mark | Condition) => (x.type === "mark" ? markTitle(x) : x.name);
 
   /** This session's Suggest next answers, from the record (so they survive a restart). */
   const sessionAnswers = (s: Session): SuggestAnswers | null => s.answers?.sweat === undefined ? null : {
@@ -553,6 +566,24 @@ export function App() {
             </div>
           </div>
         ) : null}
+        {(() => {
+          // Check-ins due (#48): on Home too, one tap to the mark.
+          const now = new Date();
+          const due = [...bodyRecords.marks, ...bodyRecords.conditions].filter((x) => isActive(x, now) && isDue(x, now));
+          if (!due.length || session) return null;
+          return (
+            <div className="pad" style={{ paddingBottom: 0 }}>
+              <div className="card" aria-label="Check-ins due">
+                <span className="label">Check in</span>
+                {due.map((x) => (
+                  <button key={x.id} type="button" className="result" onClick={() => { setBodyOpen(x.id); setTab("body"); }}>
+                    <span>How is your {bodyName(x).replace(" · ", " ").toLowerCase()}?</span><span aria-hidden="true" className="muted">›</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
         <HomeScreen
           suggestPanel={suggestPanel} onSuggest={() => setSuggesting(true)}
           library={library} recent={recent} sessionOpen={!!session}
@@ -563,14 +594,25 @@ export function App() {
         />
       </>
     );
-  } else {
-    body = <div className="pad"><h1 className="title">{tab[0]!.toUpperCase() + tab.slice(1)}</h1><span className="muted">Comes in a later milestone.</span></div>;
+  } else if (tab === "body") {
+    body = (
+      <BodyScreen key={bodyOpen ?? "map"} body={bodyRecords} open={bodyOpen}
+        onNewMark={(f: NewMarkFields) => {
+          const m = newMark(f);
+          saveBody(m, `Mark: ${markTitle(m)}`);
+          return m.id;
+        }}
+        onCheckIn={(x: Mark | Condition, f: CheckInFields) => { if (clock) saveBody(checkIn(x, f, clock), `Check-in: ${bodyName(x)}`); }}
+        onResolve={(m: Mark) => { if (clock) saveBody(resolveMark(m, clock), `Resolved: ${markTitle(m)}`); }}
+        onReopen={(m: Mark) => { if (clock) saveBody(reopenMark(m, clock), `Back again: ${markTitle(m)}`); }}
+      />
+    );
   }
 
   return (
     <div className="screen">
       <main style={{ flexGrow: 1 }}>{body}</main>
-      <BottomTabs current={tab} onChange={(t) => { setTab(t); setSub(null); }} />
+      <BottomTabs current={tab} onChange={(t) => { setTab(t); setSub(null); setBodyOpen(null); }} />
     </div>
   );
 }
