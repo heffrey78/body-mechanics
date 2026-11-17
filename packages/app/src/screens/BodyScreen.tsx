@@ -60,7 +60,7 @@ type View =
  * The Body tab (#48): a front and back figure to mark how a region feels, a list of what's marked with
  * check-ins due, each mark's history, check-ins and resolving. Conditions show here too (#49).
  */
-export function BodyScreen({ body, open, onNewMark, onCheckIn, onResolve, onReopen }: {
+export function BodyScreen({ body, open, onNewMark, onCheckIn, onResolve, onReopen, onBecomeCondition }: {
   body: Body;
   /** Open this mark or condition straight away (from Home's check-in card). */
   open?: string | null;
@@ -69,6 +69,8 @@ export function BodyScreen({ body, open, onNewMark, onCheckIn, onResolve, onReop
   onCheckIn: (s: Mark | Condition, f: CheckInFields) => void;
   onResolve: (m: Mark) => void;
   onReopen: (m: Mark) => void;
+  /** Turn a long-lasting mark into a condition (#49); returns the condition's id. */
+  onBecomeCondition: (m: Mark) => string;
 }) {
   const [view, setView] = useState<View>(() =>
     !open ? { v: "map" } : body.conditions.some((c) => c.id === open) ? { v: "condition", id: open } : { v: "mark", id: open });
@@ -89,7 +91,8 @@ export function BodyScreen({ body, open, onNewMark, onCheckIn, onResolve, onReop
   }
   if (view.v === "mark" && mark) {
     return <MarkDetail mark={mark} onBack={() => setView({ v: "map" })} onCheckIn={() => setView({ v: "checkin", id: mark.id })}
-      onResolve={() => onResolve(mark)} onReopen={() => onReopen(mark)} />;
+      onResolve={() => onResolve(mark)} onReopen={() => onReopen(mark)}
+      onBecomeCondition={() => setView({ v: "condition", id: onBecomeCondition(mark) })} />;
   }
   const condition = view.v === "condition" ? body.conditions.find((c) => c.id === view.id) : undefined;
   if (condition) {
@@ -249,7 +252,7 @@ function History({ items }: { items: { at: string; severity: Severity }[] }) {
   );
 }
 
-function MarkDetail({ mark, onBack, onCheckIn, onResolve, onReopen }: { mark: Mark; onBack: () => void; onCheckIn: () => void; onResolve: () => void; onReopen: () => void }) {
+function MarkDetail({ mark, onBack, onCheckIn, onResolve, onReopen, onBecomeCondition }: { mark: Mark; onBack: () => void; onCheckIn: () => void; onResolve: () => void; onReopen: () => void; onBecomeCondition: () => void }) {
   const [confirm, setConfirm] = useState(false);
   const s = currentState(mark);
   const now = new Date();
@@ -266,7 +269,13 @@ function MarkDetail({ mark, onBack, onCheckIn, onResolve, onReopen }: { mark: Ma
       {s?.note ? <span>“{s.note}”</span> : null}
       {flags.length ? <span className="warn-text">You noted: {flags.map((f) => RED_FLAG_LABEL[f].toLowerCase()).join(", ")}. {RED_FLAG_ADVICE}</span> : null}
       {!flags.length && (mark.kind === "pain" || mark.kind === "injury") && !mark.resolvedAt ? <span className="muted">Stay in a pain-free range, and stop if it sharpens.</span> : null}
-      {offersCondition(mark, now) ? <span className="muted">This has lasted about three months. If it's part of life now, it can become a condition (coming soon).</span> : null}
+      {offersCondition(mark, now) ? (
+        <div className="card">
+          <span>This has lasted about three months. If it's part of life now, make it a condition: it stays on the body map and in suggestions, and this mark is closed into it.</span>
+          <Button onClick={onBecomeCondition}>Make it a condition</Button>
+        </div>
+      ) : null}
+      {mark.becameCondition ? <span className="muted">This became a condition.</span> : null}
       <History items={history(mark)} />
       {mark.resolvedAt ? (
         <Button onClick={onReopen}>It's back</Button>

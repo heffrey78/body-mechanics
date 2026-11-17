@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   COMMIT_EMAIL, COMMIT_NAME, Committer, ENGINE_VERSION, NotSetUp, RecordIndex, SessionLog, Vault, clearDraft, createExercise, deviceClock,
-  GitHub, Syncer, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, loadBody, newMark, checkIn, resolveMark, reopenMark, isDue, isActive, type Body, type Mark, type Condition, type CheckInFields, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
+  GitHub, Syncer, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, loadBody, newMark, newCondition, editBody, checkIn, resolveMark, reopenMark, isDue, isActive, type Body, type Mark, type Condition, type CheckInFields, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
   portsRoundTrip, routineFromSession, saveDraft,
   type Clock, type Location, type Suggestion, type SyncStatus, type TargetUpdate, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
 } from "@bm/engine";
@@ -18,6 +18,7 @@ import { MoreScreen } from "./screens/MoreScreen.tsx";
 import { CreditsScreen } from "./screens/CreditsScreen.tsx";
 import { HomeScreen } from "./screens/HomeScreen.tsx";
 import { BodyScreen, markTitle, type NewMarkFields } from "./screens/BodyScreen.tsx";
+import { ConditionsScreen } from "./screens/ConditionsScreen.tsx";
 import { NewMovement } from "./screens/NewMovement.tsx";
 import { SessionScreen, type Pending } from "./screens/SessionScreen.tsx";
 import { HistoryScreen } from "./screens/HistoryScreen.tsx";
@@ -36,7 +37,7 @@ async function recordsRoot(): Promise<string> {
 export function App() {
   const [theme, setTheme] = useTheme();
   const [tab, setTab] = useState<TabId>("home");
-  const [sub, setSub] = useState<"theme" | "credits" | "checks" | "locations" | "sync" | null>(null);
+  const [sub, setSub] = useState<"theme" | "credits" | "checks" | "locations" | "sync" | "conditions" | null>(null);
   // GitHub sync (#38): the connection, the records' remote, and what the last sync did.
   // In a plain browser there are no host ports: sign-in is off there (`available`), and its secrets live in memory.
   const github = useMemo(() => new GitHub(httpPort, isTauri() ? hostPorts().secrets : memorySecretsPort()), []);
@@ -151,8 +152,8 @@ export function App() {
   const saveBody = (next: Mark | Condition, message: string) => {
     if (!vault) return;
     setBodyRecords((b) => next.type === "mark"
-      ? { ...b, marks: [...b.marks.filter((m) => m.id !== next.id), next].sort((x, y) => x.onset.localeCompare(y.onset)) }
-      : { ...b, conditions: [...b.conditions.filter((c) => c.id !== next.id), next].sort((x, y) => x.name.localeCompare(y.name)) });
+      ? { ...b, marks: [...b.marks.filter((m) => m.id !== next.id), ...(next.deleted ? [] : [next])].sort((x, y) => x.onset.localeCompare(y.onset)) }
+      : { ...b, conditions: [...b.conditions.filter((c) => c.id !== next.id), ...(next.deleted ? [] : [next])].sort((x, y) => x.name.localeCompare(y.name)) });
     void vault.write(next).then(() => committer?.changed(message));
   };
   const bodyName = (x: Mark | Condition) => (x.type === "mark" ? markTitle(x) : x.name);
@@ -429,6 +430,13 @@ export function App() {
     );
   } else if (tab === "more" && sub === "locations") {
     body = <LocationsScreen locations={locations} onSave={saveLocation} onAddStarters={() => starterLocations().forEach((l) => saveLocation(l))} onBack={() => setSub(null)} />;
+  } else if (tab === "more" && sub === "conditions") {
+    body = <ConditionsScreen conditions={bodyRecords.conditions} onBack={() => setSub(null)}
+      onSave={(c) => {
+        if (!clock) return;
+        const before = bodyRecords.conditions.find((x) => x.id === c.id);
+        saveBody(editBody(before, c, clock), `${c.deleted ? "Deleted condition" : "Condition"}: ${c.name}`);
+      }} />;
   } else if (tab === "more" && sub === "credits") {
     body = <CreditsScreen onBack={() => setSub(null)} />;
   } else if (tab === "more" && sub === "checks") {
@@ -605,6 +613,15 @@ export function App() {
         onCheckIn={(x: Mark | Condition, f: CheckInFields) => { if (clock) saveBody(checkIn(x, f, clock), `Check-in: ${bodyName(x)}`); }}
         onResolve={(m: Mark) => { if (clock) saveBody(resolveMark(m, clock), `Resolved: ${markTitle(m)}`); }}
         onReopen={(m: Mark) => { if (clock) saveBody(reopenMark(m, clock), `Back again: ${markTitle(m)}`); }}
+        onBecomeCondition={(m: Mark) => {
+          // A mark that's lasted (#49): a condition from today on, and the mark resolved into it.
+          if (!clock) return m.id;
+          const c = newCondition({ name: markTitle(m).replace(" · ", " "), regions: [{ region: m.region, side: m.side }], since: m.onset.slice(0, 7) });
+          const name = c.name[0]!.toUpperCase() + c.name.slice(1);
+          saveBody({ ...c, name }, `Condition: ${name}`);
+          saveBody(editBody(m, { ...m, becameCondition: c.id, resolvedAt: new Date().toISOString() }, clock), `Became a condition: ${markTitle(m)}`);
+          return c.id;
+        }}
       />
     );
   }
