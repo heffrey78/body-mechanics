@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { catalogue, catalogueEntry } from "../src/index.ts";
+import { MARK_KINDS, REGIONS, bodyRules, catalogue, catalogueEntry, modifierInfo } from "../src/index.ts";
 
 /** The bundled catalogue (#26): valid, consistent, and credited. Built by scripts/catalogue/build.ts. */
 describe("the catalogue", () => {
@@ -29,5 +29,27 @@ describe("the catalogue", () => {
 
   it("keeps left and right out of names: one-sidedness is `sided`", () => {
     for (const e of entries) for (const n of [e.name, ...e.aliases]) expect(n, e.id).not.toMatch(/^(left|right)\b|\b(left|right)$/i);
+  });
+
+  describe("body rules (#46)", () => {
+    const rules = bodyRules();
+    it("name only catalogue exercises and vocabulary modifiers", () => {
+      const ids = [...rules.helps.flatMap((h) => h.exercises), ...rules.modify.flatMap((m) => [m.exercise, ...(m.swap ? [m.swap] : [])]), ...rules.conditions.flatMap((c) => [...c.avoid, ...c.helps])];
+      for (const id of ids) expect(catalogueEntry(id), id).toBeDefined();
+      for (const m of [...rules.modify.flatMap((x) => x.modifiers), ...Object.values(rules.defaults).flat()]) expect(modifierInfo(m), m).toBeDefined();
+    });
+    it("have something that helps every kind of mark on every region, and defaults for every region", () => {
+      for (const region of REGIONS) {
+        expect(rules.defaults[region], region).toBeDefined();
+        for (const kind of MARK_KINDS) expect(rules.helps.some((h) => h.region === region && h.marks.includes(kind)), `${region} ${kind}`).toBe(true);
+      }
+    });
+    it("only modify an exercise for a region it strains, and swap to one that is gentler there", () => {
+      for (const m of rules.modify) {
+        expect(catalogueEntry(m.exercise)!.strains, `${m.exercise} ${m.region}`).toContain(m.region);
+        // A swap is the gentler version (a box squat still loads the knee, less), never one that strains more.
+        if (m.swap) expect(catalogueEntry(m.swap)!.strains.length, `${m.exercise} → ${m.swap}`).toBeLessThanOrEqual(catalogueEntry(m.exercise)!.strains.length);
+      }
+    });
   });
 });

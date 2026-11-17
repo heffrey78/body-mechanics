@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Clock, RecordIndex, SessionLog, Vault, createExercise, deviceClock, loadLibrary, memoryFilesPort, memorySecretsPort, search, type Session } from "../src/index.ts";
+import { Clock, catalogue, RecordIndex, SessionLog, Vault, createExercise, deviceClock, loadLibrary, memoryFilesPort, memorySecretsPort, search, type Session } from "../src/index.ts";
 
 async function setup() {
   const files = memoryFilesPort();
@@ -57,7 +57,7 @@ describe("logging a session (#31, #32)", () => {
       kinds: ["strength"], equipment: [], sweat: 0,
     });
     const library = await loadLibrary(vault);
-    expect(library.length).toBe(145);
+    expect(library.length).toBe(catalogue().entries.length + 1);
     const top = search("couch sit to stand", library)[0];
     expect(top).toMatchObject({ full: true, item: { name: "Couch sit to stand", own: true } });
   });

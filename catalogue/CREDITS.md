@@ -82,6 +82,7 @@ The catalogue (packages/engine/src/catalogue/catalogue.json) is published under 
 | Push-up | [wger 1551](https://wger.de/en/exercise/1551/view/) | CC-BY-SA 4 | Settebello |
 | Incline push-up | [wger 1111](https://wger.de/en/exercise/1111/view/) | CC-BY-SA 4 | anon1337 |
 | Knee push-up | [wger 1218](https://wger.de/en/exercise/1218/view/) | CC-BY-SA 4 | PaukOne |
+| Wall push-up | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
 | Bench press | [wger 73](https://wger.de/en/exercise/73/view/) | CC-BY-SA 3 | sistab2 |
 | Overhead press | [wger 687](https://wger.de/en/exercise/687/view/) | CC-BY-SA 4 | Vazco |
 | Dumbbell shoulder press | [wger 567](https://wger.de/en/exercise/567/view/) | CC-BY-SA 3 | wger.de |

@@ -60,3 +60,27 @@ export type Bother = (typeof BOTHERS)[number];
 /** Red flags (#4): any of these sends the person to a professional, and keeps that area gentle. */
 export const RED_FLAGS = ["numbness", "swelling", "after-fall", "night-pain", "getting-weaker"] as const;
 export type RedFlag = (typeof RED_FLAGS)[number];
+
+/**
+ * The modifier vocabulary (#5, #46): a change to how an exercise is done. A modifier on a record is
+ * {kind, id} from here, plus an optional value and note.
+ */
+export const MODIFIERS = {
+  range: { "short-range": "Short range", "to-box": "To a box or chair", "pain-free-range": "Pain-free range only", "below-shoulder": "Below shoulder height" },
+  load: { lighter: "Lighter", bodyweight: "Body weight only", "band-assisted": "Band-assisted" },
+  support: { "wall-support": "Hand on a wall", "hold-support": "Hold a support", "feet-down": "Feet on the floor" },
+  tempo: { "slow-lowering": "Slow lowering (3 s)", "pause-bottom": "Pause at the bottom", "no-bounce": "Smooth, no bouncing" },
+  position: { incline: "Incline", seated: "Seated", "half-kneeling": "Half-kneeling", "supported-chest": "Chest supported", kneeling: "From the knees" },
+  "grip-stance": { "neutral-grip": "Neutral grip", fists: "On fists", "shorter-step": "Shorter step", "wider-stance": "Wider stance" },
+  side: { "one-side": "One side only" },
+} as const satisfies Record<ModifierKind, Record<string, string>>;
+export type ModifierId = { [K in ModifierKind]: keyof (typeof MODIFIERS)[K] }[ModifierKind];
+
+/** A modifier id's kind and label. */
+export function modifierInfo(id: string): { kind: ModifierKind; label: string } | undefined {
+  for (const kind of MODIFIER_KINDS) {
+    const label = (MODIFIERS[kind] as Record<string, string>)[id];
+    if (label) return { kind, label };
+  }
+  return undefined;
+}

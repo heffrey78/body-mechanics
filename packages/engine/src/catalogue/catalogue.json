@@ -1,6 +1,6 @@
 {
  "version": "1",
- "builtFrom": "wger exerciseinfo, 2026-11-16",
+ "builtFrom": "wger exerciseinfo, 2026-11-17",
  "entries": [
   {
    "id": "bm:cat-cow",
@@ -2724,6 +2724,39 @@
    "review": "approved"
   },
   {
+   "id": "bm:wall-push-up",
+   "name": "Wall push-up",
+   "aliases": [],
+   "instructions": "Stand an arm's length from a wall, hands on it at chest height and a little wider than your shoulders. Bend your elbows to bring your chest towards the wall, then push back. Keep your body in one line; step further back to make it harder.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "chest",
+    "shoulder",
+    "upperarm"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "wall"
+   ],
+   "variationOf": "bm:push-up",
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
    "id": "bm:bench-press",
    "name": "Bench press",
    "aliases": [],
@@ -5120,5 +5153,946 @@
    ],
    "review": "approved"
   }
- ]
+ ],
+ "rules": {
+  "review": "pending",
+  "helps": [
+   {
+    "region": "lowerback",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:cat-cow",
+     "bm:pelvic-tilt",
+     "bm:knee-to-chest",
+     "bm:childs-pose",
+     "bm:figure-four-stretch",
+     "bm:mcgill-curl-up",
+     "bm:bird-dog",
+     "bm:dead-bug"
+    ]
+   },
+   {
+    "region": "lowerback",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:mcgill-curl-up",
+     "bm:bird-dog",
+     "bm:side-plank",
+     "bm:dead-bug",
+     "bm:glute-bridge",
+     "bm:pallof-press"
+    ]
+   },
+   {
+    "region": "upperback",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:open-book",
+     "bm:thread-the-needle",
+     "bm:wall-angels",
+     "bm:thoracic-extension",
+     "bm:cat-cow",
+     "bm:lat-stretch"
+    ]
+   },
+   {
+    "region": "upperback",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:band-pull-apart",
+     "bm:face-pull",
+     "bm:band-row",
+     "bm:ytw-raise",
+     "bm:inverted-row"
+    ]
+   },
+   {
+    "region": "neck",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:chin-tuck",
+     "bm:levator-scapulae-stretch",
+     "bm:neck-side-stretch",
+     "bm:wall-angels",
+     "bm:open-book"
+    ]
+   },
+   {
+    "region": "neck",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:chin-tuck",
+     "bm:band-pull-apart",
+     "bm:face-pull",
+     "bm:ytw-raise"
+    ]
+   },
+   {
+    "region": "shoulder",
+    "marks": [
+     "stiffness"
+    ],
+    "exercises": [
+     "bm:wall-slides",
+     "bm:cross-body-shoulder-stretch",
+     "bm:doorway-chest-stretch",
+     "bm:arm-circles",
+     "bm:thread-the-needle",
+     "bm:open-book"
+    ]
+   },
+   {
+    "region": "shoulder",
+    "marks": [
+     "pain",
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:band-external-rotation",
+     "bm:band-internal-rotation",
+     "bm:scapular-push-up",
+     "bm:face-pull",
+     "bm:wall-slides",
+     "bm:band-pull-apart"
+    ]
+   },
+   {
+    "region": "chest",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:doorway-chest-stretch",
+     "bm:open-book",
+     "bm:wall-angels"
+    ]
+   },
+   {
+    "region": "chest",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:wall-push-up",
+     "bm:incline-push-up",
+     "bm:scapular-push-up"
+    ]
+   },
+   {
+    "region": "upperarm",
+    "marks": [
+     "stiffness",
+     "pain",
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:triceps-stretch",
+     "bm:band-external-rotation",
+     "bm:hammer-curl",
+     "bm:triceps-pushdown"
+    ]
+   },
+   {
+    "region": "forearm",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:wrist-flexor-stretch",
+     "bm:wrist-extensor-stretch",
+     "bm:hammer-curl"
+    ]
+   },
+   {
+    "region": "forearm",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:hammer-curl",
+     "bm:farmer-carry",
+     "bm:dead-hang"
+    ]
+   },
+   {
+    "region": "core",
+    "marks": [
+     "stiffness",
+     "pain",
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:dead-bug",
+     "bm:mcgill-curl-up",
+     "bm:bird-dog",
+     "bm:pallof-press",
+     "bm:side-plank"
+    ]
+   },
+   {
+    "region": "hips",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:hip-flexor-stretch",
+     "bm:figure-four-stretch",
+     "bm:90-90-hip-switch",
+     "bm:hip-circles",
+     "bm:piriformis-stretch",
+     "bm:butterfly-stretch"
+    ]
+   },
+   {
+    "region": "hips",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:clamshell",
+     "bm:side-lying-hip-abduction",
+     "bm:glute-bridge",
+     "bm:band-monster-walk",
+     "bm:single-leg-stand"
+    ]
+   },
+   {
+    "region": "glutes",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:figure-four-stretch",
+     "bm:piriformis-stretch",
+     "bm:pigeon-stretch",
+     "bm:knee-to-chest"
+    ]
+   },
+   {
+    "region": "glutes",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:glute-bridge",
+     "bm:clamshell",
+     "bm:side-lying-hip-abduction",
+     "bm:hip-thrust",
+     "bm:single-leg-glute-bridge"
+    ]
+   },
+   {
+    "region": "quads",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:quad-stretch",
+     "bm:hip-flexor-stretch",
+     "bm:couch-stretch"
+    ]
+   },
+   {
+    "region": "quads",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:straight-leg-raise",
+     "bm:terminal-knee-extension",
+     "bm:wall-sit",
+     "bm:box-squat",
+     "bm:step-up"
+    ]
+   },
+   {
+    "region": "hamstrings",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:hamstring-stretch",
+     "bm:figure-four-stretch",
+     "bm:worlds-greatest-stretch"
+    ]
+   },
+   {
+    "region": "hamstrings",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:glute-bridge",
+     "bm:leg-curl",
+     "bm:romanian-deadlift",
+     "bm:single-leg-glute-bridge"
+    ]
+   },
+   {
+    "region": "knee",
+    "marks": [
+     "stiffness"
+    ],
+    "exercises": [
+     "bm:quad-stretch",
+     "bm:hamstring-stretch",
+     "bm:straight-leg-raise",
+     "bm:terminal-knee-extension",
+     "bm:cycling"
+    ]
+   },
+   {
+    "region": "knee",
+    "marks": [
+     "pain",
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:straight-leg-raise",
+     "bm:terminal-knee-extension",
+     "bm:spanish-squat",
+     "bm:wall-sit",
+     "bm:box-squat",
+     "bm:clamshell"
+    ]
+   },
+   {
+    "region": "shin",
+    "marks": [
+     "stiffness",
+     "pain",
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:tibialis-raise",
+     "bm:calf-stretch-step",
+     "bm:ankle-circles",
+     "bm:calf-raise"
+    ]
+   },
+   {
+    "region": "calf",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:calf-stretch-step",
+     "bm:ankle-circles",
+     "bm:downward-dog"
+    ]
+   },
+   {
+    "region": "calf",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:calf-raise",
+     "bm:single-leg-calf-raise",
+     "bm:tibialis-raise"
+    ]
+   },
+   {
+    "region": "ankle",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:ankle-circles",
+     "bm:calf-stretch-step",
+     "bm:tibialis-raise"
+    ]
+   },
+   {
+    "region": "ankle",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:single-leg-stand",
+     "bm:calf-raise",
+     "bm:heel-to-toe-walk",
+     "bm:tibialis-raise",
+     "bm:y-balance"
+    ]
+   }
+  ],
+  "modify": [
+   {
+    "exercise": "bm:goblet-squat",
+    "region": "knee",
+    "swap": "bm:box-squat",
+    "modifiers": [
+     "slow-lowering"
+    ]
+   },
+   {
+    "exercise": "bm:goblet-squat",
+    "region": "lowerback",
+    "modifiers": [
+     "lighter",
+     "slow-lowering"
+    ]
+   },
+   {
+    "exercise": "bm:bodyweight-squat",
+    "region": "knee",
+    "swap": "bm:box-squat",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:sumo-squat",
+    "region": "knee",
+    "swap": "bm:box-squat",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:cossack-squat",
+    "region": "knee",
+    "swap": "bm:lateral-lunge",
+    "modifiers": [
+     "short-range"
+    ]
+   },
+   {
+    "exercise": "bm:bulgarian-split-squat",
+    "region": "knee",
+    "swap": "bm:split-squat",
+    "modifiers": [
+     "short-range",
+     "hold-support"
+    ]
+   },
+   {
+    "exercise": "bm:split-squat",
+    "region": "knee",
+    "modifiers": [
+     "short-range",
+     "hold-support"
+    ]
+   },
+   {
+    "exercise": "bm:walking-lunge",
+    "region": "knee",
+    "swap": "bm:reverse-lunge",
+    "modifiers": [
+     "shorter-step"
+    ]
+   },
+   {
+    "exercise": "bm:reverse-lunge",
+    "region": "knee",
+    "modifiers": [
+     "shorter-step",
+     "hold-support"
+    ]
+   },
+   {
+    "exercise": "bm:step-up",
+    "region": "knee",
+    "modifiers": [
+     "short-range",
+     "hold-support"
+    ]
+   },
+   {
+    "exercise": "bm:leg-extension",
+    "region": "knee",
+    "swap": "bm:terminal-knee-extension",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:jump-squat",
+    "region": "knee",
+    "swap": "bm:bodyweight-squat",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:skater-hops",
+    "region": "knee",
+    "swap": "bm:lateral-lunge",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:jogging",
+    "region": "knee",
+    "swap": "bm:cycling",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:jogging",
+    "region": "ankle",
+    "swap": "bm:cycling",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:jumping-jacks",
+    "region": "knee",
+    "modifiers": [
+     "no-bounce"
+    ]
+   },
+   {
+    "exercise": "bm:burpee",
+    "region": "knee",
+    "swap": "bm:mountain-climber",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:deadlift",
+    "region": "lowerback",
+    "swap": "bm:romanian-deadlift",
+    "modifiers": [
+     "lighter"
+    ]
+   },
+   {
+    "exercise": "bm:good-morning",
+    "region": "lowerback",
+    "swap": "bm:glute-bridge",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:romanian-deadlift",
+    "region": "lowerback",
+    "modifiers": [
+     "lighter",
+     "short-range"
+    ]
+   },
+   {
+    "exercise": "bm:bent-over-row",
+    "region": "lowerback",
+    "swap": "bm:one-arm-row",
+    "modifiers": [
+     "supported-chest"
+    ]
+   },
+   {
+    "exercise": "bm:reverse-fly",
+    "region": "lowerback",
+    "modifiers": [
+     "supported-chest"
+    ]
+   },
+   {
+    "exercise": "bm:kettlebell-swing",
+    "region": "lowerback",
+    "swap": "bm:glute-bridge",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:overhead-press",
+    "region": "lowerback",
+    "swap": "bm:landmine-press",
+    "modifiers": [
+     "half-kneeling"
+    ]
+   },
+   {
+    "exercise": "bm:overhead-press",
+    "region": "shoulder",
+    "swap": "bm:landmine-press",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:dumbbell-shoulder-press",
+    "region": "shoulder",
+    "swap": "bm:landmine-press",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:lateral-raise",
+    "region": "shoulder",
+    "modifiers": [
+     "lighter",
+     "below-shoulder"
+    ]
+   },
+   {
+    "exercise": "bm:front-raise",
+    "region": "shoulder",
+    "modifiers": [
+     "lighter",
+     "below-shoulder"
+    ]
+   },
+   {
+    "exercise": "bm:bench-press",
+    "region": "shoulder",
+    "modifiers": [
+     "lighter",
+     "neutral-grip",
+     "short-range"
+    ]
+   },
+   {
+    "exercise": "bm:push-up",
+    "region": "shoulder",
+    "swap": "bm:incline-push-up",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:push-up",
+    "region": "forearm",
+    "modifiers": [
+     "fists"
+    ]
+   },
+   {
+    "exercise": "bm:incline-push-up",
+    "region": "forearm",
+    "modifiers": [
+     "fists"
+    ]
+   },
+   {
+    "exercise": "bm:knee-push-up",
+    "region": "forearm",
+    "modifiers": [
+     "fists"
+    ]
+   },
+   {
+    "exercise": "bm:dips",
+    "region": "shoulder",
+    "swap": "bm:triceps-pushdown",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:pull-up",
+    "region": "shoulder",
+    "swap": "bm:lat-pulldown",
+    "modifiers": [
+     "neutral-grip"
+    ]
+   },
+   {
+    "exercise": "bm:chin-up",
+    "region": "shoulder",
+    "swap": "bm:lat-pulldown",
+    "modifiers": [
+     "neutral-grip"
+    ]
+   },
+   {
+    "exercise": "bm:lat-pulldown",
+    "region": "shoulder",
+    "modifiers": [
+     "neutral-grip",
+     "lighter"
+    ]
+   },
+   {
+    "exercise": "bm:overhead-triceps-extension",
+    "region": "shoulder",
+    "swap": "bm:triceps-pushdown",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:plank",
+    "region": "shoulder",
+    "modifiers": [
+     "kneeling"
+    ]
+   },
+   {
+    "exercise": "bm:plank",
+    "region": "lowerback",
+    "modifiers": [
+     "kneeling"
+    ]
+   },
+   {
+    "exercise": "bm:side-plank",
+    "region": "shoulder",
+    "modifiers": [
+     "kneeling"
+    ]
+   },
+   {
+    "exercise": "bm:mountain-climber",
+    "region": "shoulder",
+    "modifiers": [
+     "incline"
+    ]
+   },
+   {
+    "exercise": "bm:hollow-hold",
+    "region": "lowerback",
+    "swap": "bm:dead-bug",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:lying-leg-raise",
+    "region": "lowerback",
+    "swap": "bm:dead-bug",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:flutter-kicks",
+    "region": "lowerback",
+    "swap": "bm:dead-bug",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:russian-twist",
+    "region": "lowerback",
+    "swap": "bm:pallof-press",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:crunch",
+    "region": "neck",
+    "swap": "bm:mcgill-curl-up",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:bicycle-crunch",
+    "region": "neck",
+    "swap": "bm:dead-bug",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:bicycle-crunch",
+    "region": "lowerback",
+    "swap": "bm:dead-bug",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:ab-wheel",
+    "region": "lowerback",
+    "swap": "bm:plank",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:back-extension",
+    "region": "lowerback",
+    "swap": "bm:bird-dog",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:superman",
+    "region": "lowerback",
+    "swap": "bm:bird-dog",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:toe-touch",
+    "region": "lowerback",
+    "modifiers": [
+     "short-range",
+     "pain-free-range"
+    ]
+   },
+   {
+    "exercise": "bm:rowing-machine",
+    "region": "lowerback",
+    "swap": "bm:cycling",
+    "modifiers": []
+   }
+  ],
+  "defaults": {
+   "neck": [
+    "lighter",
+    "pain-free-range"
+   ],
+   "shoulder": [
+    "lighter",
+    "below-shoulder",
+    "pain-free-range"
+   ],
+   "chest": [
+    "lighter",
+    "short-range"
+   ],
+   "upperback": [
+    "lighter",
+    "pain-free-range"
+   ],
+   "upperarm": [
+    "lighter"
+   ],
+   "forearm": [
+    "neutral-grip",
+    "lighter"
+   ],
+   "core": [
+    "lighter",
+    "slow-lowering"
+   ],
+   "lowerback": [
+    "lighter",
+    "slow-lowering",
+    "pain-free-range"
+   ],
+   "hips": [
+    "short-range",
+    "pain-free-range"
+   ],
+   "glutes": [
+    "lighter"
+   ],
+   "quads": [
+    "lighter",
+    "short-range"
+   ],
+   "hamstrings": [
+    "lighter",
+    "short-range"
+   ],
+   "knee": [
+    "short-range",
+    "slow-lowering",
+    "pain-free-range"
+   ],
+   "shin": [
+    "no-bounce"
+   ],
+   "calf": [
+    "lighter",
+    "no-bounce"
+   ],
+   "ankle": [
+    "hold-support",
+    "no-bounce"
+   ]
+  },
+  "conditions": [
+   {
+    "kind": "acl-repair",
+    "name": "ACL repair",
+    "regions": [
+     "knee"
+    ],
+    "avoid": [
+     "bm:jump-squat",
+     "bm:skater-hops",
+     "bm:burpee",
+     "bm:jumping-jacks",
+     "bm:cossack-squat"
+    ],
+    "helps": [
+     "bm:terminal-knee-extension",
+     "bm:straight-leg-raise",
+     "bm:spanish-squat",
+     "bm:step-up",
+     "bm:single-leg-stand",
+     "bm:y-balance"
+    ]
+   },
+   {
+    "kind": "hip-replacement",
+    "name": "Hip replacement",
+    "regions": [
+     "hips"
+    ],
+    "avoid": [
+     "bm:deep-squat-hold",
+     "bm:pigeon-stretch",
+     "bm:90-90-hip-switch",
+     "bm:frog-stretch",
+     "bm:cossack-squat",
+     "bm:jump-squat"
+    ],
+    "helps": [
+     "bm:glute-bridge",
+     "bm:clamshell",
+     "bm:side-lying-hip-abduction",
+     "bm:sit-to-stand",
+     "bm:step-up",
+     "bm:single-leg-stand"
+    ]
+   },
+   {
+    "kind": "shoulder-impingement",
+    "name": "Shoulder impingement",
+    "regions": [
+     "shoulder"
+    ],
+    "avoid": [
+     "bm:dips",
+     "bm:overhead-triceps-extension",
+     "bm:front-raise"
+    ],
+    "helps": [
+     "bm:band-external-rotation",
+     "bm:face-pull",
+     "bm:band-pull-apart",
+     "bm:wall-slides",
+     "bm:ytw-raise",
+     "bm:scapular-push-up"
+    ]
+   },
+   {
+    "kind": "lumbar-disc",
+    "name": "Lumbar disc history",
+    "regions": [
+     "lowerback"
+    ],
+    "avoid": [
+     "bm:crunch",
+     "bm:bicycle-crunch",
+     "bm:russian-twist",
+     "bm:good-morning",
+     "bm:toe-touch",
+     "bm:superman"
+    ],
+    "helps": [
+     "bm:mcgill-curl-up",
+     "bm:bird-dog",
+     "bm:side-plank",
+     "bm:dead-bug",
+     "bm:glute-bridge",
+     "bm:pallof-press"
+    ]
+   },
+   {
+    "kind": "hypermobility",
+    "name": "Hypermobility",
+    "regions": [],
+    "avoid": [],
+    "helps": []
+   }
+  ]
+ }
 }

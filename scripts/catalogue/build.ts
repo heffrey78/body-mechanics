@@ -1,14 +1,16 @@
 /**
  * Builds the bundled catalogue (#26, D3): catalogue/curated.yaml (the exercises and their reviewed
  * tags) + wger's data (names' sources, instructions, aliases, licence and authors) + catalogue/own.yaml
- * (our own exercises' instructions) → packages/engine/src/catalogue/catalogue.json and CREDITS.md.
+ * (our own exercises' instructions) + catalogue/rules.yaml (the body rules, #46) →
+ * packages/engine/src/catalogue/catalogue.json and CREDITS.md.
  *
  *   node scripts/catalogue/build.ts            # wger from catalogue/.cache/wger.json, fetched if missing
  *   node scripts/catalogue/build.ts --fetch    # fetch wger afresh
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { parse } from "yaml";
-import { Catalogue, CatalogueEntry } from "../../packages/engine/src/catalogue/schema.ts";
+import { BodyRules, Catalogue, CatalogueEntry } from "../../packages/engine/src/catalogue/schema.ts";
+import { REGIONS } from "../../packages/engine/src/records/vocab.ts";
 
 const CACHE = "catalogue/.cache/wger.json";
 const WGER = "https://wger.de/api/v2/exerciseinfo/?limit=1000&format=json";
@@ -92,12 +94,39 @@ for (const e of entries) {
   if (!e.instructions.trim()) problems.push(`${e.id}: no instructions (add some to own.yaml)`);
   if (e.variationOf && !seen.has(e.variationOf)) problems.push(`${e.id}: variationOf ${e.variationOf} isn't in the catalogue`);
 }
+// The body rules: exercise ids get their "bm:", and every one must be in the catalogue.
+const bm = (x: string) => `bm:${x}`;
+type RawRules = { review: string; helps: { exercises: string[] }[]; modify: { exercise: string; swap?: string }[]; conditions: { avoid: string[]; helps: string[] }[]; defaults: Record<string, string[]> };
+const raw = parse(readFileSync("catalogue/rules.yaml", "utf8")) as RawRules;
+const rawRules = {
+  ...raw,
+  helps: raw.helps.map((h) => ({ ...h, exercises: h.exercises.map(bm) })),
+  modify: raw.modify.map((m) => ({ ...m, exercise: bm(m.exercise), ...(m.swap ? { swap: bm(m.swap) } : {}) })),
+  conditions: raw.conditions.map((c) => ({ ...c, avoid: c.avoid.map(bm), helps: c.helps.map(bm) })),
+};
+const ruled = BodyRules.safeParse(rawRules);
+if (!ruled.success) problems.push(...ruled.error.issues.map((i) => `rules.yaml ${i.path.join(".")}: ${i.message}`));
+else {
+  const r = ruled.data;
+  const known = (where: string, id: string) => { if (!seen.has(id)) problems.push(`rules.yaml ${where}: ${id} isn't in the catalogue`); };
+  const byId = new Map(entries.map((e) => [e.id, e]));
+  r.helps.forEach((h) => h.exercises.forEach((x) => known(`helps ${h.region}`, x)));
+  r.conditions.forEach((c) => [...c.avoid, ...c.helps].forEach((x) => known(`condition ${c.kind}`, x)));
+  for (const m of r.modify) {
+    known(`modify ${m.exercise}`, m.exercise);
+    if (m.swap) known(`modify ${m.exercise} swap`, m.swap);
+    // A rule for a region the exercise doesn't strain would never fire.
+    if (byId.get(m.exercise) && !byId.get(m.exercise)!.strains.includes(m.region)) problems.push(`rules.yaml modify ${m.exercise}: it doesn't strain ${m.region}`);
+    if (!m.swap && !m.modifiers.length) problems.push(`rules.yaml modify ${m.exercise} ${m.region}: neither a swap nor modifiers`);
+  }
+  for (const region of REGIONS) if (!r.defaults[region]) problems.push(`rules.yaml defaults: nothing for ${region}`);
+}
 if (problems.length) {
   console.error(problems.join("\n"));
   process.exit(1);
 }
 
-const catalogue = Catalogue.parse({ version: "1", builtFrom: `wger exerciseinfo, ${new Date().toISOString().slice(0, 10)}`, entries });
+const catalogue = Catalogue.parse({ version: "1", builtFrom: `wger exerciseinfo, ${new Date().toISOString().slice(0, 10)}`, entries, rules: ruled.data });
 writeFileSync("packages/engine/src/catalogue/catalogue.json", JSON.stringify(catalogue, null, 1) + "\n");
 
 const credits = [
@@ -114,3 +143,4 @@ const credits = [
 writeFileSync("catalogue/CREDITS.md", credits);
 const pending = entries.filter((e) => e.review === "pending").length;
 console.log(`${entries.length} exercises (${entries.filter((e) => e.source.kind === "own").length} our own); ${pending} awaiting the owner's review.`);
+console.log(`Body rules: ${catalogue.rules.helps.length} helps, ${catalogue.rules.modify.length} modify, ${catalogue.rules.conditions.length} conditions; review ${catalogue.rules.review}.`);

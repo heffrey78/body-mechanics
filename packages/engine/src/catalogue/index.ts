@@ -13,3 +13,10 @@ export function catalogue(): Catalogue {
 export function catalogueEntry(id: string): CatalogueEntry | undefined {
   return catalogue().entries.find((e) => e.id === id);
 }
+
+export { BodyRules } from "./schema.ts";
+
+/** The body rules (#46): what helps a mark, how to modify for a mild one, and the condition types. */
+export function bodyRules(): Catalogue["rules"] {
+  return catalogue().rules;
+}

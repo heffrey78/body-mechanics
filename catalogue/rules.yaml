@@ -1,0 +1,159 @@
+# Body rules (#46, D1, D3): how marks and conditions shape exercises. Drafted from common exercise
+# and rehab practice, and reviewed by the owner before shipping (`review`). Guidance, not medical
+# advice: red flags always send the person to a professional and keep that area gentle.
+#
+# Exercise ids are the catalogue's without "bm:". Regions, mark kinds and modifier ids use the
+# vocabularies in packages/engine/src/records/vocab.ts.
+#
+# How the engine (#47) uses them, per D3:
+#   - A mark that is moderate or worse, or has a red flag, on a region an exercise strains: avoid it.
+#   - A mild mark on a region an exercise strains: modify it, with the exercise's own rule below if
+#     it has one (a swap and/or modifiers), else the region's default modifiers.
+#   - Pain or injury on a region an exercise works but doesn't strain: caution ("keep it light and
+#     pain-free").
+#   - helps: what to suggest for a mark, best first. A helper that itself strains the marked region
+#     goes through the same checks.
+#   - conditions: a condition's avoid list is always avoided; anything else that strains its
+#     regions is modified as for a mild mark.
+
+review: pending
+
+# ---------------------------------------------------------------- what helps a mark
+helps:
+  - {region: lowerback, marks: [stiffness, pain], exercises: [cat-cow, pelvic-tilt, knee-to-chest, childs-pose, figure-four-stretch, mcgill-curl-up, bird-dog, dead-bug]}
+  - {region: lowerback, marks: [weakness, injury], exercises: [mcgill-curl-up, bird-dog, side-plank, dead-bug, glute-bridge, pallof-press]}
+  - {region: upperback, marks: [stiffness, pain], exercises: [open-book, thread-the-needle, wall-angels, thoracic-extension, cat-cow, lat-stretch]}
+  - {region: upperback, marks: [weakness, injury], exercises: [band-pull-apart, face-pull, band-row, ytw-raise, inverted-row]}
+  - {region: neck, marks: [stiffness, pain], exercises: [chin-tuck, levator-scapulae-stretch, neck-side-stretch, wall-angels, open-book]}
+  - {region: neck, marks: [weakness, injury], exercises: [chin-tuck, band-pull-apart, face-pull, ytw-raise]}
+  - {region: shoulder, marks: [stiffness], exercises: [wall-slides, cross-body-shoulder-stretch, doorway-chest-stretch, arm-circles, thread-the-needle, open-book]}
+  - {region: shoulder, marks: [pain, weakness, injury], exercises: [band-external-rotation, band-internal-rotation, scapular-push-up, face-pull, wall-slides, band-pull-apart]}
+  - {region: chest, marks: [stiffness, pain], exercises: [doorway-chest-stretch, open-book, wall-angels]}
+  - {region: chest, marks: [weakness, injury], exercises: [wall-push-up, incline-push-up, scapular-push-up]}
+  - {region: upperarm, marks: [stiffness, pain, weakness, injury], exercises: [triceps-stretch, band-external-rotation, hammer-curl, triceps-pushdown]}
+  - {region: forearm, marks: [stiffness, pain], exercises: [wrist-flexor-stretch, wrist-extensor-stretch, hammer-curl]}
+  - {region: forearm, marks: [weakness, injury], exercises: [hammer-curl, farmer-carry, dead-hang]}
+  - {region: core, marks: [stiffness, pain, weakness, injury], exercises: [dead-bug, mcgill-curl-up, bird-dog, pallof-press, side-plank]}
+  - {region: hips, marks: [stiffness, pain], exercises: [hip-flexor-stretch, figure-four-stretch, 90-90-hip-switch, hip-circles, piriformis-stretch, butterfly-stretch]}
+  - {region: hips, marks: [weakness, injury], exercises: [clamshell, side-lying-hip-abduction, glute-bridge, band-monster-walk, single-leg-stand]}
+  - {region: glutes, marks: [stiffness, pain], exercises: [figure-four-stretch, piriformis-stretch, pigeon-stretch, knee-to-chest]}
+  - {region: glutes, marks: [weakness, injury], exercises: [glute-bridge, clamshell, side-lying-hip-abduction, hip-thrust, single-leg-glute-bridge]}
+  - {region: quads, marks: [stiffness, pain], exercises: [quad-stretch, hip-flexor-stretch, couch-stretch]}
+  - {region: quads, marks: [weakness, injury], exercises: [straight-leg-raise, terminal-knee-extension, wall-sit, box-squat, step-up]}
+  - {region: hamstrings, marks: [stiffness, pain], exercises: [hamstring-stretch, figure-four-stretch, worlds-greatest-stretch]}
+  - {region: hamstrings, marks: [weakness, injury], exercises: [glute-bridge, leg-curl, romanian-deadlift, single-leg-glute-bridge]}
+  - {region: knee, marks: [stiffness], exercises: [quad-stretch, hamstring-stretch, straight-leg-raise, terminal-knee-extension, cycling]}
+  - {region: knee, marks: [pain, weakness, injury], exercises: [straight-leg-raise, terminal-knee-extension, spanish-squat, wall-sit, box-squat, clamshell]}
+  - {region: shin, marks: [stiffness, pain, weakness, injury], exercises: [tibialis-raise, calf-stretch-step, ankle-circles, calf-raise]}
+  - {region: calf, marks: [stiffness, pain], exercises: [calf-stretch-step, ankle-circles, downward-dog]}
+  - {region: calf, marks: [weakness, injury], exercises: [calf-raise, single-leg-calf-raise, tibialis-raise]}
+  - {region: ankle, marks: [stiffness, pain], exercises: [ankle-circles, calf-stretch-step, tibialis-raise]}
+  - {region: ankle, marks: [weakness, injury], exercises: [single-leg-stand, calf-raise, heel-to-toe-walk, tibialis-raise, y-balance]}
+
+# ---------------------------------------------------------------- a mild mark: modify
+# An exercise's own rule for a mild mark on a region it strains: swap to a gentler exercise and/or add
+# modifiers. With no rule here, the region's default applies.
+modify:
+  - {exercise: goblet-squat, region: knee, swap: box-squat, modifiers: [slow-lowering]}
+  - {exercise: goblet-squat, region: lowerback, modifiers: [lighter, slow-lowering]}
+  - {exercise: bodyweight-squat, region: knee, swap: box-squat}
+  - {exercise: sumo-squat, region: knee, swap: box-squat}
+  - {exercise: cossack-squat, region: knee, swap: lateral-lunge, modifiers: [short-range]}
+  - {exercise: bulgarian-split-squat, region: knee, swap: split-squat, modifiers: [short-range, hold-support]}
+  - {exercise: split-squat, region: knee, modifiers: [short-range, hold-support]}
+  - {exercise: walking-lunge, region: knee, swap: reverse-lunge, modifiers: [shorter-step]}
+  - {exercise: reverse-lunge, region: knee, modifiers: [shorter-step, hold-support]}
+  - {exercise: step-up, region: knee, modifiers: [short-range, hold-support]}
+  - {exercise: leg-extension, region: knee, swap: terminal-knee-extension}
+  - {exercise: jump-squat, region: knee, swap: bodyweight-squat}
+  - {exercise: skater-hops, region: knee, swap: lateral-lunge}
+  - {exercise: jogging, region: knee, swap: cycling}
+  - {exercise: jogging, region: ankle, swap: cycling}
+  - {exercise: jumping-jacks, region: knee, modifiers: [no-bounce]}
+  - {exercise: burpee, region: knee, swap: mountain-climber}
+  - {exercise: deadlift, region: lowerback, swap: romanian-deadlift, modifiers: [lighter]}
+  - {exercise: good-morning, region: lowerback, swap: glute-bridge}
+  - {exercise: romanian-deadlift, region: lowerback, modifiers: [lighter, short-range]}
+  - {exercise: bent-over-row, region: lowerback, swap: one-arm-row, modifiers: [supported-chest]}
+  - {exercise: reverse-fly, region: lowerback, modifiers: [supported-chest]}
+  - {exercise: kettlebell-swing, region: lowerback, swap: glute-bridge}
+  - {exercise: overhead-press, region: lowerback, swap: landmine-press, modifiers: [half-kneeling]}
+  - {exercise: overhead-press, region: shoulder, swap: landmine-press}
+  - {exercise: dumbbell-shoulder-press, region: shoulder, swap: landmine-press}
+  - {exercise: lateral-raise, region: shoulder, modifiers: [lighter, below-shoulder]}
+  - {exercise: front-raise, region: shoulder, modifiers: [lighter, below-shoulder]}
+  - {exercise: bench-press, region: shoulder, modifiers: [lighter, neutral-grip, short-range]}
+  - {exercise: push-up, region: shoulder, swap: incline-push-up}
+  - {exercise: push-up, region: forearm, modifiers: [fists]}
+  - {exercise: incline-push-up, region: forearm, modifiers: [fists]}
+  - {exercise: knee-push-up, region: forearm, modifiers: [fists]}
+  - {exercise: dips, region: shoulder, swap: triceps-pushdown}
+  - {exercise: pull-up, region: shoulder, swap: lat-pulldown, modifiers: [neutral-grip]}
+  - {exercise: chin-up, region: shoulder, swap: lat-pulldown, modifiers: [neutral-grip]}
+  - {exercise: lat-pulldown, region: shoulder, modifiers: [neutral-grip, lighter]}
+  - {exercise: overhead-triceps-extension, region: shoulder, swap: triceps-pushdown}
+  - {exercise: plank, region: shoulder, modifiers: [kneeling]}
+  - {exercise: plank, region: lowerback, modifiers: [kneeling]}
+  - {exercise: side-plank, region: shoulder, modifiers: [kneeling]}
+  - {exercise: mountain-climber, region: shoulder, modifiers: [incline]}
+  - {exercise: hollow-hold, region: lowerback, swap: dead-bug}
+  - {exercise: lying-leg-raise, region: lowerback, swap: dead-bug}
+  - {exercise: flutter-kicks, region: lowerback, swap: dead-bug}
+  - {exercise: russian-twist, region: lowerback, swap: pallof-press}
+  - {exercise: crunch, region: neck, swap: mcgill-curl-up}
+  - {exercise: bicycle-crunch, region: neck, swap: dead-bug}
+  - {exercise: bicycle-crunch, region: lowerback, swap: dead-bug}
+  - {exercise: ab-wheel, region: lowerback, swap: plank}
+  - {exercise: back-extension, region: lowerback, swap: bird-dog}
+  - {exercise: superman, region: lowerback, swap: bird-dog}
+  - {exercise: toe-touch, region: lowerback, modifiers: [short-range, pain-free-range]}
+  - {exercise: rowing-machine, region: lowerback, swap: cycling}
+
+# Default modifiers for a mild mark on a region an exercise strains, when the exercise has no rule above.
+defaults:
+  neck: [lighter, pain-free-range]
+  shoulder: [lighter, below-shoulder, pain-free-range]
+  chest: [lighter, short-range]
+  upperback: [lighter, pain-free-range]
+  upperarm: [lighter]
+  forearm: [neutral-grip, lighter]
+  core: [lighter, slow-lowering]
+  lowerback: [lighter, slow-lowering, pain-free-range]
+  hips: [short-range, pain-free-range]
+  glutes: [lighter]
+  quads: [lighter, short-range]
+  hamstrings: [lighter, short-range]
+  knee: [short-range, slow-lowering, pain-free-range]
+  shin: [no-bounce]
+  calf: [lighter, no-bounce]
+  ankle: [hold-support, no-bounce]
+
+# ---------------------------------------------------------------- conditions
+# Common condition types to pick from (#49). Rules for whole-body conditions are deferred (#5): they
+# are listed so they can be recorded, with no rules yet.
+conditions:
+  - kind: acl-repair
+    name: ACL repair
+    regions: [knee]
+    avoid: [jump-squat, skater-hops, burpee, jumping-jacks, cossack-squat]
+    helps: [terminal-knee-extension, straight-leg-raise, spanish-squat, step-up, single-leg-stand, y-balance]
+  - kind: hip-replacement
+    name: Hip replacement
+    regions: [hips]
+    avoid: [deep-squat-hold, pigeon-stretch, 90-90-hip-switch, frog-stretch, cossack-squat, jump-squat]
+    helps: [glute-bridge, clamshell, side-lying-hip-abduction, sit-to-stand, step-up, single-leg-stand]
+  - kind: shoulder-impingement
+    name: Shoulder impingement
+    regions: [shoulder]
+    avoid: [dips, overhead-triceps-extension, front-raise]
+    helps: [band-external-rotation, face-pull, band-pull-apart, wall-slides, ytw-raise, scapular-push-up]
+  - kind: lumbar-disc
+    name: Lumbar disc history
+    regions: [lowerback]
+    avoid: [crunch, bicycle-crunch, russian-twist, good-morning, toe-touch, superman]
+    helps: [mcgill-curl-up, bird-dog, side-plank, dead-bug, glute-bridge, pallof-press]
+  - kind: hypermobility
+    name: Hypermobility
+    regions: []
+    avoid: []
+    helps: []
