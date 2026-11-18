@@ -51,9 +51,9 @@ export function PlanScreen({ defaultLocation, locations, library, index, body, u
     return (
       <div className="pad">
         <div className="hrow"><Button variant="ghost" onClick={onBack}>‹ Home</Button></div>
-        <h1 className="title">Plan a session</h1>
-        <span className="muted">Pick a focus. The plan works around what's marked on your body.</span>
-        <Questions initial={null} defaultLocation={defaultLocation} locations={locations} onDone={(a) => { setSkip(new Set()); setAnswers(a); }} onClose={onBack} />
+        <h1 className="title">Start a session</h1>
+        <span className="muted">Pick a focus. The plan works around what's marked on your body; swap anything, and in the session Suggest next gives one more idea at a time.</span>
+        <Questions initial={null} defaultLocation={defaultLocation} locations={locations} onDone={(a) => { setSkip(new Set()); setAnswers(a); }} onClose={onBack} submit="Build my plan" />
       </div>
     );
   }

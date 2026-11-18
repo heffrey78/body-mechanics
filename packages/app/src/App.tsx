@@ -614,7 +614,7 @@ export function App() {
           );
         })()}
         <HomeScreen
-          suggestPanel={suggestPanel} onSuggest={() => setSuggesting(true)} onPlan={() => setHome({ screen: "plan" })}
+          onPlan={() => setHome({ screen: "plan" })}
           library={library} recent={recent} sessionOpen={!!session}
           locations={locations} location={location} onLocation={setLocation}
           onStart={(x) => void startWith(x)}

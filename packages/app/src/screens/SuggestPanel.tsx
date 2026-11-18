@@ -101,8 +101,8 @@ export function SuggestPanel({ answers, defaultLocation, locations, library, ind
   );
 }
 
-export function Questions({ initial, defaultLocation, locations, onDone, onClose }: {
-  initial: SuggestAnswers | null; defaultLocation: string | null; locations: Location[]; onDone: (a: SuggestAnswers) => void; onClose: () => void;
+export function Questions({ initial, defaultLocation, locations, onDone, onClose, submit = "Suggest" }: {
+  initial: SuggestAnswers | null; defaultLocation: string | null; locations: Location[]; onDone: (a: SuggestAnswers) => void; onClose: () => void; submit?: string;
 }) {
   const [location, setLocation] = useState<string | undefined>(initial ? initial.location : defaultLocation ?? undefined);
   const loc = locations.find((l) => l.id === location);
@@ -146,7 +146,7 @@ export function Questions({ initial, defaultLocation, locations, onDone, onClose
         {KINDS.map((k) => <Chip key={k} on={kinds.includes(k)} onClick={() => setKinds(kinds.includes(k) ? kinds.filter((x) => x !== k) : [...kinds, k])}>{KIND_LABEL[k]}</Chip>)}
       </div>
       <span className="muted">No kind chosen: a balanced mix.</span>
-      <Button variant="primary" xl onClick={() => onDone({ ...(location ? { location } : {}), ...(minutes ? { minutes } : {}), sweat, area: area === "whole" ? [] : AREAS[area], kinds })}>Suggest</Button>
+      <Button variant="primary" xl onClick={() => onDone({ ...(location ? { location } : {}), ...(minutes ? { minutes } : {}), sweat, area: area === "whole" ? [] : AREAS[area], kinds })}>{submit}</Button>
     </div>
   );
 }

@@ -8,10 +8,8 @@ import { REGION_LABEL } from "../ui/labels.ts";
  * Enter starts the top one only when every word matched, otherwise it opens the new-movement form.
  * Recent exercises sit below as chips.
  */
-export function HomeScreen({ suggestPanel, onSuggest, onPlan, library, recent, sessionOpen, locations, location, onLocation, onStart, onNew, onResume }: {
-  suggestPanel: ReactNode;
-  onSuggest: () => void;
-  /** Plan a whole session around the body (#50). */
+export function HomeScreen({ onPlan, library, recent, sessionOpen, locations, location, onLocation, onStart, onNew, onResume }: {
+  /** Start a session: the focus, then a plan around the body (#50, #52). */
   onPlan: () => void;
   library: LibraryItem[];
   locations: Location[];
@@ -60,8 +58,8 @@ export function HomeScreen({ suggestPanel, onSuggest, onPlan, library, recent, s
           </button>
         </div>
       ) : null}
-      {!sessionOpen && !q.trim() ? suggestPanel ?? <Button xl onClick={onSuggest}>Suggest next</Button> : null}
-      {!sessionOpen && !q.trim() && !suggestPanel ? <Button onClick={onPlan}>Plan a session</Button> : null}
+      {/* One way to get started (#52): a plan around the body; Suggest next lives in the session. */}
+      {!sessionOpen && !q.trim() ? <Button variant="primary" xl onClick={onPlan}>Start a session</Button> : null}
       {recent.length ? (
         <>
           <span className="label">Recent</span>
