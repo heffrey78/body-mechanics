@@ -626,6 +626,16 @@ export function App() {
   } else if (tab === "body") {
     body = (
       <BodyScreen key={bodyOpen ?? "map"} body={bodyRecords} open={bodyOpen} library={library} routines={routines}
+        onSaveMark={(m) => {
+          if (!clock) return;
+          const before = bodyRecords.marks.find((x) => x.id === m.id);
+          saveBody(editBody(before, m, clock), `${m.deleted ? "Deleted mark" : "Mark"}: ${markTitle(m)}`);
+        }}
+        onSaveCondition={(c) => {
+          if (!clock) return;
+          const before = bodyRecords.conditions.find((x) => x.id === c.id);
+          saveBody(editBody(before, c, clock), `${c.deleted ? "Deleted condition" : "Condition"}: ${c.name}`);
+        }}
         onUseModified={(r, f) => {
           const byId = new Map(library.map((x) => [x.id, x]));
           saveRoutine({ ...r, items: r.items.map((i) => (i.id === f.itemId ? applyModified(i, f.assessment, (x) => byId.get(x)?.measure ?? "reps") : i)) });

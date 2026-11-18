@@ -6,6 +6,8 @@ import {
 } from "@bm/engine";
 import { Button, Chip, MarkBadge } from "../ui/components.tsx";
 import { REGION_LABEL } from "../ui/labels.ts";
+import { REGIONS } from "@bm/engine";
+import { ConditionEditor } from "./ConditionsScreen.tsx";
 
 export const KIND_WORD: Record<MarkKind, string> = { pain: "Pain", stiffness: "Stiffness", weakness: "Weakness", injury: "Injury" };
 const SEVERITY_WORD: Record<Severity, string> = { 1: "Mild", 2: "Moderate", 3: "Severe" };
@@ -55,16 +57,21 @@ type View =
   | { v: "new"; region: Region; side: Side }
   | { v: "mark"; id: string }
   | { v: "checkin"; id: string }
-  | { v: "condition"; id: string };
+  | { v: "condition"; id: string }
+  | { v: "editmark"; id: string }
+  | { v: "editcondition"; id: string };
 
 /**
  * The Body tab (#48): a front and back figure to mark how a region feels, a list of what's marked with
  * check-ins due, each mark's history, check-ins and resolving. Conditions show here too (#49).
  */
-export function BodyScreen({ body, library, routines, open, onNewMark, onCheckIn, onResolve, onReopen, onBecomeCondition, onUseModified }: {
+export function BodyScreen({ body, library, routines, open, onNewMark, onCheckIn, onResolve, onReopen, onBecomeCondition, onUseModified, onSaveMark, onSaveCondition }: {
   body: Body;
   library: LibraryItem[];
   routines: Routine[];
+  /** Save an edited or deleted mark or condition (#54). */
+  onSaveMark: (m: Mark) => void;
+  onSaveCondition: (c: Condition) => void;
   /** Change a routine item as a flag says (#50). */
   onUseModified: (r: Routine, f: RoutineFlag) => void;
   /** Open this mark or condition straight away (from Home's check-in card). */
@@ -89,6 +96,20 @@ export function BodyScreen({ body, library, routines, open, onNewMark, onCheckIn
     return <MarkSheet title={placeLabel(view.region, view.side)} isNew onCancel={() => setView({ v: "map" })}
       onSave={(f) => setView({ v: "mark", id: onNewMark({ ...f, kind: f.kind!, onset: f.onset!, region: view.region, side: view.side }) })} />;
   }
+  if (view.v === "editmark") {
+    const m = body.marks.find((x) => x.id === view.id);
+    if (m) {
+      return <MarkEditor mark={m} onCancel={() => setView({ v: "mark", id: m.id })}
+        onSave={(next) => { onSaveMark(next); setView(next.deleted ? { v: "map" } : { v: "mark", id: m.id }); }} />;
+    }
+  }
+  if (view.v === "editcondition") {
+    const c = body.conditions.find((x) => x.id === view.id);
+    if (c) {
+      return <ConditionEditor initial={c} onBack={() => setView({ v: "condition", id: c.id })}
+        onSave={(next) => { onSaveCondition(next); setView(next.deleted ? { v: "map" } : { v: "condition", id: c.id }); }} />;
+    }
+  }
   const mark = view.v === "mark" || view.v === "checkin" ? body.marks.find((m) => m.id === view.id) : undefined;
   if (view.v === "checkin" && mark) {
     return <MarkSheet title={markTitle(mark)} last={currentState(mark)} onCancel={() => setView({ v: "mark", id: mark.id })}
@@ -97,13 +118,13 @@ export function BodyScreen({ body, library, routines, open, onNewMark, onCheckIn
   if (view.v === "mark" && mark) {
     return <MarkDetail mark={mark} onBack={() => setView({ v: "map" })} onCheckIn={() => setView({ v: "checkin", id: mark.id })}
       onResolve={() => onResolve(mark)} onReopen={() => onReopen(mark)}
-      onBecomeCondition={() => setView({ v: "condition", id: onBecomeCondition(mark) })}>
+      onBecomeCondition={() => setView({ v: "condition", id: onBecomeCondition(mark) })} onEdit={() => setView({ v: "editmark", id: mark.id })}>
       <Advice subject={mark} body={body} library={library} routines={routines} onUseModified={onUseModified} />
     </MarkDetail>;
   }
   const condition = view.v === "condition" ? body.conditions.find((c) => c.id === view.id) : undefined;
   if (condition) {
-    return <ConditionDetail condition={condition} onBack={() => setView({ v: "map" })} onCheckIn={(f) => onCheckIn(condition, f)}>
+    return <ConditionDetail condition={condition} onBack={() => setView({ v: "map" })} onCheckIn={(f) => onCheckIn(condition, f)} onEdit={() => setView({ v: "editcondition", id: condition.id })}>
       <Advice subject={condition} body={body} library={library} routines={routines} onUseModified={onUseModified} />
     </ConditionDetail>;
   }
@@ -261,7 +282,7 @@ function History({ items }: { items: { at: string; severity: Severity }[] }) {
   );
 }
 
-function MarkDetail({ mark, onBack, onCheckIn, onResolve, onReopen, onBecomeCondition, children }: { mark: Mark; onBack: () => void; onCheckIn: () => void; onResolve: () => void; onReopen: () => void; onBecomeCondition: () => void; children?: ReactNode }) {
+function MarkDetail({ mark, onBack, onCheckIn, onResolve, onReopen, onBecomeCondition, onEdit, children }: { mark: Mark; onBack: () => void; onCheckIn: () => void; onResolve: () => void; onReopen: () => void; onBecomeCondition: () => void; onEdit: () => void; children?: ReactNode }) {
   const [confirm, setConfirm] = useState(false);
   const s = currentState(mark);
   const now = new Date();
@@ -269,7 +290,7 @@ function MarkDetail({ mark, onBack, onCheckIn, onResolve, onReopen, onBecomeCond
   const next = s ? new Date(Date.parse(s.at) + 7 * 86_400_000) : null;
   return (
     <div className="pad">
-      <div className="hrow"><Button variant="ghost" onClick={onBack}>‹ Body</Button></div>
+      <div className="hrow"><Button variant="ghost" onClick={onBack}>‹ Body</Button><Button variant="ghost" onClick={onEdit}>Edit</Button></div>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}><MarkBadge kind={mark.kind} /><h1 className="title">{markTitle(mark)}</h1></div>
       <span className="muted">{SEVERITY_WORD[s?.severity ?? 1]} · since {day(`${mark.onset}T12:00:00Z`)}{s?.bothers.length ? ` · ${s.bothers.map((b) => BOTHER_LABEL[b].toLowerCase()).join(", ")}` : ""}</span>
       {mark.resolvedAt ? <span className="muted">Resolved {day(mark.resolvedAt)}.</span>
@@ -304,7 +325,7 @@ function MarkDetail({ mark, onBack, onCheckIn, onResolve, onReopen, onBecomeCond
   );
 }
 
-function ConditionDetail({ condition, onBack, onCheckIn, children }: { condition: Condition; onBack: () => void; onCheckIn: (f: CheckInFields) => void; children?: ReactNode }) {
+function ConditionDetail({ condition, onBack, onCheckIn, onEdit, children }: { condition: Condition; onBack: () => void; onCheckIn: (f: CheckInFields) => void; onEdit: () => void; children?: ReactNode }) {
   const [checking, setChecking] = useState(false);
   if (checking) {
     return <MarkSheet title={condition.name} last={currentState(condition)} onCancel={() => setChecking(false)} onSave={(f) => { onCheckIn(f); setChecking(false); }} />;
@@ -312,7 +333,7 @@ function ConditionDetail({ condition, onBack, onCheckIn, children }: { condition
   const flags = redFlags(condition);
   return (
     <div className="pad">
-      <div className="hrow"><Button variant="ghost" onClick={onBack}>‹ Body</Button></div>
+      <div className="hrow"><Button variant="ghost" onClick={onBack}>‹ Body</Button><Button variant="ghost" onClick={onEdit}>Edit</Button></div>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}><MarkBadge kind="condition" /><h1 className="title">{condition.name}</h1></div>
       <span className="muted">{condition.regions.length ? condition.regions.map((r) => placeLabel(r.region, r.side)).join(", ") : "Whole body"} · since {condition.since}{condition.until ? ` until ${condition.until}` : ""}</span>
       {condition.note ? <span>“{condition.note}”</span> : null}
@@ -364,6 +385,54 @@ function Advice({ subject, body, library, routines, onUseModified }: {
         </div>
       ) : null}
     </>
+  );
+}
+
+/** Edit a mark (#54): move it (region and side), change its kind, when it started, its note; or delete it. */
+function MarkEditor({ mark, onSave, onCancel }: { mark: Mark; onSave: (m: Mark) => void; onCancel: () => void }) {
+  const [region, setRegion] = useState<Region>(mark.region);
+  const [side, setSide] = useState<Side>(mark.side);
+  const [kind, setKind] = useState<MarkKind>(mark.kind);
+  const [onset, setOnset] = useState(mark.onset);
+  const [note, setNote] = useState(mark.note ?? "");
+  const [confirm, setConfirm] = useState(false);
+  const pickRegion = (r: Region) => {
+    setRegion(r);
+    // A sided region needs a side; any other region takes none.
+    setSide(sidedHere(r) ? (side === "none" ? "left" : side) : "none");
+  };
+  const valid = /^\d{4}-\d{2}-\d{2}$/.test(onset) && onset <= new Date().toISOString().slice(0, 10);
+  const save = () => {
+    const { note: _n, ...rest } = mark;
+    onSave({ ...rest, region, side, kind, onset, ...(note.trim() ? { note: note.trim() } : {}) });
+  };
+  return (
+    <div className="pad">
+      <div className="hrow"><Button variant="ghost" onClick={onCancel}>‹ Cancel</Button><span className="muted">Edit mark</span></div>
+      <h1 className="title">{placeLabel(region, side)}</h1>
+      <span className="label">Where</span>
+      <div className="chips">{REGIONS.map((r) => <Chip key={r} on={region === r} onClick={() => pickRegion(r)}>{REGION_LABEL[r]}</Chip>)}</div>
+      {sidedHere(region) ? (
+        <>
+          <span className="label">Side</span>
+          <div className="chips">{(["left", "right", "both"] as const).map((s) => <Chip key={s} on={side === s} onClick={() => setSide(s)}>{s[0]!.toUpperCase() + s.slice(1)}</Chip>)}</div>
+        </>
+      ) : null}
+      <span className="label">How does it feel?</span>
+      <div className="chips">{MARK_KINDS.map((k) => <Chip key={k} on={kind === k} onClick={() => setKind(k)}>{KIND_WORD[k]}</Chip>)}</div>
+      <label className="label" htmlFor="mark-onset">Since</label>
+      <input id="mark-onset" className="field" type="date" value={onset} max={new Date().toISOString().slice(0, 10)} onChange={(e) => setOnset(e.target.value)} />
+      <label className="label" htmlFor="mark-edit-note">Notes</label>
+      <input id="mark-edit-note" className="field" value={note} onChange={(e) => setNote(e.target.value)} />
+      <span className="muted">How bad it is changes with a check-in, so its history stays.</span>
+      <Button variant="primary" xl disabled={!valid} onClick={save}>Save</Button>
+      {confirm ? (
+        <div className="card">
+          <span>Delete this mark and its check-ins? To keep its history, mark it resolved instead.</span>
+          <div className="pair"><Button variant="stop" onClick={() => onSave({ ...mark, deleted: true })}>Delete</Button><Button onClick={() => setConfirm(false)}>Keep</Button></div>
+        </div>
+      ) : <Button variant="ghost" onClick={() => setConfirm(true)}>Delete mark</Button>}
+    </div>
   );
 }
 

@@ -50,7 +50,7 @@ export function ConditionsScreen({ conditions, onSave, onBack }: { conditions: C
   );
 }
 
-function ConditionEditor({ initial, onSave, onBack }: { initial: Condition | null; onSave: (c: Condition) => void; onBack: () => void }) {
+export function ConditionEditor({ initial, onSave, onBack }: { initial: Condition | null; onSave: (c: Condition) => void; onBack: () => void }) {
   const types = bodyRules().conditions;
   const [kind, setKind] = useState<string | undefined>(initial?.kind);
   const [name, setName] = useState(initial?.name ?? "");
