@@ -46,11 +46,13 @@ export interface SessionSummary {
   finishedAt?: string;
   location?: string;
   routine?: string;
+  /** Deleted (#53): kept so the cache knows it, left out of everything else. */
+  deleted?: true;
   entries: EntrySummary[];
 }
 
 const CACHE = "index.json.age";
-const CACHE_VERSION = 2;
+const CACHE_VERSION = 3;
 
 interface CacheFile {
   v: number;
@@ -63,6 +65,7 @@ export function summarize(path: string, s: Session): SessionSummary {
     ...(s.finishedAt ? { finishedAt: s.finishedAt } : {}),
     ...(s.location ? { location: s.location } : {}),
     ...(s.routine ? { routine: s.routine } : {}),
+    ...(s.deleted ? { deleted: true as const } : {}),
     entries: s.entries.filter((e) => !e.deleted).map((e) => ({
       exercise: e.exercise,
       ...(e.effort ? { effort: e.effort } : {}),
@@ -147,7 +150,7 @@ export class RecordIndex {
 
   /** Every session, newest first. */
   sessions(): SessionSummary[] {
-    return [...this.#byPath.values()].sort((a, b) => b.startedAt.localeCompare(a.startedAt));
+    return [...this.#byPath.values()].filter((s) => !s.deleted).sort((a, b) => b.startedAt.localeCompare(a.startedAt));
   }
 
   /** The most recent session's sets of an exercise, for "last time" (#1). */

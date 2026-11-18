@@ -22,7 +22,7 @@ export interface Pending {
  * exercise, every set tappable to correct or delete, and Type next / recent chips for what's next.
  * The card sits in the middle (#44): what's done above it, what's still to do below.
  */
-export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, library, recent, index, units, pending, onPending, onChanged, onFinished, onHome }: {
+export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, library, recent, index, units, pending, onPending, onChanged, onFinished, onDiscard, onHome }: {
   /** Suggest next (#43), shown in place when open. */
   suggestPanel: ReactNode;
   onSuggest: () => void;
@@ -38,6 +38,8 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, lib
   onPending: (p: Pending | null) => void;
   onChanged: (s: Session) => void;
   onFinished: (s: Session) => void;
+  /** Throw the session away (#53). */
+  onDiscard: () => void;
   onHome: () => void;
 }) {
   const byId = useMemo(() => new Map(library.map((x) => [x.id, x])), [library]);
@@ -61,7 +63,9 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, lib
   const [next, setNext] = useState("");
   const [busy, setBusy] = useState(false);
   const [modifying, setModifying] = useState(false);
-  useEffect(() => setModifying(false), [currentId]);
+  const [removing, setRemoving] = useState(false);
+  const [discarding, setDiscarding] = useState(false);
+  useEffect(() => { setModifying(false); setRemoving(false); }, [currentId]);
   // The current exercise in the middle of the screen whenever it changes (#44).
   const middle = useRef<HTMLDivElement>(null);
   useEffect(() => { middle.current?.scrollIntoView({ block: "center", behavior: "smooth" }); }, [current?.id]);
@@ -298,6 +302,22 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, lib
           <Segmented label="Effort" value={current.effort ?? ("" as Effort)} onChange={(e) => void run(() => log.setEffort(current.id, e))}
             options={EFFORTS.map((id) => ({ id, label: EFFORT_LABEL[id] }))} />
           {skipCurrent && !hold ? <Button variant="ghost" onClick={skipCurrent}>Skip this exercise</Button> : null}
+          {hold ? null : removing ? (
+            <div className="card">
+              <span>Remove {item?.name ?? "this exercise"} from the session{current.sets.some((x) => !x.deleted) ? ", with its sets" : ""}?</span>
+              <div className="pair">
+                <Button variant="stop" onClick={() => void run(async () => {
+                  const others = entries.filter((e) => e.id !== current.id);
+                  await log.deleteEntry(current.id);
+                  setRemoving(false);
+                  if (rest) { setRest(null); await stopTimer(); }
+                  onPending(null);
+                  setCurrentId(others.at(-1)?.id ?? "");
+                })}>Remove</Button>
+                <Button onClick={() => setRemoving(false)}>Keep</Button>
+              </div>
+            </div>
+          ) : <Button variant="ghost" onClick={() => setRemoving(true)}>Remove from session</Button>}
         </div>
       ) : null}
       </div>
@@ -315,6 +335,12 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, lib
       ) : recent.length ? (
         <div className="chips">{recent.filter((r) => !entries.some((e) => e.exercise === r.id)).slice(0, 6).map((r) => <Chip key={r.id} onClick={() => void addNext(r)}>{r.name}</Chip>)}</div>
       ) : null}
+      {discarding ? (
+        <div className="card">
+          <span>{entries.some((e) => e.sets.some((x) => !x.deleted)) ? "Discard this session and its sets? It won't be in your history." : "Discard this session? Nothing was logged."}</span>
+          <div className="pair"><Button variant="stop" onClick={() => void (async () => { if (rest) { setRest(null); await stopTimer(); } onDiscard(); })()}>Discard</Button><Button onClick={() => setDiscarding(false)}>Keep going</Button></div>
+        </div>
+      ) : !hold ? <Button variant="ghost" onClick={() => setDiscarding(true)}>Discard this session</Button> : null}
     </div>
   );
 }

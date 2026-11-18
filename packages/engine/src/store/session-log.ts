@@ -114,6 +114,23 @@ export class SessionLog {
     await this.#save();
   }
 
+  /** Take an exercise out of the session (#53): a tombstone, so another device's copy doesn't bring it back. */
+  async deleteEntry(entryId: string): Promise<void> {
+    const e = this.#entry(entryId);
+    e.deleted = true;
+    e.edits = { ...(e.edits ?? {}), deleted: this.#clock.tick() };
+    await this.#save();
+  }
+
+  /** Throw the session away (#53): a false start. It's deleted, and the log has no session after. */
+  async discard(): Promise<void> {
+    const s = this.#need();
+    s.deleted = true;
+    s.edits = { ...(s.edits ?? {}), deleted: this.#clock.tick() };
+    await this.#save(`Deleted session ${s.startedAt.slice(0, 10)}`);
+    this.#session = null;
+  }
+
   /** How an exercise is being done (#51): its sets count as modified in history and progress. */
   async setModifiers(entryId: string, modifiers: Modifier[]): Promise<void> {
     const e = this.#entry(entryId);
@@ -212,4 +229,9 @@ export async function createExercise(vault: Vault, fields: Omit<Exercise, "type"
   await vault.write(record);
   committer?.changed(`New exercise: ${record.name}`);
   return fromOwn(record);
+}
+
+/** A finished session deleted from History (#53): its tombstone, stamped for the merge. */
+export function deletedSession(s: Session, clock: Clock): Session {
+  return { ...s, deleted: true, edits: { ...(s.edits ?? {}), deleted: clock.tick() } };
 }

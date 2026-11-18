@@ -19,7 +19,7 @@ type View = { screen: "weeks" } | { screen: "session"; path: string } | { screen
  * History (#33): sessions by week with totals, a session's detail (reopen it to edit), and an
  * exercise's progress: the best set per session, modified sessions marked, left/right for one-sided.
  */
-export function HistoryScreen({ vault, index, library, places, units, canEdit, onEdit, onRepeat, onSaveAsRoutine }: {
+export function HistoryScreen({ vault, index, library, places, units, canEdit, onEdit, onRepeat, onSaveAsRoutine, onDelete }: {
   vault: Vault | null;
   index: RecordIndex | null;
   library: LibraryItem[];
@@ -31,6 +31,8 @@ export function HistoryScreen({ vault, index, library, places, units, canEdit, o
   onRepeat: (s: Session) => void;
   /** Saves the routine and returns its name. */
   onSaveAsRoutine: (s: Session, name: string) => string;
+  /** Delete a session (#53). */
+  onDelete: (s: Session) => void;
 }) {
   const [view, setView] = useState<View>({ screen: "weeks" });
   const byId = new Map(library.map((x) => [x.id, x]));
@@ -38,6 +40,7 @@ export function HistoryScreen({ vault, index, library, places, units, canEdit, o
 
   if (view.screen === "session") {
     return <SessionDetail places={places} vault={vault} path={view.path} name={name} byId={byId} units={units} canEdit={canEdit} onEdit={onEdit} onRepeat={onRepeat} onSaveAsRoutine={onSaveAsRoutine}
+      onDelete={(s) => { onDelete(s); setView({ screen: "weeks" }); }}
       onBack={() => setView({ screen: "weeks" })} onProgress={(exercise) => setView({ screen: "progress", exercise, from: view.path })} />;
   }
   if (view.screen === "progress") {
@@ -76,12 +79,13 @@ export function HistoryScreen({ vault, index, library, places, units, canEdit, o
   );
 }
 
-function SessionDetail({ places, vault, path, name, byId, units, canEdit, onEdit, onRepeat, onSaveAsRoutine, onBack, onProgress }: {
+function SessionDetail({ places, vault, path, name, byId, units, canEdit, onEdit, onRepeat, onSaveAsRoutine, onDelete, onBack, onProgress }: {
   places: Map<string, string>; vault: Vault | null; path: string; name: (id: string) => string; byId: Map<string, LibraryItem>; units: "kg" | "lb"; canEdit: boolean;
-  onEdit: (s: Session) => void; onRepeat: (s: Session) => void; onSaveAsRoutine: (s: Session, name: string) => string;
+  onEdit: (s: Session) => void; onRepeat: (s: Session) => void; onSaveAsRoutine: (s: Session, name: string) => string; onDelete: (s: Session) => void;
   onBack: () => void; onProgress: (exercise: string) => void;
 }) {
   const [s, setS] = useState<Session | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const [naming, setNaming] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
   useEffect(() => {
@@ -128,6 +132,12 @@ function SessionDetail({ places, vault, path, name, byId, units, canEdit, onEdit
               </div>
             )
           ) : null}
+          {!canEdit ? null : deleting ? (
+            <div className="card">
+              <span>Delete this session? Its sets leave your history and progress.</span>
+              <div className="pair"><Button variant="stop" onClick={() => onDelete(s)}>Delete</Button><Button onClick={() => setDeleting(false)}>Keep</Button></div>
+            </div>
+          ) : <Button variant="ghost" onClick={() => setDeleting(true)}>Delete session</Button>}
         </>
       ) : <span className="muted">Opening…</span>}
     </div>

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   COMMIT_EMAIL, COMMIT_NAME, Committer, ENGINE_VERSION, NotSetUp, RecordIndex, SessionLog, Vault, clearDraft, createExercise, deviceClock,
-  GitHub, Syncer, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, loadBody, newMark, newCondition, editBody, modifiersOf, applyModified, checkIn, resolveMark, reopenMark, isDue, isActive, type Body, type Mark, type Condition, type CheckInFields, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
+  GitHub, Syncer, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, loadBody, newMark, newCondition, editBody, modifiersOf, applyModified, deletedSession, checkIn, resolveMark, reopenMark, isDue, isActive, type Body, type Mark, type Condition, type CheckInFields, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
   portsRoundTrip, routineFromSession, saveDraft,
   type Clock, type Location, type Suggestion, type SyncStatus, type TargetUpdate, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
 } from "@bm/engine";
@@ -484,6 +484,11 @@ export function App() {
           const byId = new Map(library.map((x) => [x.id, x]));
           void startPlan(routineFromSession(s, "Repeat", (x) => byId.get(x)?.measure ?? "reps").items);
         }}
+        onDelete={(s) => {
+          if (!vault || !clock) return;
+          const gone = deletedSession(s, clock);
+          void vault.write(gone).then((path) => { index?.put(path, gone); setIndex(index); committer?.changed(`Deleted session ${s.startedAt.slice(0, 10)}`); setSummary("Session deleted."); });
+        }}
         onSaveAsRoutine={(s, name) => {
           const byId = new Map(library.map((x) => [x.id, x]));
           const r = routineFromSession(s, name, (x) => byId.get(x)?.measure ?? "reps");
@@ -525,6 +530,17 @@ export function App() {
         pending={pending}
         onPending={(p) => { setPending(p); changed(log.session ?? session, p); }}
         onChanged={(s) => changed(s)}
+        onDiscard={() => void (async () => {
+          await log.discard();
+          setSession(null);
+          setPending(null);
+          setPlan(null);
+          setRefused(new Set());
+          setSuggesting(false);
+          if (vault) void clearDraft(vault);
+          setSummary("Session discarded.");
+          setHome({ screen: "start" });
+        })()}
         onFinished={(s) => {
           setSession(null);
           setPending(null);

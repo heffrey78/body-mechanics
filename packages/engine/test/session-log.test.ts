@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Clock, catalogue, modifiersOf, routineFromSession, RecordIndex, SessionLog, Vault, createExercise, deviceClock, loadLibrary, memoryFilesPort, memorySecretsPort, search, type Session } from "../src/index.ts";
+import { Clock, catalogue, deletedSession, mergeRecords, modifiersOf, routineFromSession, RecordIndex, SessionLog, Vault, createExercise, deviceClock, loadLibrary, memoryFilesPort, memorySecretsPort, search, type Session } from "../src/index.ts";
 
 async function setup() {
   const files = memoryFilesPort();
@@ -61,6 +61,31 @@ describe("logging a session (#31, #32)", () => {
     expect(index.sessions()[0]!.entries.map((x) => x.modified)).toEqual([true, true]);
     const r = routineFromSession(done, "Gentle", () => "reps");
     expect(r.items.map((i) => i.modifiers?.map((m) => m.id))).toEqual([["slow-lowering", "to-box"], ["band-assisted"]]);
+  });
+
+  it("removes a false start: an exercise from a session, or the whole session, as tombstones (#53)", async () => {
+    const { vault, index } = await setup();
+    let t = Date.parse("2026-11-17T07:00:00.000Z");
+    const clock = new Clock("dddddddddddddddd", () => t);
+    const log = new SessionLog(vault, clock, { index, now: () => new Date(t) });
+    const s = await log.start("bm:goblet-squat");
+    const keep = await log.addEntry("bm:plank");
+    await log.deleteEntry(s.entries[0]!.id);
+    t += 60_000; await log.logSet(keep.id, { seconds: 30 });
+    expect(index.sessions()[0]!.entries.map((e) => e.exercise)).toEqual(["bm:plank"]);
+    const done = await log.finish();
+    // Deleted from History on this device, edited nowhere else: it's gone from history and progress.
+    const gone = deletedSession(done, clock);
+    index.put(await vault.write(gone), gone);
+    expect(index.sessions()).toEqual([]);
+    expect(index.progress("bm:plank")).toEqual([]);
+    // The other device still had it, unchanged: the merge keeps the deletion.
+    expect(mergeRecords(done, gone, done).record).toMatchObject({ deleted: true });
+    // A false start discarded while open: the log has no session after.
+    const again = await log.start("bm:cat-cow");
+    await log.discard();
+    expect(log.session).toBeNull();
+    expect(index.sessions().some((x) => x.id === again.id)).toBe(false);
   });
 
   it("keeps one device id across restarts", async () => {

@@ -144,6 +144,8 @@ export const Session = z.strictObject({
   routine: id.optional(),
   note: z.string().max(1000).optional(),
   entries: z.array(Entry),
+  /** A tombstone (#53): a deleted session stays until the merge has seen both sides (#29). */
+  deleted: z.literal(true).optional(),
   edits,
 });
 export type Session = z.infer<typeof Session>;
