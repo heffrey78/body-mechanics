@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Body Mechanics",
+  "version": "0.1.0",
+  "identifier": "io.github.heffrey78.bodymechanics",
+  "build": {
+    "frontendDist": "../packages/app/dist",
+    "devUrl": "http://localhost:1420",
+    "beforeDevCommand": "npm run dev -w @bm/app",
+    "beforeBuildCommand": "npm run build -w @bm/app"
+  },
+  "app": {
+    "windows": [{ "label": "main", "title": "Body Mechanics", "width": 420, "height": 860 }],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["deb"],
+    "android": { "minSdkVersion": 26 },
+    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.png"]
+  }
+}

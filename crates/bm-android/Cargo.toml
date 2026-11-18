@@ -1,0 +1,13 @@
+[package]
+name = "bm-android"
+version = "0.1.0"
+description = "Body Mechanics' Android plugin (#22): a foreground service that keeps hold and rest timers running, and cues, with the screen locked. From writer's android-plugin's shape (writer e89d55c)."
+edition = "2024"
+publish = false
+# The name tauri-build looks for (DEP_BM_ANDROID_ANDROID_LIBRARY_PATH) to add this plugin's Kotlin to the app.
+links = "bm-android"
+
+[dependencies]
+tauri = { version = "2.12", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"

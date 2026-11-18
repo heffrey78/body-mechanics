@@ -68,3 +68,21 @@ That bypasses the server's rules and shows up as drift.
 `export_docs` writes Markdown snapshots plus a Mermaid link diagram to
 `exports/` by default. Run it only when asked. GitHub issues are the source
 of truth, not the exported files.
+
+## The owner's phone (adb)
+
+- adb is installed in the home folder, not on the PATH: `~/Android/Sdk/platform-tools/adb`
+  (Google's platform-tools; installing system packages needs the owner's sudo password).
+- The test phone is a Pixel 10 Pro (Android 17), connected by USB. The app's package is
+  `io.github.heffrey78.bodymechanics`.
+- Useful commands:
+  - `adb devices -l`: is the phone connected? If it isn't listed, ask the owner to plug it in
+    and accept the USB debugging prompt.
+  - `adb install -r <apk>`: install over the existing app. The CI debug key keeps the data.
+  - `adb logcat -c`, then `adb logcat --pid=$(adb shell pidof io.github.heffrey78.bodymechanics)`:
+    the app's log for one run. Rust and WebView console output both land here.
+  - `adb shell dumpsys netpolicy | grep <uid>` and `adb shell dumpsys package <pkg>`: network
+    policy and permissions, for "can't reach GitHub" problems.
+  - `adb shell uiautomator dump` and `adb shell input tap X Y`: read and drive the screen, but only
+    while the phone is unlocked.
+- The phone holds the owner's real records. Never uninstall the app or clear its data.

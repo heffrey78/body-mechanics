@@ -1,0 +1,6364 @@
+{
+ "version": "1",
+ "builtFrom": "wger exerciseinfo, 2026-11-18",
+ "entries": [
+  {
+   "id": "bm:cat-cow",
+   "name": "Cat-cow",
+   "aliases": [],
+   "instructions": "On all fours. Arch spine up (cat) then drop it down (cow). Breathe with movement.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "lowerback",
+    "upperback",
+    "neck"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1938,
+    "url": "https://wger.de/en/exercise/1938/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "wger contributors"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:childs-pose",
+   "name": "Child's pose",
+   "aliases": [
+    "Prayer pose",
+    "Extended Arm Child's Pose"
+   ],
+   "instructions": "Starting position:\nStart on all fours, knees, toes, and hands touching the ground. Your two big toes should be touching.\nSteps:\nMove your knees so that they're about hip-width apart.\nOn an exhale, move your pelvis back to sit on your heels. Your hands should still be touching the ground.\nRelax your upper body, lowering your forehead to the floor and letting your hands move forward naturally.\nStay in this pose.\nTips:\nTo leave the pose, walk your arms back under your shoulders and move your upper body up into a seated position.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "lowerback",
+    "hips",
+    "upperback",
+    "shoulder"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1002,
+    "url": "https://wger.de/en/exercise/1002/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "wger contributors"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:seated-spinal-twist",
+   "name": "Seated spinal twist",
+   "aliases": [],
+   "instructions": "Sit tall on a chair, feet flat. Turn your chest towards one side, a hand on the chair's back, and breathe out into the turn. Keep your hips facing forward; turn only as far as is comfortable.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "lowerback",
+    "upperback",
+    "core"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "chair",
+    "bench"
+   ],
+   "needs": [
+    [
+     "chair",
+     "bench"
+    ]
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:hamstring-stretch",
+   "name": "Straight-leg hamstring stretch",
+   "aliases": [
+    "Straight Leg Hamstring Stretch",
+    "Supine Hamstring Stretch"
+   ],
+   "instructions": "Lie on your back with both legs extended. Raise one leg straight up and gently pull it towards your upper body with both hands around your thigh. Keep the knee as straight as possible and your lower back on the mat. Hold the stretch, then switch legs.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "hamstrings",
+    "calf"
+   ],
+   "strains": [
+    "lowerback",
+    "hamstrings"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 2761,
+    "url": "https://wger.de/en/exercise/2761/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "SMS"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:hip-flexor-stretch",
+   "name": "Hip flexor stretch",
+   "aliases": [
+    "psoas stretch",
+    "kneeling lunge stretch"
+   ],
+   "instructions": "Kneel in a lunge position with one knee on the floor and the other foot in front, hands on your hips.\nKeep your torso upright, squeeze the glute of the back leg and push your hips forward until you feel a stretch at the front of the hip and thigh. Hold, then switch sides.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "hips",
+    "quads"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 1867,
+    "url": "https://wger.de/en/exercise/1867/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Davidgj32"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:90-90-hip-switch",
+   "name": "90/90 hip switches",
+   "aliases": [
+    "90/90 Hip Rotations"
+   ],
+   "instructions": "Sit on the floor with one leg bent at 90 degrees in front of you and the other leg bent at 90 degrees out to the side, so that the rear shin is parallel to the front shin. Keep your torso upright and, if possible, your hands off the floor.\nRotate both knees over to the other side so that the legs swap positions and you arrive in the same 90/90 position facing the opposite way. Move slowly and under control, keeping the feet in contact with the floor, and alternate sides for the desired number of repetitions.\nMobility drill for internal and external rotation of the hips.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "hips",
+    "glutes"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 2613,
+    "url": "https://wger.de/en/exercise/2613/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "wger contributors"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:pigeon-stretch",
+   "name": "Pigeon stretch",
+   "aliases": [],
+   "instructions": "View the video to undestand the exercise",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "glutes",
+    "hips"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1872,
+    "url": "https://wger.de/en/exercise/1872/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Davidgj32"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:figure-four-stretch",
+   "name": "Lying figure-four stretch",
+   "aliases": [
+    "Lying Figure Four Stretch",
+    "Glute Stretch"
+   ],
+   "instructions": "Lie on your back with both knees bent and your feet flat on the floor. Cross one ankle over the opposite knee so that your legs form a figure four.\nReach through the gap and hold the back of the thigh of the lower leg, or its shin, and gently pull it towards your chest until you feel a stretch in the glute and outer hip of the crossed leg. Keep your head and lower back on the floor and let the crossed knee open outwards. Hold the stretch and breathe calmly, then switch sides.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "glutes",
+    "hips"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1869,
+    "url": "https://wger.de/en/exercise/1869/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Davidgj32"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:calf-stretch-step",
+   "name": "Calf stretch on a step",
+   "aliases": [
+    "achilles stretch",
+    "heel drop",
+    "Step Calf Stretch",
+    "Heel Drop Calf Stretch",
+    "Calf Stretch off a Step"
+   ],
+   "instructions": "Stand on a step or a sturdy raised surface with the balls of both feet on the edge and the heels hanging off, holding a rail or wall for balance. Let one or both heels drop below the level of the step until you feel a stretch through the calf, and hold. Keep the knee straight to stretch the gastrocnemius, or bend the knee slightly to bias the soleus lower down. Hold for the prescribed time, typically 30 seconds, without bouncing, then switch sides if stretching one leg at a time.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "calf",
+    "ankle"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "step"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 2666,
+    "url": "https://wger.de/en/exercise/2666/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "trs1800"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:ankle-circles",
+   "name": "Ankle circles",
+   "aliases": [],
+   "instructions": "Lift one foot and draw slow circles with your toes, as large as the ankle allows. Circle both ways, then change feet.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "ankle",
+    "shin"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:doorway-chest-stretch",
+   "name": "Doorway chest stretch",
+   "aliases": [],
+   "instructions": "Stand in a doorway with your forearm on the frame, elbow at shoulder height. Step gently through until you feel a stretch across the front of the chest. Don't push into pain at the front of the shoulder.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "chest",
+    "shoulder"
+   ],
+   "strains": [
+    "shoulder"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "wall"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:wall-slides",
+   "name": "Wall slides",
+   "aliases": [],
+   "instructions": "Stand with heels, shoulders, back of head, and hips touching the wall. Start with biceps straight out and elbows at a 90 degree angle. Straighten the arms while remaining againstthe wall without arching the back off of the wall, mimicking a shoulder press movement.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "shoulder",
+    "upperback"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "wall"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 716,
+    "url": "https://wger.de/en/exercise/716/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Whythebigpaws"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:wall-angels",
+   "name": "Wall angels",
+   "aliases": [],
+   "instructions": "The Wall Angels exercise primarily targets the upper back and shoulder muscles, helping improve posture, shoulder mobility, and scapular control.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "upperback",
+    "shoulder"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "wall"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1679,
+    "url": "https://wger.de/en/exercise/1679/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "bbayuwega"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:chin-tuck",
+   "name": "Chin tucks",
+   "aliases": [
+    "Chin tuck"
+   ],
+   "instructions": "Starting position:\nSit or stand with your back straight.\nSteps:\nUse fingers on your chin to slowly tuck your chin in, moving your head back to align it with your spine.\nHold for 5 seconds.\nGo back to normal head position and repeat.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "neck"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility",
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 1006,
+    "url": "https://wger.de/en/exercise/1006/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "wger contributors"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:neck-side-stretch",
+   "name": "Neck side stretch",
+   "aliases": [
+    "neck stretch"
+   ],
+   "instructions": "Starting position:\nSit or stand with your back straight.\nSteps:\nTilt your head to the side.\nTake the hand closer to your head and use it to grab your head from the other side.\nPush with your hand against your head and with your head against your hand so that the forces balance out and your head stays still.\nMaintain this tension until the end of the exercise.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "neck",
+    "shoulder"
+   ],
+   "strains": [
+    "neck"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 1008,
+    "url": "https://wger.de/en/exercise/1008/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "wger contributors"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:levator-scapulae-stretch",
+   "name": "Levator scapulae stretch",
+   "aliases": [],
+   "instructions": "Starting position:\nStart standing up or sitting down. Turn your head to the left, around 45 degrees or just above your nipple. Place your right hand behind your back or sit on it. Take your left hand and use it to hold the back of your head. Lean your head down slightly.\nSteps:\nAfter assuming the starting position, press your head against your left hand with slight force. Your hand should press back with equal force, so that your head doesn't move. Hold this position.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "neck",
+    "upperback"
+   ],
+   "strains": [
+    "neck"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 1013,
+    "url": "https://wger.de/en/exercise/1013/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "wger contributors"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:wrist-flexor-stretch",
+   "name": "Wrist flexor stretch",
+   "aliases": [],
+   "instructions": "Arm straight in front, palm up. With the other hand, ease the fingers down and back until you feel a stretch along the inside of the forearm.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "forearm"
+   ],
+   "strains": [
+    "forearm"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:wrist-extensor-stretch",
+   "name": "Wrist extensor stretch",
+   "aliases": [],
+   "instructions": "Arm straight in front, palm down. With the other hand, ease the back of the hand down until you feel a stretch along the top of the forearm.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "forearm"
+   ],
+   "strains": [
+    "forearm"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:thoracic-extension",
+   "name": "Thoracic extension over a foam roller",
+   "aliases": [],
+   "instructions": "Lie back over a foam roller across your upper back, hands supporting your head. Let your upper back extend over the roller, then move it a few centimetres and repeat. Keep the lower back still.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "upperback"
+   ],
+   "strains": [
+    "neck"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "foam-roller",
+    "floor"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:open-book",
+   "name": "Open book",
+   "aliases": [],
+   "instructions": "Basic exercise\nFocus: enhances thoracic mobility and\nspinal segmentation while opening the shoulders and chest.\n**Position:**kneeling on the floor with your right side facing a wall. Hips are square and stable, with the right knee down and the left foot forward. Lengthen your spine and align your head comfortably.\nBegin with your arms relaxed and open in front of your chest, palms\nfacing each other and hands apart.\nInhale\nto initiate the movement, allowing your left arm —the one farther from\nthe wall— to open outward and backward. Lead the twist from your thoracic\nspine, rotating your upper back progressively while keeping your pelvis\nstill.\nExhale as you complete the rotation, guiding your left hand\ntoward the wall as your gaze follows your hand.\nReturn by inhaling and\nslowly bringing your arm forward, reversing the spinal rotation segment\nby segment.\nRepeat on the opposite side.\nProgression\n**Position:**kneeling on the floor with your right side facing a wall. Left knee down and right foot forward.\nBefore the basic exercise: inhale, exhalewhile moving the right arm along the wall with a circle upwards and backwards, inhalewhile bringing back the arm.\nBasic exercise.\nRepeat on the opposite side.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "upperback",
+    "chest",
+    "shoulder"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1822,
+    "url": "https://wger.de/en/exercise/1822/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "teus_ergaster"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:thread-the-needle",
+   "name": "Thread the needle",
+   "aliases": [],
+   "instructions": "On hands and knees, slide one arm under the other, palm up, letting your shoulder and head lower towards the floor. Return and reach that arm up to the ceiling.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "upperback",
+    "shoulder"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:worlds-greatest-stretch",
+   "name": "World's greatest stretch",
+   "aliases": [],
+   "instructions": "Step into a long lunge, back knee down if needed. Put the same-side hand inside the front foot, then rotate and reach the other arm to the ceiling. Return and step back.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "hips",
+    "hamstrings",
+    "upperback",
+    "quads"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:cobra",
+   "name": "Cobra stretch",
+   "aliases": [
+    "Cobra Pose"
+   ],
+   "instructions": "The Cobra Stretch is a back extension exercise that helps improve spinal flexibility and relieve lower back tension. To perform, lie face down on the floor with your hands placed under your shoulders. Press your palms into the floor and lift your chest while keeping your hips on the ground. Keep your elbows slightly bent and your shoulders relaxed. Hold the stretch for a few seconds, then slowly lower yourself back down. This exercise is beneficial for improving posture and reducing lower back stiffness.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "lowerback",
+    "core",
+    "chest"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1450,
+    "url": "https://wger.de/en/exercise/1450/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "hpmbala@gmail.com"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:sphinx",
+   "name": "Sphinx",
+   "aliases": [],
+   "instructions": "Lie on your stomach flat, legs extended and the backs of your feet on\nthe ground. Bring your forearms under your shoulders, elbows directly\nunderneath. Then press your hands into the floor to lift your chest.\nDraw your shoulder blades together, open your collarbones, and direct\nyour gaze forward, while keeping the lower back relaxed.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "lowerback",
+    "core"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1810,
+    "url": "https://wger.de/en/exercise/1810/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Joculari"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:quad-stretch",
+   "name": "Quadriceps stretch",
+   "aliases": [
+    "Quad Stretch"
+   ],
+   "instructions": "Stand on one leg (hold onto a wall if necessary). Use your hand to grasp the ankle of your other leg and gently pull your heel toward your buttocks. Make sure your knees stay close together and that you push your pelvis slightly forward (avoid arching your back).",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "quads",
+    "hips"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 2687,
+    "url": "https://wger.de/en/exercise/2687/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "tobias08"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:butterfly-stretch",
+   "name": "Butterfly stretch",
+   "aliases": [],
+   "instructions": "Sit in a prayer position with the soles of your feet gently pressed together.\nUse your hands to slowly pull your feet inwards towards your groin. Hold for as long as required.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "hips"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1843,
+    "url": "https://wger.de/en/exercise/1843/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Croak6728"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:frog-stretch",
+   "name": "Frog stretch",
+   "aliases": [],
+   "instructions": "Get on your hands and knees.\nWiden your knees outwards, and drop to your elbows.\nWithout moving your elbows or knees, start to rock forwards and backwards, trying to get your bum closer to your feet.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "hips"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor",
+    "mat"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1844,
+    "url": "https://wger.de/en/exercise/1844/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Croak6728"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:couch-stretch",
+   "name": "Couch stretch",
+   "aliases": [],
+   "instructions": "Stand facing away from a bench, couch or similar-height object.\nExtend one leg backwards, resting your foot \"laces-down\" on the edge of the bench.\nLower yourself until your rear knee is on the floor and you are in a lunge position, with your torso hanging forwards slightly.\nBrace your core, tense your rear glute, and straighten up your torso to vertical, under control. Relax and repeat.\nRepeat for the other leg, too.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "quads",
+    "hips"
+   ],
+   "strains": [
+    "knee",
+    "lowerback"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "bench",
+    "chair"
+   ],
+   "needs": [
+    [
+     "bench",
+     "chair"
+    ]
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 2525,
+    "url": "https://wger.de/en/exercise/2525/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Croak6728"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:lat-stretch",
+   "name": "Lat stretch",
+   "aliases": [],
+   "instructions": "Hold a door frame or wall at head height, step back and sit your hips back, letting your chest drop between your arms. Lean slightly to one side to bias that side.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "upperback",
+    "shoulder"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "wall"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:cross-body-shoulder-stretch",
+   "name": "Cross-body shoulder stretch",
+   "aliases": [],
+   "instructions": "Bring one arm across your chest and hold it above the elbow with the other hand. Keep the shoulder down, away from your ear.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "shoulder",
+    "upperback"
+   ],
+   "strains": [
+    "shoulder"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:triceps-stretch",
+   "name": "Triceps stretch",
+   "aliases": [],
+   "instructions": "Put your left hand on your back, use your right hand to grab your left elbow and gently pull it. Hold this position for a few seconds.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "upperarm",
+    "shoulder"
+   ],
+   "strains": [
+    "shoulder"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 1230,
+    "url": "https://wger.de/en/exercise/1230/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Lynn_McIntyre"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:deep-squat-hold",
+   "name": "Supported deep squat hold",
+   "aliases": [],
+   "instructions": "Hold a stable support in front of you and lower into a comfortable deep squat with both feet grounded. Use the support for balance and to control depth. Maintain the squat hold without bouncing or forcing the hips or ankles farther than a comfortable range.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "hips",
+    "ankle",
+    "glutes"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 2696,
+    "url": "https://wger.de/en/exercise/2696/view/"
+   },
+   "licence": {
+    "name": "CC0",
+    "url": "http://creativecommons.org/publicdomain/zero/1.0/"
+   },
+   "authors": [
+    "Original exercise instructions prepared for nalhilal"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:downward-dog",
+   "name": "Downward dog",
+   "aliases": [],
+   "instructions": "From hands and knees, lift your hips up and back into an upside-down V. Press the floor away and let your heels sink towards it; bend the knees if your hamstrings pull.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "hamstrings",
+    "calf",
+    "shoulder",
+    "upperback"
+   ],
+   "strains": [
+    "forearm",
+    "shoulder"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor",
+    "mat"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:hip-circles",
+   "name": "Hip circles",
+   "aliases": [],
+   "instructions": "View the video to undestand the exercise",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "hips"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 1862,
+    "url": "https://wger.de/en/exercise/1862/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Davidgj32"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:arm-circles",
+   "name": "Arm circles",
+   "aliases": [
+    "Forward arm circles"
+   ],
+   "instructions": "Starting position:\nStand tall with your back straight.\nSteps:\nKeeping your arms straight, bring them in front of you, move them down, behind your back, then over your head, and back to the initial position.\nKeep circling your arms as described in step 1.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "shoulder"
+   ],
+   "strains": [
+    "shoulder"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 994,
+    "url": "https://wger.de/en/exercise/994/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "wger contributors"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:pelvic-tilt",
+   "name": "Posterior pelvic tilt",
+   "aliases": [
+    "Pelvic Tilt Drill / Supine Pelvic Tilt",
+    "Pelvic Tilts"
+   ],
+   "instructions": "Lie on your back with knees bent, feet flat on the floor. Flatten your lower back against the floor by tilting your pelvis posteriorly, engaging your abs and glutes. Hold 5 seconds, release. This retrains pelvic positioning to counter anterior pelvic tilt.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "core",
+    "lowerback"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility",
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 2488,
+    "url": "https://wger.de/en/exercise/2488/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Raj"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:knee-to-chest",
+   "name": "Knee to chest stretch",
+   "aliases": [],
+   "instructions": "The knee to chest stretch is a simple yet effective exercise for relieving lower back tension and improving hip mobility. To perform, lie flat on your back with your legs extended. Bring one knee toward your chest, wrapping your hands around your shin or behind your thigh. Gently pull the knee closer to your chest while keeping the other leg straight on the floor. Hold the stretch for 15–30 seconds, then switch sides. For a deeper stretch, both knees can be pulled toward the chest simultaneously.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "lowerback",
+    "glutes"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1452,
+    "url": "https://wger.de/en/exercise/1452/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "hpmbala@gmail.com"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:piriformis-stretch",
+   "name": "Seated piriformis stretch",
+   "aliases": [],
+   "instructions": "Seated Piriformis Stretch\nPart of: Limber 11\nSource: Joe DeFranco\nPrescription: 20-30 sec each side\nType: static\nIncludes isometric hold.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "glutes",
+    "hips"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "chair",
+    "bench"
+   ],
+   "needs": [
+    [
+     "chair",
+     "bench"
+    ]
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1959,
+    "url": "https://wger.de/en/exercise/1959/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Pete-E automation"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:toe-touch",
+   "name": "Standing forward fold",
+   "aliases": [
+    "Toe Touch",
+    "Standing Forward Bend"
+   ],
+   "instructions": "Stand with your feet closer together. Hinge at your hips and lower your upper body towards your toes. Reach your hands towards your feet, try to touch your toes, the ground, or as far down your legs as you can comfortably go.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "hamstrings",
+    "lowerback",
+    "calf"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 1390,
+    "url": "https://wger.de/en/exercise/1390/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "captive0592"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:goblet-squat",
+   "name": "Goblet squat",
+   "aliases": [
+    "Dumbbell Goblet Squat"
+   ],
+   "instructions": "Grasp dumbbell with both hands at the sides of the upper plates. Hold dumbbell in front of chest, close to torso. Place feet about shoulderwide apart, keep knees slightly bent.\nSquat down until thighs are parallel to floor. Keep back straight, bend and move hips backward to keep knees above feet. Return, keep knees slightly flexed. Repeat.\nKeep bodyweight on heels and look ahead or slightly above to keep back straight.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "quads",
+    "glutes",
+    "core"
+   ],
+   "strains": [
+    "knee",
+    "lowerback"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 2,
+   "equipment": [
+    "dumbbells",
+    "kettlebell"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 203,
+    "url": "https://wger.de/en/exercise/203/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "ataraxie67"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:bodyweight-squat",
+   "name": "Bodyweight squat",
+   "aliases": [
+    "Bodyweight Squat HD"
+   ],
+   "instructions": "Squat is a type of bodyweight exercise. It is one of the most popular exercises for strength and muscle growth. Squat is particularly effective for focusing on the muscles of the leg and hips.\nSquat are an easy exercise for beginners to do. It can help strengthen leg muscles, tighten hip muscles and burn calories to lose weight.\nIt tightens the butt and legs. Squats are very effective for firming and strengthening your legs by acting on the gluteus,hip flexors, quadriceps, hamstrings and inner thigh muscles. Also, bodyweight squats can help shape your glutes and butt.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "quads",
+    "glutes"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "strength",
+    "endurance"
+   ],
+   "sweat": 1,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 1312,
+    "url": "https://wger.de/en/exercise/1312/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "admin",
+    "hektkaso"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:box-squat",
+   "name": "Box squat to a chair",
+   "aliases": [
+    "Box squat"
+   ],
+   "instructions": "Set up the box: Position the box behind you, about 3 feet from a squat rack if you're using a barbell. Choose a height that allows you to squat down and gently tap your glutes on the box with your back straight.\nStand with proper form: Stand with your feet shoulder-width apart, toes pointed slightly outward. Engage your core and keep your back neutral. If using a barbell, rack it at shoulder height.\nLower down: Sit back as if going to sit on a chair, bending your knees and lowering your hips towards the box. Keep your core tight and back straight throughout the movement.\nControlled descent: Descend in a controlled manner until your glutes gently touch the box. Don't plop down.\nPause and press up: Briefly pause at the bottom with your back straight and core engaged. Then, press through your heels to drive yourself back up to the starting position.\nImprovements in coordination, balance and endurance, toning of the leg and buttock muscles and an overall increase in bone density eliminating the risk of osteoporosis.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "quads",
+    "glutes"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "chair",
+    "bench",
+    "step"
+   ],
+   "needs": [
+    [
+     "chair",
+     "bench",
+     "step"
+    ]
+   ],
+   "variationOf": "bm:bodyweight-squat",
+   "source": {
+    "kind": "wger",
+    "id": 977,
+    "url": "https://wger.de/en/exercise/977/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "clafal"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:split-squat",
+   "name": "Split squat",
+   "aliases": [
+    "Dumbbell Split Squat"
+   ],
+   "instructions": "Stand in a long stride, back heel lifted. Lower straight down until the back knee nearly touches the floor, front shin close to upright, then push back up. Do all reps on one side, then change.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "quads",
+    "glutes"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "strength",
+    "balance"
+   ],
+   "sweat": 2,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 1366,
+    "url": "https://wger.de/en/exercise/1366/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Anastasious"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:bulgarian-split-squat",
+   "name": "Bulgarian split squat",
+   "aliases": [
+    "Bulgarian split squats"
+   ],
+   "instructions": "Stand tall in front of a chair and take a large step. Put the upper part of one of your feet on the chair.\nBend the front knee, balancing with arms until the back knee almost touches the ground.\nPush back to the starting position and repeat.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "quads",
+    "glutes",
+    "hips"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "strength",
+    "balance"
+   ],
+   "sweat": 2,
+   "equipment": [
+    "bench",
+    "chair",
+    "step"
+   ],
+   "needs": [
+    [
+     "bench",
+     "chair",
+     "step"
+    ]
+   ],
+   "variationOf": "bm:split-squat",
+   "source": {
+    "kind": "wger",
+    "id": 988,
+    "url": "https://wger.de/en/exercise/988/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "wger contributors"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:reverse-lunge",
+   "name": "Reverse lunge",
+   "aliases": [
+    "Reverse lunges"
+   ],
+   "instructions": "Starting position:\nStand straight, feet hip-width apart.\nSteps:\nStep backward with one leg so it can bend comfortably to a 90 degree angle.\nSlowly bend both knees to form 90 degree angles.\nReturn to the starting position.\nRepeat, alternating legs.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "quads",
+    "glutes"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "strength",
+    "balance"
+   ],
+   "sweat": 2,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 999,
+    "url": "https://wger.de/en/exercise/999/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "wger contributors"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:walking-lunge",
+   "name": "Walking lunge",
+   "aliases": [
+    "Dumbbell Lunges Walking",
+    "Walking Lunges"
+   ],
+   "instructions": "Starting Position: Stand with feet hip-width apart and hands either on your hips or holding dumbbells at your sides.\nThe Stride: Take a wide step forward with your right leg.\nThe Descent: Lower your hips until both knees are bent at approximately 90-degree angles.\nThe Transition: Drive through your front heel to stand up, bringing your back foot forward to step directly into the next lunge.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "quads",
+    "glutes",
+    "hamstrings"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "strength",
+    "endurance"
+   ],
+   "sweat": 2,
+   "equipment": [
+    "dumbbells",
+    "kettlebell"
+   ],
+   "needs": [],
+   "optional": [
+    "dumbbells",
+    "kettlebell"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 206,
+    "url": "https://wger.de/en/exercise/206/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 3",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en"
+   },
+   "authors": [
+    "wger.de"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:step-up",
+   "name": "Step-ups",
+   "aliases": [
+    "Chair steps"
+   ],
+   "instructions": "Starting position:\nStand facing a chair.\nSteps:\nStep up onto the chair.\nStep off the chair.\nRepeat.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "quads",
+    "glutes"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "strength",
+    "endurance"
+   ],
+   "sweat": 2,
+   "equipment": [
+    "step",
+    "bench",
+    "chair"
+   ],
+   "needs": [
+    [
+     "step",
+     "bench",
+     "chair"
+    ]
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 981,
+    "url": "https://wger.de/en/exercise/981/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "wger contributors"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:romanian-deadlift",
+   "name": "Romanian deadlift",
+   "aliases": [
+    "Dumbbell Romanian Deadlift"
+   ],
+   "instructions": "This exercise involves holding a dumbbell in each hand and bending forward at the hips while keeping the back straight, then returning to a standing position. It primarily targets the hamstrings and glutes.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "hamstrings",
+    "glutes",
+    "lowerback"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 2,
+   "equipment": [
+    "dumbbells",
+    "kettlebell",
+    "barbell"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "kettlebell",
+     "barbell"
+    ]
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1652,
+    "url": "https://wger.de/en/exercise/1652/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "AlucardEvil40"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:single-leg-rdl",
+   "name": "Single-leg Romanian deadlift",
+   "aliases": [
+    "Single Leg RDL",
+    "Single Leg Romanian Deadlift"
+   ],
+   "instructions": "Stand upright and hold weights in both hands if using loads.\nBrace your core and lift one leg off the ground.\nKeep your back straight, hinge at the hips while lowering your torso forward, ensuring you don’t rotate your hips.\nLower until you feel a stretch in your standing leg's hamstring, then return to standing position. Repeat on both sides.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "hamstrings",
+    "glutes",
+    "ankle"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "strength",
+    "balance"
+   ],
+   "sweat": 1,
+   "equipment": [],
+   "variationOf": "bm:romanian-deadlift",
+   "source": {
+    "kind": "wger",
+    "id": 1388,
+    "url": "https://wger.de/en/exercise/1388/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "admin",
+    "captive0592"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:deadlift",
+   "name": "Deadlift",
+   "aliases": [
+    "Deadlifts"
+   ],
+   "instructions": "Stand firmly, with your feet slightly more than shoulder wide apart. Stand directly behind the bar where it should barely touch your shin, your feet pointing a bit out. Bend down with a straight back, the knees also pointing somewhat out. Grab the bar with a shoulder wide grip, one overhand, one underhand (mixed grip).\nPull the weight up. At the highest point make a slight hollow back and pull the bar back. Hold 1 or 2 seconds that position. Go down, making sure the back is not bent. Once down you can either go back again as soon as the weights touch the floor, or make a pause, depending on the weight.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "hamstrings",
+    "glutes",
+    "lowerback",
+    "forearm",
+    "upperback"
+   ],
+   "strains": [
+    "lowerback",
+    "knee"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 2,
+   "equipment": [
+    "barbell",
+    "kettlebell",
+    "dumbbells"
+   ],
+   "needs": [
+    [
+     "barbell",
+     "kettlebell",
+     "dumbbells"
+    ]
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 184,
+    "url": "https://wger.de/en/exercise/184/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 3",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en"
+   },
+   "authors": [
+    "wger.de"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:hip-thrust",
+   "name": "Hip thrust",
+   "aliases": [],
+   "instructions": "The bar should go directly on your upper thigh, directly below your crotch. Your feet should be directly under your knees. Push your hips up so that you form a straight line from your knees to your shoulders. Use a pad for comfort.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "glutes",
+    "hamstrings"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 2,
+   "equipment": [
+    "bench",
+    "chair",
+    "barbell",
+    "dumbbells"
+   ],
+   "needs": [
+    [
+     "bench",
+     "chair"
+    ]
+   ],
+   "optional": [
+    "barbell",
+    "dumbbells"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 294,
+    "url": "https://wger.de/en/exercise/294/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Bret Contreras"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:glute-bridge",
+   "name": "Glute bridge",
+   "aliases": [],
+   "instructions": "Lie on you back with your hips and knees flexed, feet on the ground. From this position, raise your butt off of the ground to a height where your body makes a straight line from your knees to your shoulders. To make the exercise more intense, you can add weight by letting a barbell rest on your hips as you complete the motion, or you can put your feet on a slightly higher surface such as a step or a bench.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "glutes",
+    "hamstrings",
+    "lowerback"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength",
+    "endurance"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 265,
+    "url": "https://wger.de/en/exercise/265/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "tdprice12"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:single-leg-glute-bridge",
+   "name": "Single-leg glute bridge",
+   "aliases": [
+    "Single Leg Glute Bridge"
+   ],
+   "instructions": "A glute bridge, where you use just one leg at a time.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "glutes",
+    "hamstrings"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "floor"
+   ],
+   "variationOf": "bm:glute-bridge",
+   "source": {
+    "kind": "wger",
+    "id": 1740,
+    "url": "https://wger.de/en/exercise/1740/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Happy"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:good-morning",
+   "name": "Good morning",
+   "aliases": [
+    "Hip Hinge"
+   ],
+   "instructions": "Stand with your feet more than shoulder-width apart (wider stance) and place your hands on your hips. Hinge at your hips and lower your upper body towards the ground while keeping your back straight then come back up.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "hamstrings",
+    "lowerback",
+    "glutes"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "strength",
+    "mobility"
+   ],
+   "sweat": 1,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 1392,
+    "url": "https://wger.de/en/exercise/1392/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "captive0592"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:calf-raise",
+   "name": "Calf raise",
+   "aliases": [],
+   "instructions": "Stand on the edge of a step, heels free, holding something for balance. Rise onto your toes, pause, then lower slowly below the step.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "calf",
+    "ankle"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength",
+    "endurance"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "step",
+    "dumbbells"
+   ],
+   "needs": [],
+   "optional": [
+    "step",
+    "dumbbells"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:single-leg-calf-raise",
+   "name": "Single-leg calf raise",
+   "aliases": [
+    "Calf raises, one legged"
+   ],
+   "instructions": "Stand on one foot on the edge of a step, heel free, holding something for balance. Rise as high as you can, pause, then lower slowly below the step.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "calf",
+    "ankle"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength",
+    "balance"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "step",
+    "wall",
+    "dumbbells"
+   ],
+   "needs": [],
+   "optional": [
+    "step",
+    "wall",
+    "dumbbells"
+   ],
+   "variationOf": "bm:calf-raise",
+   "source": {
+    "kind": "wger",
+    "id": 702,
+    "url": "https://wger.de/en/exercise/702/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "McMarcel13"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:wall-sit",
+   "name": "Wall sit",
+   "aliases": [
+    "Wall-sit"
+   ],
+   "instructions": "The Wall Sit (or wall chair) is an isometric exercise that mainly involves the leg muscles, improving muscular endurance and stability. Here are the main and secondary muscles activated during the exercise.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "quads",
+    "knee",
+    "glutes"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength",
+    "endurance"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "wall"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1408,
+    "url": "https://wger.de/en/exercise/1408/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "clafal"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:leg-press",
+   "name": "Leg press",
+   "aliases": [],
+   "instructions": "The leg press is a weight training exercise in which the individual pushes a weight or resistance away from them using their legs.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "quads",
+    "glutes"
+   ],
+   "strains": [
+    "knee",
+    "lowerback"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 2,
+   "equipment": [
+    "machine"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 371,
+    "url": "https://wger.de/en/exercise/371/view/"
+   },
+   "licence": {
+    "name": "CC0",
+    "url": "http://creativecommons.org/publicdomain/zero/1.0/"
+   },
+   "authors": [
+    "BFad07"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:leg-extension",
+   "name": "Leg extension",
+   "aliases": [],
+   "instructions": "The leg extension is a resistance weight training exercise that targets the quadriceps muscle in the legs. The exercise is done using a machine called the Leg Extension Machine. There are various manufacturers of these machines and each one is slightly different. Most gym and weight rooms will have the machine in their facility. The leg extension is an isolated exercise targeting one specific muscle group, the quadriceps. It should not be considered as a total leg workout, such as the squat or deadlift. The exercise consists of bending the leg at the knee and extending the legs, then lowering them back to the original position.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "quads"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "machine"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 369,
+    "url": "https://wger.de/en/exercise/369/view/"
+   },
+   "licence": {
+    "name": "CC0",
+    "url": "http://creativecommons.org/publicdomain/zero/1.0/"
+   },
+   "authors": [
+    "BFad07"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:leg-curl",
+   "name": "Leg curl",
+   "aliases": [],
+   "instructions": "The leg curl, also known as the hamstring curl, is an isolation exercise that targets the hamstring muscles. The exercise involves flexing the lower leg against resistance towards the buttocks. Other exercises that can be used to strengthen the hamstrings are the glute-ham raise and the deadlift.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "hamstrings"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "machine"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 364,
+    "url": "https://wger.de/en/exercise/364/view/"
+   },
+   "licence": {
+    "name": "CC0",
+    "url": "http://creativecommons.org/publicdomain/zero/1.0/"
+   },
+   "authors": [
+    "BFad07"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:nordic-curl",
+   "name": "Nordic curl",
+   "aliases": [],
+   "instructions": "The Nordic hamstring curl is one of the best lower-body exercises to build posterior leg strength, improve knee health, and prevent injury.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "hamstrings"
+   ],
+   "strains": [
+    "knee",
+    "hamstrings"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 2,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 910,
+    "url": "https://wger.de/en/exercise/910/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "karly"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:lateral-lunge",
+   "name": "Lateral lunge",
+   "aliases": [],
+   "instructions": "Step wide to one side and sit the hips back over that leg, keeping the other leg straight and both feet flat. Push back to standing.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "quads",
+    "glutes",
+    "hips"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "strength",
+    "mobility"
+   ],
+   "sweat": 1,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:cossack-squat",
+   "name": "Cossack squat",
+   "aliases": [],
+   "instructions": "The Cossack Squat is a multi-joint exercise that works mainly on the legs and buttocks, but also involves stabilizing muscles. It is an excellent exercise for improving strength, mobility and stability in a functional way.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "quads",
+    "hips",
+    "glutes"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "strength",
+    "mobility"
+   ],
+   "sweat": 1,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 1407,
+    "url": "https://wger.de/en/exercise/1407/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "clafal"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:sumo-squat",
+   "name": "Sumo squat",
+   "aliases": [
+    "Sumo Squats"
+   ],
+   "instructions": "Stand with your feet wider than your shoulders, with your toes pointed out at a 45 degree angle and barbell on your shoulder.\nWhile keeping your back straight, descend slowly by bending at the knees and hips as if you are sitting down (squatting).\nLower yourself until your quadriceps and hamstrings are parallel to the floor.\nReturn to the starting position by pressing upwards and extending your legs while maintaining an equal distribution of weight on your forefoot and heel.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "quads",
+    "glutes",
+    "hips"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 632,
+    "url": "https://wger.de/en/exercise/632/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "sophialj"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:kettlebell-swing",
+   "name": "Kettlebell swing",
+   "aliases": [],
+   "instructions": "While kettlebell swings are a full-body workout, they mostly target the muscles along the posterior chain (back of the body). The main muscles used are the glutes, hamstrings, spinal erectors, and muscles of the upper back.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "glutes",
+    "hamstrings",
+    "core",
+    "upperback"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "strength",
+    "endurance"
+   ],
+   "sweat": 2,
+   "equipment": [
+    "kettlebell",
+    "dumbbells"
+   ],
+   "needs": [
+    [
+     "kettlebell",
+     "dumbbells"
+    ]
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 960,
+    "url": "https://wger.de/en/exercise/960/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "clafal"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:sit-to-stand",
+   "name": "Sit-to-stand",
+   "aliases": [],
+   "instructions": "Sit at the front of a chair, feet under your knees. Lean forward and stand up without using your hands, then sit back down slowly.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "quads",
+    "glutes"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "strength",
+    "endurance"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "chair",
+    "bench"
+   ],
+   "needs": [
+    [
+     "chair",
+     "bench"
+    ]
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:clamshell",
+   "name": "Clamshell",
+   "aliases": [],
+   "instructions": "Position\nSide plank with the elbow and the forearm on the ground and the legs slightly bent.\nExecution\nLift your upper knee while keeping your feet close together, like a “shell opening,” then slowly return to the starting position. Keep your core stable and your hips aligned.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "glutes",
+    "hips"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1823,
+    "url": "https://wger.de/en/exercise/1823/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "teus_ergaster"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:side-lying-hip-abduction",
+   "name": "Side-lying hip abduction",
+   "aliases": [
+    "Side Lying Hip Abduction"
+   ],
+   "instructions": "Begin by lying down on your side with your top leg straight and your bottom leg bent for support.\nLift your top leg off the ground\n(optional) - Hold position at the top\nResources:\n40 seconds YouTube video: https://www.youtube.com/watch?v=g9FtnmsIYgI",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "glutes",
+    "hips"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1202,
+    "url": "https://wger.de/en/exercise/1202/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "wakanda90"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:band-monster-walk",
+   "name": "Banded monster walk",
+   "aliases": [
+    "Monster Walk",
+    "Thigh Resisted Monster Walk"
+   ],
+   "instructions": "A banded walking drill for the glutes and hip stabilisers. Place a mini band around both thighs just above the knees, or around the ankles for a harder version. Stand with feet hip-width apart so the band is under tension, then sink into a quarter-squat with the chest up. Walk forward with small diagonal steps, pushing each leg out against the band and keeping the knees tracking over the toes rather than letting them fall inward. Walk forward for the prescribed number of steps, then walk backward to return, keeping the band under tension throughout.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "glutes",
+    "hips"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "band"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 2665,
+    "url": "https://wger.de/en/exercise/2665/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "trs1800"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:terminal-knee-extension",
+   "name": "Band terminal knee extension",
+   "aliases": [],
+   "instructions": "This is an end range strengthening exercise for the knee extensors. Start by looping a band around the back of one knee and anchoring the other end to a stable surface in front of you. Stand in a split stance with the banded knee bent and placed as the front leg. Straighten the knee to pull against the bands resistance and maintain a contraction in your quadriceps for up to 5 seconds before releasing.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "knee",
+    "quads"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "band",
+    "cable"
+   ],
+   "needs": [
+    [
+     "band",
+     "cable"
+    ]
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 2494,
+    "url": "https://wger.de/en/exercise/2494/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Rehab Hero"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:straight-leg-raise",
+   "name": "Straight-leg raise",
+   "aliases": [],
+   "instructions": "Lie on your back, one knee bent. Tighten the thigh of the straight leg and lift it to the height of the other knee, then lower slowly.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "quads",
+    "hips",
+    "knee"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:spanish-squat",
+   "name": "Spanish squat",
+   "aliases": [],
+   "instructions": "Loop a heavy band behind both knees, anchored in front of you. Lean back into the band and sit into a squat with shins upright, then hold.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "quads",
+    "knee"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "band"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:tibialis-raise",
+   "name": "Tibialis raise",
+   "aliases": [
+    "Tibialis raises"
+   ],
+   "instructions": "Stand up straight\nLift the balls of your feet, resting on your heels.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "shin",
+    "ankle"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "wall"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1200,
+    "url": "https://wger.de/en/exercise/1200/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "cynomops"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:copenhagen-plank",
+   "name": "Copenhagen plank",
+   "aliases": [
+    "Copenhagen Adduction Exercise",
+    "Adductor Side Plank"
+   ],
+   "instructions": "Lie on your side with the elbow placed directly under the shoulder, similar to a side plank position. Place the upper leg on a bench with the inside of the foot or ankle resting on it. Lift your hips and hold your body in a straight line while keeping the lower leg off the floor. The exercise strongly activates the adductors of the upper leg while also challenging the core and hip stabilizers.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "hips",
+    "core"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "bench",
+    "chair"
+   ],
+   "needs": [
+    [
+     "bench",
+     "chair"
+    ]
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1605,
+    "url": "https://wger.de/en/exercise/1605/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "RiccaBaro"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:push-up",
+   "name": "Push-up",
+   "aliases": [],
+   "instructions": "The push-up is a fundamental bodyweight exercise that targets the chest, arms, and shoulders while engaging the core for stability. It requires no equipment and is excellent for building upper body strength.\nInstructions:\nStart in a plank position with hands placed slightly wider than shoulder-width, feet together, and body in a straight line from head to heels.\nEngage your core and lower your body by bending your elbows, keeping them close to your body or flared slightly outward.\nLower until your chest nearly touches the ground while maintaining a neutral spine.\nPush through your palms to return to the starting position, fully extending your arms.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "chest",
+    "shoulder",
+    "upperarm",
+    "core"
+   ],
+   "strains": [
+    "shoulder",
+    "forearm"
+   ],
+   "kinds": [
+    "strength",
+    "endurance"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1551,
+    "url": "https://wger.de/en/exercise/1551/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Settebello"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:incline-push-up",
+   "name": "Incline push-up",
+   "aliases": [
+    "Push-Ups | Incline"
+   ],
+   "instructions": "Inclined push-ups primarily target the chest muscles (pectoralis major and minor), but also work the triceps, shoulders, and core to a lesser extent. Because the upper body is elevated, the incline push-up places less emphasis on the triceps compared to regular push-ups, which may be beneficial for individuals looking to specifically target their chest muscles.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "chest",
+    "shoulder",
+    "upperarm"
+   ],
+   "strains": [
+    "forearm"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "bench",
+    "chair",
+    "desk",
+    "step"
+   ],
+   "needs": [
+    [
+     "bench",
+     "chair",
+     "desk",
+     "step"
+    ]
+   ],
+   "variationOf": "bm:push-up",
+   "source": {
+    "kind": "wger",
+    "id": 1111,
+    "url": "https://wger.de/en/exercise/1111/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "anon1337"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:knee-push-up",
+   "name": "Knee push-up",
+   "aliases": [
+    "knee push-ups"
+   ],
+   "instructions": "Start by kneeling on the floor, keeping your knees together. Place your hands on the floor in front of you, slightly wider than shoulder-width apart.\nMake sure your body forms a straight line from head to knees. Hands should be positioned below shoulders.\nLower your torso towards the ground, bending your elbows while keeping your trunk stable. Keep your knees in contact with the floor.\nPush through your hands to return to the starting position. Be sure to maintain contraction of chest, shoulder and arm muscles at the top of the movement.\nPerform the desired number of repetitions, controlling the movement and maintaining good form.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "chest",
+    "shoulder",
+    "upperarm"
+   ],
+   "strains": [
+    "forearm"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "floor",
+    "mat"
+   ],
+   "variationOf": "bm:push-up",
+   "source": {
+    "kind": "wger",
+    "id": 1218,
+    "url": "https://wger.de/en/exercise/1218/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "PaukOne"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:wall-push-up",
+   "name": "Wall push-up",
+   "aliases": [],
+   "instructions": "Stand an arm's length from a wall, hands on it at chest height and a little wider than your shoulders. Bend your elbows to bring your chest towards the wall, then push back. Keep your body in one line; step further back to make it harder.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "chest",
+    "shoulder",
+    "upperarm"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "wall"
+   ],
+   "variationOf": "bm:push-up",
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:bench-press",
+   "name": "Bench press",
+   "aliases": [],
+   "instructions": "Lay down on a bench, the bar should be directly above your eyes, the knees are somewhat angled and the feet are firmly on the floor. Concentrate, breath deeply and grab the bar more than shoulder wide. Bring it slowly down till it briefly touches your chest at the height of your nipples. Push the bar up.\nIf you train with a high weight it is advisable to have a spotter that can help you up if you can't lift the weight on your own.\nWith the width of the grip you can also control which part of the chest is trained more:\nwide grip: outer chest muscles\nnarrow grip: inner chest muscles and triceps",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "chest",
+    "shoulder",
+    "upperarm"
+   ],
+   "strains": [
+    "shoulder"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 2,
+   "equipment": [
+    "barbell",
+    "dumbbells",
+    "bench"
+   ],
+   "needs": [
+    [
+     "barbell",
+     "dumbbells"
+    ],
+    [
+     "bench"
+    ]
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 73,
+    "url": "https://wger.de/en/exercise/73/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 3",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en"
+   },
+   "authors": [
+    "sistab2"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:overhead-press",
+   "name": "Overhead press",
+   "aliases": [],
+   "instructions": "Stand with the bar at your collarbones, hands just wider than your shoulders. Brace your trunk and press the bar straight overhead, moving your head back to let it pass, then lower it to your collarbones. Don't lean back.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "shoulder",
+    "upperarm",
+    "core"
+   ],
+   "strains": [
+    "shoulder",
+    "lowerback"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 2,
+   "equipment": [
+    "barbell",
+    "dumbbells"
+   ],
+   "needs": [
+    [
+     "barbell",
+     "dumbbells"
+    ]
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 687,
+    "url": "https://wger.de/en/exercise/687/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Vazco"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:dumbbell-shoulder-press",
+   "name": "Dumbbell shoulder press",
+   "aliases": [
+    "Shoulder Press, Dumbbells",
+    "OHP Dumbbells",
+    "Overhead press Dumbbells",
+    "Military Press with Dumbbells"
+   ],
+   "instructions": "Sit on a bench, the back rest should be almost vertical. Take two dumbbells and bring them up to shoulder height, the palms and the elbows point during the whole exercise to the front. Press the weights up, at the highest point they come very near but don't touch. Go slowly down and repeat.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "shoulder",
+    "upperarm"
+   ],
+   "strains": [
+    "shoulder"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "dumbbells",
+    "kettlebell"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "kettlebell"
+    ]
+   ],
+   "variationOf": "bm:overhead-press",
+   "source": {
+    "kind": "wger",
+    "id": 567,
+    "url": "https://wger.de/en/exercise/567/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 3",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en"
+   },
+   "authors": [
+    "wger.de"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:landmine-press",
+   "name": "Landmine press",
+   "aliases": [],
+   "instructions": "Hold the end of a bar anchored in a corner at your shoulder. Press it up and forward until your arm is straight, then lower it with control. Brace so your trunk doesn't twist.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "shoulder",
+    "chest",
+    "upperarm",
+    "core"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "barbell"
+   ],
+   "variationOf": "bm:overhead-press",
+   "source": {
+    "kind": "wger",
+    "id": 346,
+    "url": "https://wger.de/en/exercise/346/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Torsten Linnecke"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:pull-up",
+   "name": "Pull-up",
+   "aliases": [
+    "Pull-ups"
+   ],
+   "instructions": "Grab the pull up bar with a wide grip, the body is hanging freely. Keep your chest out and pull yourself up till your chin reaches the bar or it touches your neck, if you want to pull behind you. Go with a slow and controlled movement down, always keeping the chest out.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "upperback",
+    "upperarm",
+    "forearm"
+   ],
+   "strains": [
+    "shoulder",
+    "forearm"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 2,
+   "equipment": [
+    "pullup-bar"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 475,
+    "url": "https://wger.de/en/exercise/475/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 3",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en"
+   },
+   "authors": [
+    "wger.de"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:chin-up",
+   "name": "Chin-up",
+   "aliases": [
+    "Chin Up"
+   ],
+   "instructions": "The chin-up (also known as a chin or chinup) is a strength training exercise. People frequently do this exercise with the intention of strengthening muscles such as the latissimus dorsi and biceps, which extend the shoulder and flex the elbow, respectively. In this maneuver, the palms are faced towards the body. It is a form of pull-up in which the range of motion is established in relation to a person's chin.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "upperback",
+    "upperarm",
+    "forearm"
+   ],
+   "strains": [
+    "shoulder",
+    "forearm"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 2,
+   "equipment": [
+    "pullup-bar"
+   ],
+   "variationOf": "bm:pull-up",
+   "source": {
+    "kind": "wger",
+    "id": 152,
+    "url": "https://wger.de/en/exercise/152/view/"
+   },
+   "licence": {
+    "name": "CC0",
+    "url": "http://creativecommons.org/publicdomain/zero/1.0/"
+   },
+   "authors": [
+    "BFad07"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:inverted-row",
+   "name": "Inverted row",
+   "aliases": [
+    "Inverted Rows",
+    "horizontal pull-ups"
+   ],
+   "instructions": "Maintain a straight body, retract your shoulder blades, and pull your\nchest to the bar for an effective back and upper body workout.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "upperback",
+    "upperarm"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "barbell"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1198,
+    "url": "https://wger.de/en/exercise/1198/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Gavru"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:bent-over-row",
+   "name": "Bent-over row",
+   "aliases": [
+    "Bent Over Row"
+   ],
+   "instructions": "Standing with the torso bent forward from the hips at roughly 45 degrees, back straight. Hold two dumbbells with an overhand grip, arms hanging below the shoulders. Pull the dumbbells along the body toward the pelvis, elbows close to the torso, briefly squeezing the shoulder blades together at the top. Lower under control. Primary muscle: lats. Keep the torso stable throughout the movement, no arching of the lower back.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "upperback",
+    "upperarm"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "dumbbells",
+    "kettlebell",
+    "barbell"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "kettlebell",
+     "barbell"
+    ]
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 2762,
+    "url": "https://wger.de/en/exercise/2762/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "lleeaa"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:one-arm-row",
+   "name": "One-arm dumbbell row",
+   "aliases": [
+    "Bent Over Dumbbell Rows (Single Arm)",
+    "One Arm DB Rows",
+    "Dumbbell Single-Arm Row"
+   ],
+   "instructions": "With dumbbells in hand, bend at the hip until hands hang just below the knees (similar to straight-legged-deadlift starting position). Keep upper body angle constant while contracting your lats to pull you ellbows back pinching the shoulder blades at the top. Try not to stand up with every rep, check hands go below knees on every rep.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "upperback",
+    "upperarm"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "dumbbells",
+    "kettlebell",
+    "bench",
+    "chair"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "kettlebell"
+    ],
+    [
+     "bench",
+     "chair"
+    ]
+   ],
+   "variationOf": "bm:bent-over-row",
+   "source": {
+    "kind": "wger",
+    "id": 81,
+    "url": "https://wger.de/en/exercise/81/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "sebk"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:seated-cable-row",
+   "name": "Seated cable row",
+   "aliases": [],
+   "instructions": "Take a seat on the machine with your feet planted, a little wider than shoulder width. Drive the heels, and squeeze the glutes. Grab onto the cable handle.\nSit up tall with a slight bend through the knees. Tighten up the abs and low back to maintain a perpendicular angle to the floor with your torso.\nRoll the shoulders back and down. Squeeze them together as you row, thinking about pinching a pencil in between them. As you do this, pull the handle back towards you, landing right above your belly button.\nPause here for a moment before returning the handle, still squeezing the shoulder blades. Once you've returned the weight to the stack, then allow the shoulder blades to relax, without pulling the torso forward.\nRepeat the movement.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "upperback",
+    "upperarm"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "cable",
+    "machine",
+    "band"
+   ],
+   "needs": [
+    [
+     "cable",
+     "machine",
+     "band"
+    ]
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1117,
+    "url": "https://wger.de/en/exercise/1117/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Franpol"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:lat-pulldown",
+   "name": "Lat pulldown",
+   "aliases": [
+    "Wide-grip Pulldown",
+    "Lat Pulldown (Wide Grip)",
+    "Machine Lat Pulldown"
+   ],
+   "instructions": "Starting position:\nArms extended overhead, feeling a stretch in your lats.\nKeep your shoulders depressed (don’t shrug upward).\nPulling phase (concentric):\nPull the bar down to your upper chest or collarbone area by driving your elbows down and back.\nKeep your chest lifted and squeeze your shoulder blades together at the bottom.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "upperback",
+    "upperarm"
+   ],
+   "strains": [
+    "shoulder"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "cable",
+    "machine"
+   ],
+   "needs": [
+    [
+     "cable",
+     "machine"
+    ]
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 723,
+    "url": "https://wger.de/en/exercise/723/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 3",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en"
+   },
+   "authors": [
+    "tuckerm"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:face-pull",
+   "name": "Face pull",
+   "aliases": [
+    "Face pulls with yellow/green band"
+   ],
+   "instructions": "Face pulls with band – standing horizontal pull. Grab the band at face height, pull elbows high and wide towards your face while squeezing shoulder blades together. Trains upper back, rear shoulders and improves posture.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "upperback",
+    "shoulder"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "band",
+    "cable"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1732,
+    "url": "https://wger.de/en/exercise/1732/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "54str"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:band-pull-apart",
+   "name": "Band pull-apart",
+   "aliases": [
+    "Band pull-aparts"
+   ],
+   "instructions": "Hold the band with your arms extended in front of you at shoulder height.\nKeep your elbows slightly bent but fixed throughout the movement.\nPull the band apart by spreading your arms until the band touches or comes close to your chest.\nSlowly bring your arms back to the starting position, controlling the tension on the band.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "upperback",
+    "shoulder"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength",
+    "endurance"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "band"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1380,
+    "url": "https://wger.de/en/exercise/1380/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "schwolfar"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:band-row",
+   "name": "Band row",
+   "aliases": [
+    "Seated Band Row",
+    "Seated Resistance Band Row",
+    "Floor Band Row"
+   ],
+   "instructions": "Sit on the floor with your legs straight out in front of you and your back tall. Loop a resistance band around the soles of both feet and hold one end in each hand, arms extended and a slight bend in the knees. Pull the band toward your lower ribs by driving your elbows straight back and squeezing your shoulder blades together. Keep your chest up and your torso still rather than rocking backward to move the band. Extend the arms slowly to return. Because the torso stays upright and supported, this is a useful row when a bent-over position is uncomfortable, and it needs no anchor point.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "upperback",
+    "upperarm"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength",
+    "endurance"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "band",
+    "cable"
+   ],
+   "needs": [
+    [
+     "band",
+     "cable"
+    ]
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 2635,
+    "url": "https://wger.de/en/exercise/2635/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "trs1800"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:reverse-fly",
+   "name": "Reverse fly",
+   "aliases": [],
+   "instructions": "Hinge forward with a flat back, dumbbells hanging. Lift them out to the sides, squeezing your shoulder blades together, and lower slowly.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "upperback",
+    "shoulder"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "dumbbells",
+    "band"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "band"
+    ]
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:lateral-raise",
+   "name": "Lateral raise",
+   "aliases": [
+    "Lateral Raises",
+    "Shoulder fly",
+    "Side raises",
+    "Dumbbell Lateral Raise"
+   ],
+   "instructions": "This exercise works the deltoid muscle of the shoulder. The movement starts with the arms straight, and the hands holding weights at the sides or in front of the body. Body is in a slight forward-leaning position with hips and knees bent a little. Arms are kept straight or slightly bent, and raised through an arc of movement in the coronal plane that terminates when the hands are at approximately shoulder height. Weights are lowered to the starting position, completing one rep. When using a cable machine the individual stands with the coronal plane in line with the pulley, which is at or near the ground.[9] The exercise can be completed one shoulder at a time (with the other hand used to stabilize the body against the weight moved), or with both hands simultaneously if two parallel pulleys are available.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "shoulder"
+   ],
+   "strains": [
+    "shoulder"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "dumbbells",
+    "band"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "band"
+    ]
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 348,
+    "url": "https://wger.de/en/exercise/348/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 3",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en"
+   },
+   "authors": [
+    "wger.de"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:front-raise",
+   "name": "Front raise",
+   "aliases": [
+    "Front Raises",
+    "dumbbell front raises",
+    "DB Front Raises"
+   ],
+   "instructions": "To execute the exercise, the lifter stands with their feet shoulder width apart and weights or resistance handles held by their side with a pronated (overhand) grip.\nThe movement is to bring the arms up in front of the body to eye level and with only a slight bend in the elbow. This isolates the anterior deltoid muscle (front of the shoulder) and uses the anterior deltoid to lift the weight.\nWhen lifting it is important to keep the body still so the anterior deltoid is fully utilised; if the weight cannot be lifted by standing still then it is too heavy and a lower weight is needed. It is important to keep a slight bend in the elbow when lifting as keeping the elbow locked will add stress to the elbow joint and could cause injury.\nA neutral grip, similar to that used in the hammer curl, can also be used. With this variation the weight is again raised to eye level, but out to a 45 degree angle from the front of the body. This may be beneficial for those with shoulder injuries, particularly those related to the rotator cuff.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "shoulder"
+   ],
+   "strains": [
+    "shoulder"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "dumbbells",
+    "band"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "band"
+    ]
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 256,
+    "url": "https://wger.de/en/exercise/256/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 3",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en"
+   },
+   "authors": [
+    "Manu, wikipedia"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:biceps-curl",
+   "name": "Biceps curl",
+   "aliases": [],
+   "instructions": "Stand with dumbbells at your sides, palms forward. Bend at the elbows to bring them to your shoulders without swinging, then lower slowly.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "upperarm",
+    "forearm"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "dumbbells",
+    "kettlebell",
+    "band"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "kettlebell",
+     "band"
+    ]
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:hammer-curl",
+   "name": "Hammer curl",
+   "aliases": [
+    "Hammer Curls"
+   ],
+   "instructions": "Start: Hold dumbbells at your sides with palms facing your torso.\nCurl: Lift the weights toward your shoulders while maintaining the neutral grip (like holding a hammer).\nSqueeze: Contract the biceps at the top without moving your elbows forward.\nLower: Slowly return to the starting position with full control.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "upperarm",
+    "forearm"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "dumbbells",
+    "kettlebell",
+    "band"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "kettlebell",
+     "band"
+    ]
+   ],
+   "variationOf": "bm:biceps-curl",
+   "source": {
+    "kind": "wger",
+    "id": 272,
+    "url": "https://wger.de/en/exercise/272/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 3",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en"
+   },
+   "authors": [
+    "wger.de"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:dips",
+   "name": "Bench dips",
+   "aliases": [
+    "Dips Between Two Benches"
+   ],
+   "instructions": "Put two benches so far appart, that you can hold onto one with your hands and are just able to reach the other with your feet. The legs stay during the exercise completely stretched. With your elbows facing back, bend them as much as you can. Push yourself up, but don't stretch out the arms.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "upperarm",
+    "chest",
+    "shoulder"
+   ],
+   "strains": [
+    "shoulder",
+    "forearm"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "bench",
+    "chair"
+   ],
+   "needs": [
+    [
+     "bench",
+     "chair"
+    ]
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 197,
+    "url": "https://wger.de/en/exercise/197/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 3",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en"
+   },
+   "authors": [
+    "wger.de"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:overhead-triceps-extension",
+   "name": "Overhead triceps extension",
+   "aliases": [],
+   "instructions": "Overhead Triceps Extension with EZ Bar – Quick Guide\nThe overhead position emphasizes the long head of the triceps (because it's stretched under load), the exercise does engage all three triceps heads (long, lateral, and medial) to some degree during extension.\nSetup:\nSit on a bench (or stand) and hold an EZ bar with a narrow, overhand\ngrip. Lift the bar overhead, arms fully extended. Keep your core tight\nand elbows close to your head.\nExecution:\nSlowly lower the bar behind your head by bending your elbows until they\nreach ~90°. Keep elbows pointed forward (not flaring out).\nFinish: Extend your arms back up to the starting position, squeezing your triceps at the top.\nTips:\nControl the movement to avoid straining your shoulders.\nUse a moderate weight for full range of motion.\nKeep your back straight and avoid arching.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "upperarm"
+   ],
+   "strains": [
+    "shoulder"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "dumbbells",
+    "kettlebell",
+    "band"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "kettlebell",
+     "band"
+    ]
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1519,
+    "url": "https://wger.de/en/exercise/1519/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "benjamin.yildiz@proton.me"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:triceps-pushdown",
+   "name": "Triceps pushdown",
+   "aliases": [],
+   "instructions": "Triceps pushdown on cable using lat bar.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "upperarm"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "cable",
+    "band"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1185,
+    "url": "https://wger.de/en/exercise/1185/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "anto.kreegyr"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:shrug",
+   "name": "Shrug",
+   "aliases": [
+    "Shrugs, Dumbbells"
+   ],
+   "instructions": "Stand with straight body, the hands are hanging freely on the side and hold each a dumbbell. Lift from this position the shoulders as high as you can, but don't bend the arms during the movement. On the highest point, make a short pause of 1 or 2 seconds before returning slowly to the initial position.\nWhen training with a higher weight, make sure that you still do the whole movement!",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "upperback",
+    "neck"
+   ],
+   "strains": [
+    "neck"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "dumbbells",
+    "kettlebell",
+    "barbell"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "kettlebell",
+     "barbell"
+    ]
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 572,
+    "url": "https://wger.de/en/exercise/572/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 3",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en"
+   },
+   "authors": [
+    "wger.de"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:band-external-rotation",
+   "name": "Band external rotation",
+   "aliases": [],
+   "instructions": "Elbow at your side, bent to 90°, holding a band anchored across your body. Turn the forearm outwards against the band, keeping the elbow tucked in.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "shoulder"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "band"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:band-internal-rotation",
+   "name": "Band internal rotation",
+   "aliases": [],
+   "instructions": "Elbow at your side, bent to 90°, holding a band anchored on that side. Turn the forearm inwards across your body against the band.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "shoulder"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "band"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:ytw-raise",
+   "name": "Y-T-W raises",
+   "aliases": [
+    "YTW Raises"
+   ],
+   "instructions": "The YTW exercise for scapular retraction is designed to strengthen the inter-scapular muscles between your shoulder blades, to help retract or pull your shoulders back, helping to maintain proper upright posture.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "upperback",
+    "shoulder"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 2454,
+    "url": "https://wger.de/en/exercise/2454/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "probablyforging"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:scapular-push-up",
+   "name": "Scapular push-up",
+   "aliases": [],
+   "instructions": "In a push-up position with straight arms, let your chest sink between your shoulder blades, then push the floor away to spread them. Elbows stay straight.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "upperback",
+    "shoulder",
+    "chest"
+   ],
+   "strains": [
+    "forearm"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:dead-hang",
+   "name": "Dead hang",
+   "aliases": [
+    "Deadhang"
+   ],
+   "instructions": "Hang from a pull-up bar with straight arms, hands shoulder-width apart. Let your shoulders relax up but stay in control; step down before your grip fails.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "forearm",
+    "shoulder",
+    "upperback"
+   ],
+   "strains": [
+    "shoulder"
+   ],
+   "kinds": [
+    "strength",
+    "mobility"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "pullup-bar"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 182,
+    "url": "https://wger.de/en/exercise/182/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "2dPREtEZP221u68Akf0JImv5L48"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:farmer-carry",
+   "name": "Farmer carry",
+   "aliases": [
+    "Dumbbell farmer's carry"
+   ],
+   "instructions": "Grab half your body weight in each hand and walk.",
+   "measure": "distance",
+   "sided": false,
+   "works": [
+    "forearm",
+    "upperback",
+    "core"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "strength",
+    "endurance"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "dumbbells",
+    "kettlebell"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1116,
+    "url": "https://wger.de/en/exercise/1116/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "philip"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:suitcase-carry",
+   "name": "Suitcase carry",
+   "aliases": [],
+   "instructions": "Walk forward and backward with holding dumbbell on one side without leaning to counter the weight.",
+   "measure": "distance",
+   "sided": true,
+   "works": [
+    "core",
+    "forearm",
+    "upperback"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength",
+    "balance"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "dumbbells",
+    "kettlebell"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1776,
+    "url": "https://wger.de/en/exercise/1776/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "aboksz"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:plank",
+   "name": "Plank",
+   "aliases": [],
+   "instructions": "Get into a position on the floor supporting your weight on your forearms and toes. Arms are bent and directly below the shoulder.\nKeep your body straight at all times and hold this position as long as possible. To increase difficulty an arm or leg can be raised while performing this exercise.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "core"
+   ],
+   "strains": [
+    "lowerback",
+    "shoulder"
+   ],
+   "kinds": [
+    "strength",
+    "endurance"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 458,
+    "url": "https://wger.de/en/exercise/458/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 3",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en"
+   },
+   "authors": [
+    "YYCfit / BFad07"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:side-plank",
+   "name": "Side plank",
+   "aliases": [],
+   "instructions": "Works your obliques and helps stabilize your spine. Lie on your side and support your body between your forearm and knee to your feet.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "core",
+    "hips"
+   ],
+   "strains": [
+    "shoulder"
+   ],
+   "kinds": [
+    "strength",
+    "endurance"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 580,
+    "url": "https://wger.de/en/exercise/580/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "http://www.bodybuilding.com/"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:dead-bug",
+   "name": "Dead bug",
+   "aliases": [],
+   "instructions": "Lie on your back, arms up and knees over hips. Press your lower back into the floor and lower the opposite arm and leg slowly, then return and switch.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "core"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:bird-dog",
+   "name": "Bird dog",
+   "aliases": [],
+   "instructions": "The Bird Dog is a core stability exercise that enhances balance, coordination, and spinal alignment. It’s a low-impact movement ideal for strengthening the posterior chain and improving overall functional control.\nBegin on all fours with hands under shoulders and knees under hips, keeping your spine neutral.\nExtend your right arm forward and left leg backward simultaneously, keeping hips square.\nPause briefly at full extension while engaging your core and glutes.\nReturn to the starting position and repeat on the opposite side",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "core",
+    "lowerback",
+    "glutes",
+    "shoulder"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength",
+    "balance"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1572,
+    "url": "https://wger.de/en/exercise/1572/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Settebello"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:mcgill-curl-up",
+   "name": "McGill curl-up",
+   "aliases": [],
+   "instructions": "Lie on your back with one knee bent and your hands under your lower back. Lift your head and shoulders a few centimetres as one unit and hold, without flattening your back.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "core"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:hollow-hold",
+   "name": "Hollow hold",
+   "aliases": [],
+   "instructions": "Get on a mat and lie on your back. Contract your abs, stretch your arms and legs and raise them (your head and shoulders are also be raised). Make sure your lower back remains in contact with the mat.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "core"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "floor",
+    "mat"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 297,
+    "url": "https://wger.de/en/exercise/297/view/"
+   },
+   "licence": {
+    "name": "CC0",
+    "url": "http://creativecommons.org/publicdomain/zero/1.0/"
+   },
+   "authors": [
+    "Behrooz"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:crunch",
+   "name": "Crunch",
+   "aliases": [
+    "Crunches"
+   ],
+   "instructions": "Lay down on your back a soft surface, the feet are on the floor. Ask a partner or use some other help (barbell, etc.) to keep them fixed, your hands are behind your head. From this position move your upper body up till your head or elbows touch your knees. Do this movement by rolling up your back.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "core"
+   ],
+   "strains": [
+    "neck"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor",
+    "mat"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 167,
+    "url": "https://wger.de/en/exercise/167/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 3",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en"
+   },
+   "authors": [
+    "wger.de"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:bicycle-crunch",
+   "name": "Bicycle crunch",
+   "aliases": [
+    "bicycle crunches"
+   ],
+   "instructions": "Bicycle crunches are a core exercise performed on the floor. Lie on your back with your hands behind your head and legs extended. Lift your shoulders off the ground, bring one knee toward your chest, and twist your torso so your opposite elbow meets the knee. Alternate sides in a pedaling motion, ensuring controlled movements and engaging your core throughout the exercise.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "core"
+   ],
+   "strains": [
+    "neck",
+    "lowerback"
+   ],
+   "kinds": [
+    "strength",
+    "endurance"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1412,
+    "url": "https://wger.de/en/exercise/1412/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "hpmbala@gmail.com"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:russian-twist",
+   "name": "Russian twist",
+   "aliases": [],
+   "instructions": "Hold a dumbbell, barbell weight or something else that is heavy with both hands, but make sure it is not too heavy and you are able to keep in form.\nLean back to a 45-degree angle from the floor. For an extra challenge, lift your feet off the floor.\nRotate your arms to one side to the same level as your chest, touch the floor for a little extra challenge, and then do the same to the other side. When you're back in your original position after doing both sides it will count as 1 rep.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "core"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1193,
+    "url": "https://wger.de/en/exercise/1193/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "lion"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:pallof-press",
+   "name": "Pallof press",
+   "aliases": [],
+   "instructions": "The Pallof press is an anti-rotation exercise that trains the larger and smaller muscles around the spine to resist rotation.\nStand parallel to the cable machine or to the anchor point to the\nresistance band and clasp with the handle or band with both hands.\nMake sure your torso is front on and bring your hands to the center of your chest and slowly press out.\nSlowly return your hands to the chest and repeat.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "core"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "cable",
+    "band"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1194,
+    "url": "https://wger.de/en/exercise/1194/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "prevail90"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:ab-wheel",
+   "name": "Ab wheel rollout",
+   "aliases": [
+    "Ab wheel"
+   ],
+   "instructions": "Starting Position: Kneel on the floor with the ab wheel in front of you.\nGrip the Wheel: Hold the handles firmly.\nRoll Out: Slowly roll the wheel forward, extending your body while keeping your core tight.\nReturn: Pull the wheel back towards your knees, maintaining tension in your core.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "core",
+    "shoulder"
+   ],
+   "strains": [
+    "lowerback",
+    "shoulder"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1573,
+    "url": "https://wger.de/en/exercise/1573/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "lhegedus"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:hanging-leg-raise",
+   "name": "Hanging leg raise",
+   "aliases": [
+    "Hanging Leg Raises"
+   ],
+   "instructions": "Hanging from bar or straps, bring legs up with knees extended or flexed",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "core",
+    "hips",
+    "forearm"
+   ],
+   "strains": [
+    "shoulder"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "pullup-bar"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 283,
+    "url": "https://wger.de/en/exercise/283/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 3",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en"
+   },
+   "authors": [
+    "robhoyt"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:lying-leg-raise",
+   "name": "Lying leg raise",
+   "aliases": [
+    "Leg Raises, Lying"
+   ],
+   "instructions": "Lay down on a bench and hold onto the recliner with your hands to keep you stable. Hold your legs straight and lift them till they make an angle of about 45°. Make a short pause of 1 sec. and go slowly down to the initial position. To increase the intensity you can make a longer pause of 7 sec. every 5th time.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "core",
+    "hips"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "floor",
+    "mat"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 377,
+    "url": "https://wger.de/en/exercise/377/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 3",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en"
+   },
+   "authors": [
+    "wger.de"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:mountain-climber",
+   "name": "Mountain climbers",
+   "aliases": [],
+   "instructions": "Starting position:\nStart in the upright push-up position, aka. the high plank position.Hands should be directly under your shoulders.Keep your head in line with your back, facing the floor.Feet should be about hip-width apart.\nSteps:\nMove one knee toward the center of your body, towards your elbows, keeping the other leg extended.\nIn a quick jumping movement, straighten the bent leg out and pull the other knee toward your body.\nKeep repeating step 2, alternating legs.\nNotes:\nThroughout the exercise, your back should remain as straight as possible – avoid a hump or a sagging back.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "core",
+    "shoulder",
+    "hips"
+   ],
+   "strains": [
+    "shoulder",
+    "forearm"
+   ],
+   "kinds": [
+    "endurance",
+    "strength"
+   ],
+   "sweat": 2,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 996,
+    "url": "https://wger.de/en/exercise/996/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "wger contributors"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:bear-crawl",
+   "name": "Bear crawl",
+   "aliases": [],
+   "instructions": "On hands and feet with knees just off the floor, crawl forward with small steps of opposite hand and foot, keeping your back flat and hips low.",
+   "measure": "distance",
+   "sided": false,
+   "works": [
+    "core",
+    "shoulder",
+    "quads"
+   ],
+   "strains": [
+    "forearm",
+    "shoulder"
+   ],
+   "kinds": [
+    "endurance",
+    "strength"
+   ],
+   "sweat": 2,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:superman",
+   "name": "Superman",
+   "aliases": [],
+   "instructions": "Lay flat on your stomach with your arms extended in front of you on the ground as your legs are lying flat. Lift both your arms and legs at the same time, as if you were flying, and contract the lower back. Make sure that you are breathing and, depending on your fitness level, hold the movement for at least two to five seconds per repetition.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "lowerback",
+    "glutes",
+    "upperback"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor",
+    "mat"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 636,
+    "url": "https://wger.de/en/exercise/636/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "baldurmen"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:back-extension",
+   "name": "Back extension",
+   "aliases": [
+    "Hyperextensions"
+   ],
+   "instructions": "Lie on the hyperextension pillow with your navel at the front edge, allowing your upper body to hang freely. Tighten all your back muscles and raise your torso until you're horizontal, but no higher. Lower yourself slowly, maintaining a steady flow of muscles.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "lowerback",
+    "glutes",
+    "hamstrings"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "machine"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 301,
+    "url": "https://wger.de/en/exercise/301/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 3",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en"
+   },
+   "authors": [
+    "wger.de"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:reverse-crunch",
+   "name": "Reverse crunch",
+   "aliases": [],
+   "instructions": "Lay down\nPlace your hands near your butt (often slightly in front or under or both)\nRaise your legs, but about 70% of the way you should be able to also raise your pelvis\n(optional/variable) Hold 1/2 seconds at the top\nGo back to starting position",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "core"
+   ],
+   "strains": [],
+   "kinds": [
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1772,
+    "url": "https://wger.de/en/exercise/1772/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "eufvksruh"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:flutter-kicks",
+   "name": "Flutter kicks",
+   "aliases": [],
+   "instructions": "-Laying on the back, lift your straightened legs from the ground at a 45 degree angle.\n-As your Left foot travels downward and nearly touches the floor, your Right foot should seek to reach a 90 degree angle, or as close to one as possible.\n-Bring your R foot down until it nearly touches the floor, and bring your L foot upwards.  Maintain leg rigidity throughout the exercise.  Your head should stay off the ground, supported by tightened upper abdominals.\n-(L up R down, L down R up, x2)  ^v, v^, ^v, v^ = 1 rep\n-Primarily works the Rectus Abdominus, the hip flexors and the lower back. Secondarily works the Obliques.  Emphasis placed on the lower quadrant of the abs.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "core",
+    "hips"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "strength",
+    "endurance"
+   ],
+   "sweat": 1,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 235,
+    "url": "https://wger.de/en/exercise/235/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "nate303303"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:single-leg-stand",
+   "name": "Single-leg stand",
+   "aliases": [],
+   "instructions": "Stand on one leg near something to hold, the knee soft. Hold your balance without leaning; touch down when you need to.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "ankle",
+    "hips",
+    "knee"
+   ],
+   "strains": [],
+   "kinds": [
+    "balance"
+   ],
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:single-leg-stand-eyes-closed",
+   "name": "Single-leg balance, eyes closed",
+   "aliases": [
+    "Single-Leg Balance with Eyes Closed",
+    "Eyes Closed Single Leg Stand",
+    "Blind Single-Leg Balance"
+   ],
+   "instructions": "A balance and proprioception drill. Stand on one leg with the knee slightly bent and the other foot lifted clear of the floor, then close your eyes and hold the position. Without visual feedback the ankle and hip stabilisers have to do the work, so expect noticeable wobble. Stand within reach of a wall, counter or chair so you can steady yourself if needed. Hold for the prescribed time, then switch legs. Commonly prescribed in rehabilitation after ankle or knee injury.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "ankle",
+    "hips",
+    "knee"
+   ],
+   "strains": [],
+   "kinds": [
+    "balance"
+   ],
+   "sweat": 0,
+   "equipment": [],
+   "variationOf": "bm:single-leg-stand",
+   "source": {
+    "kind": "wger",
+    "id": 2667,
+    "url": "https://wger.de/en/exercise/2667/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "trs1800"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:heel-to-toe-walk",
+   "name": "Heel-to-toe walk",
+   "aliases": [],
+   "instructions": "Walk in a straight line, putting the heel of each foot directly in front of the toes of the other. Look ahead, not down.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "ankle",
+    "hips"
+   ],
+   "strains": [],
+   "kinds": [
+    "balance"
+   ],
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:single-leg-reach",
+   "name": "Single-leg reach",
+   "aliases": [],
+   "instructions": "Stand on one leg and hinge forward, reaching both hands towards the floor as the other leg extends behind. Return tall with control.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "hamstrings",
+    "glutes",
+    "ankle"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "balance",
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:bird-dog-hold",
+   "name": "Bird dog hold",
+   "aliases": [],
+   "instructions": "On hands and knees, extend one arm and the opposite leg level with your back, and hold without letting your hips tip.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "core",
+    "lowerback",
+    "glutes",
+    "shoulder"
+   ],
+   "strains": [],
+   "kinds": [
+    "balance",
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "floor"
+   ],
+   "variationOf": "bm:bird-dog",
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:tall-kneeling-press",
+   "name": "Tall-kneeling band press",
+   "aliases": [],
+   "instructions": "Kneel upright with a band anchored behind you. Press it forward from your chest without arching your back or rocking.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "core",
+    "chest",
+    "shoulder"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "balance",
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "band"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:bottoms-up-kb-hold",
+   "name": "Bottoms-up kettlebell hold",
+   "aliases": [],
+   "instructions": "Hold a light kettlebell upside down by the handle, elbow at 90° in front of you. Keep it balanced and steady with a firm grip.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "shoulder",
+    "forearm"
+   ],
+   "strains": [
+    "shoulder"
+   ],
+   "kinds": [
+    "balance",
+    "strength"
+   ],
+   "sweat": 0,
+   "equipment": [
+    "kettlebell"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:y-balance",
+   "name": "Y-balance reach",
+   "aliases": [],
+   "instructions": "Stand on one leg and reach the other foot as far as you can forward, then back to each side, touching lightly. Keep the standing knee over your toes.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "ankle",
+    "hips",
+    "knee",
+    "glutes"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "balance"
+   ],
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:jumping-jacks",
+   "name": "Jumping jacks",
+   "aliases": [],
+   "instructions": "A jumping jack or star jump, also called side-straddle hop in the US military, is a physical jumping exercise performed by jumping to a position with the legs spread wide and the hands going overhead, sometimes in a clap, and then returning to a position with the feet together and the arms at the sides",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "calf",
+    "shoulder",
+    "hips"
+   ],
+   "strains": [
+    "knee",
+    "ankle"
+   ],
+   "kinds": [
+    "endurance"
+   ],
+   "sweat": 2,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 320,
+    "url": "https://wger.de/en/exercise/320/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "student1234"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:burpee",
+   "name": "Burpee",
+   "aliases": [
+    "Burpees"
+   ],
+   "instructions": "Jump, lay down on your chest, do a pushup then jump, repeat",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "quads",
+    "chest",
+    "core",
+    "shoulder"
+   ],
+   "strains": [
+    "knee",
+    "shoulder",
+    "forearm"
+   ],
+   "kinds": [
+    "endurance"
+   ],
+   "sweat": 2,
+   "equipment": [
+    "floor"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 132,
+    "url": "https://wger.de/en/exercise/132/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "er0355"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:high-knees",
+   "name": "High knees",
+   "aliases": [
+    "Running in place"
+   ],
+   "instructions": "Starting positionStand straight.\nSteps:\nRun in place, putting knees as high up as is comfortable and switching legs at a quick pace.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "hips",
+    "quads",
+    "calf"
+   ],
+   "strains": [
+    "knee",
+    "ankle"
+   ],
+   "kinds": [
+    "endurance"
+   ],
+   "sweat": 2,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 983,
+    "url": "https://wger.de/en/exercise/983/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "wger contributors"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:jump-rope",
+   "name": "Jump rope",
+   "aliases": [
+    "Jump rope: basic jumps"
+   ],
+   "instructions": "Starting position:\nPut your feet close together, bend the knees a bit, keep your head and body straight, keep elbows in, open your arms.\nSteps:\nSpin only your wrists with enough force to make the rope spin.\nJump just high enough to pass the rope below your feet.\nRepeat.\nNotes:\nThis exercise requires a jump rope. Make sure the rope length is adjusted to your height. One way to check is to grab both handles with one hand and stand on the middle of the rope hanging on the ground with one foot. If the rope (excluding the handles) reaches just below your chest, its length is right. A shorter rope would be hazardous, as you might hit yourself, and a longer rope would make for bad form.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "calf",
+    "ankle",
+    "shoulder"
+   ],
+   "strains": [
+    "ankle",
+    "calf"
+   ],
+   "kinds": [
+    "endurance"
+   ],
+   "sweat": 2,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 993,
+    "url": "https://wger.de/en/exercise/993/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "wger contributors"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:stair-climb",
+   "name": "Brisk stair climb",
+   "aliases": [],
+   "instructions": "Climb stairs briskly, one step at a time, holding the rail if you need it. Walk down slowly.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "quads",
+    "glutes",
+    "calf"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "endurance"
+   ],
+   "sweat": 2,
+   "equipment": [
+    "step"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:rowing-machine",
+   "name": "Rowing machine",
+   "aliases": [],
+   "instructions": "Sit on a rowing machine with your back straight.",
+   "measure": "distance",
+   "sided": false,
+   "works": [
+    "upperback",
+    "quads",
+    "hamstrings",
+    "upperarm"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "endurance"
+   ],
+   "sweat": 2,
+   "equipment": [
+    "machine"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 1093,
+    "url": "https://wger.de/en/exercise/1093/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Boertie"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:cycling",
+   "name": "Cycling",
+   "aliases": [],
+   "instructions": "Cycling, also called bicycling or biking, is the use of bicycles for transport, recreation, exercise or sport. People engaged in cycling are referred to as cyclists, bicyclists, or bikers. Apart from two-wheeled bicycles, cycling also includes the riding of unicycles, tricycles, quadracycles, recumbent and similar human-powered vehicles.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "quads",
+    "glutes",
+    "calf"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "endurance"
+   ],
+   "sweat": 2,
+   "equipment": [
+    "machine"
+   ],
+   "source": {
+    "kind": "wger",
+    "id": 177,
+    "url": "https://wger.de/en/exercise/177/view/"
+   },
+   "licence": {
+    "name": "CC0",
+    "url": "http://creativecommons.org/publicdomain/zero/1.0/"
+   },
+   "authors": [
+    "BFad07"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:jogging",
+   "name": "Jogging",
+   "aliases": [],
+   "instructions": "Get your shoes on, go outside and start running at a moderate pace.",
+   "measure": "distance",
+   "sided": false,
+   "works": [
+    "quads",
+    "calf",
+    "hamstrings"
+   ],
+   "strains": [
+    "knee",
+    "ankle",
+    "shin"
+   ],
+   "kinds": [
+    "endurance"
+   ],
+   "sweat": 2,
+   "equipment": [],
+   "source": {
+    "kind": "wger",
+    "id": 319,
+    "url": "https://wger.de/en/exercise/319/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+   },
+   "authors": [
+    "Papazit"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:jump-squat",
+   "name": "Jump squat",
+   "aliases": [
+    "Squat Jumps"
+   ],
+   "instructions": "Jump wide, then close",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "quads",
+    "glutes",
+    "calf"
+   ],
+   "strains": [
+    "knee",
+    "ankle"
+   ],
+   "kinds": [
+    "endurance",
+    "strength"
+   ],
+   "sweat": 2,
+   "equipment": [],
+   "variationOf": "bm:bodyweight-squat",
+   "source": {
+    "kind": "wger",
+    "id": 614,
+    "url": "https://wger.de/en/exercise/614/view/"
+   },
+   "licence": {
+    "name": "CC-BY-SA 3",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en"
+   },
+   "authors": [
+    "OGhTebfCxhexZXuf35mUxV9C--A"
+   ],
+   "review": "approved"
+  },
+  {
+   "id": "bm:skater-hops",
+   "name": "Skater hops",
+   "aliases": [],
+   "instructions": "Hop sideways from one foot to the other, landing softly with a bent knee and letting the other leg swing behind.",
+   "measure": "reps",
+   "sided": true,
+   "works": [
+    "glutes",
+    "quads",
+    "ankle"
+   ],
+   "strains": [
+    "knee",
+    "ankle"
+   ],
+   "kinds": [
+    "endurance",
+    "balance"
+   ],
+   "sweat": 2,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "approved"
+  }
+ ],
+ "rules": {
+  "review": "approved",
+  "helps": [
+   {
+    "region": "lowerback",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:cat-cow",
+     "bm:pelvic-tilt",
+     "bm:knee-to-chest",
+     "bm:childs-pose",
+     "bm:figure-four-stretch",
+     "bm:mcgill-curl-up",
+     "bm:bird-dog",
+     "bm:dead-bug"
+    ]
+   },
+   {
+    "region": "lowerback",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:mcgill-curl-up",
+     "bm:bird-dog",
+     "bm:side-plank",
+     "bm:dead-bug",
+     "bm:glute-bridge",
+     "bm:pallof-press"
+    ]
+   },
+   {
+    "region": "upperback",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:open-book",
+     "bm:thread-the-needle",
+     "bm:wall-angels",
+     "bm:thoracic-extension",
+     "bm:cat-cow",
+     "bm:lat-stretch"
+    ]
+   },
+   {
+    "region": "upperback",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:band-pull-apart",
+     "bm:face-pull",
+     "bm:band-row",
+     "bm:ytw-raise",
+     "bm:inverted-row"
+    ]
+   },
+   {
+    "region": "neck",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:chin-tuck",
+     "bm:levator-scapulae-stretch",
+     "bm:neck-side-stretch",
+     "bm:wall-angels",
+     "bm:open-book"
+    ]
+   },
+   {
+    "region": "neck",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:chin-tuck",
+     "bm:band-pull-apart",
+     "bm:face-pull",
+     "bm:ytw-raise"
+    ]
+   },
+   {
+    "region": "shoulder",
+    "marks": [
+     "stiffness"
+    ],
+    "exercises": [
+     "bm:wall-slides",
+     "bm:cross-body-shoulder-stretch",
+     "bm:doorway-chest-stretch",
+     "bm:arm-circles",
+     "bm:thread-the-needle",
+     "bm:open-book"
+    ]
+   },
+   {
+    "region": "shoulder",
+    "marks": [
+     "pain",
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:band-external-rotation",
+     "bm:band-internal-rotation",
+     "bm:scapular-push-up",
+     "bm:face-pull",
+     "bm:wall-slides",
+     "bm:band-pull-apart"
+    ]
+   },
+   {
+    "region": "chest",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:doorway-chest-stretch",
+     "bm:open-book",
+     "bm:wall-angels"
+    ]
+   },
+   {
+    "region": "chest",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:wall-push-up",
+     "bm:incline-push-up",
+     "bm:scapular-push-up"
+    ]
+   },
+   {
+    "region": "upperarm",
+    "marks": [
+     "stiffness",
+     "pain",
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:triceps-stretch",
+     "bm:band-external-rotation",
+     "bm:hammer-curl",
+     "bm:triceps-pushdown"
+    ]
+   },
+   {
+    "region": "forearm",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:wrist-flexor-stretch",
+     "bm:wrist-extensor-stretch",
+     "bm:hammer-curl"
+    ]
+   },
+   {
+    "region": "forearm",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:hammer-curl",
+     "bm:farmer-carry",
+     "bm:dead-hang"
+    ]
+   },
+   {
+    "region": "core",
+    "marks": [
+     "stiffness",
+     "pain",
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:dead-bug",
+     "bm:mcgill-curl-up",
+     "bm:bird-dog",
+     "bm:pallof-press",
+     "bm:side-plank"
+    ]
+   },
+   {
+    "region": "hips",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:hip-flexor-stretch",
+     "bm:figure-four-stretch",
+     "bm:90-90-hip-switch",
+     "bm:hip-circles",
+     "bm:piriformis-stretch",
+     "bm:butterfly-stretch"
+    ]
+   },
+   {
+    "region": "hips",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:clamshell",
+     "bm:side-lying-hip-abduction",
+     "bm:glute-bridge",
+     "bm:band-monster-walk",
+     "bm:single-leg-stand"
+    ]
+   },
+   {
+    "region": "glutes",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:figure-four-stretch",
+     "bm:piriformis-stretch",
+     "bm:pigeon-stretch",
+     "bm:knee-to-chest"
+    ]
+   },
+   {
+    "region": "glutes",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:glute-bridge",
+     "bm:clamshell",
+     "bm:side-lying-hip-abduction",
+     "bm:hip-thrust",
+     "bm:single-leg-glute-bridge"
+    ]
+   },
+   {
+    "region": "quads",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:quad-stretch",
+     "bm:hip-flexor-stretch",
+     "bm:couch-stretch"
+    ]
+   },
+   {
+    "region": "quads",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:straight-leg-raise",
+     "bm:terminal-knee-extension",
+     "bm:wall-sit",
+     "bm:box-squat",
+     "bm:step-up"
+    ]
+   },
+   {
+    "region": "hamstrings",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:hamstring-stretch",
+     "bm:figure-four-stretch",
+     "bm:worlds-greatest-stretch"
+    ]
+   },
+   {
+    "region": "hamstrings",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:glute-bridge",
+     "bm:leg-curl",
+     "bm:romanian-deadlift",
+     "bm:single-leg-glute-bridge"
+    ]
+   },
+   {
+    "region": "knee",
+    "marks": [
+     "stiffness"
+    ],
+    "exercises": [
+     "bm:quad-stretch",
+     "bm:hamstring-stretch",
+     "bm:straight-leg-raise",
+     "bm:terminal-knee-extension",
+     "bm:cycling"
+    ]
+   },
+   {
+    "region": "knee",
+    "marks": [
+     "pain",
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:straight-leg-raise",
+     "bm:terminal-knee-extension",
+     "bm:spanish-squat",
+     "bm:wall-sit",
+     "bm:box-squat",
+     "bm:clamshell"
+    ]
+   },
+   {
+    "region": "shin",
+    "marks": [
+     "stiffness",
+     "pain",
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:tibialis-raise",
+     "bm:calf-stretch-step",
+     "bm:ankle-circles",
+     "bm:calf-raise"
+    ]
+   },
+   {
+    "region": "calf",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:calf-stretch-step",
+     "bm:ankle-circles",
+     "bm:downward-dog"
+    ]
+   },
+   {
+    "region": "calf",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:calf-raise",
+     "bm:single-leg-calf-raise",
+     "bm:tibialis-raise"
+    ]
+   },
+   {
+    "region": "ankle",
+    "marks": [
+     "stiffness",
+     "pain"
+    ],
+    "exercises": [
+     "bm:ankle-circles",
+     "bm:calf-stretch-step",
+     "bm:tibialis-raise"
+    ]
+   },
+   {
+    "region": "ankle",
+    "marks": [
+     "weakness",
+     "injury"
+    ],
+    "exercises": [
+     "bm:single-leg-stand",
+     "bm:calf-raise",
+     "bm:heel-to-toe-walk",
+     "bm:tibialis-raise",
+     "bm:y-balance"
+    ]
+   }
+  ],
+  "modify": [
+   {
+    "exercise": "bm:goblet-squat",
+    "region": "knee",
+    "swap": "bm:box-squat",
+    "modifiers": [
+     "slow-lowering"
+    ]
+   },
+   {
+    "exercise": "bm:goblet-squat",
+    "region": "lowerback",
+    "modifiers": [
+     "lighter",
+     "slow-lowering"
+    ]
+   },
+   {
+    "exercise": "bm:bodyweight-squat",
+    "region": "knee",
+    "swap": "bm:box-squat",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:sumo-squat",
+    "region": "knee",
+    "swap": "bm:box-squat",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:cossack-squat",
+    "region": "knee",
+    "swap": "bm:lateral-lunge",
+    "modifiers": [
+     "short-range"
+    ]
+   },
+   {
+    "exercise": "bm:bulgarian-split-squat",
+    "region": "knee",
+    "swap": "bm:split-squat",
+    "modifiers": [
+     "short-range",
+     "hold-support"
+    ]
+   },
+   {
+    "exercise": "bm:split-squat",
+    "region": "knee",
+    "modifiers": [
+     "short-range",
+     "hold-support"
+    ]
+   },
+   {
+    "exercise": "bm:walking-lunge",
+    "region": "knee",
+    "swap": "bm:reverse-lunge",
+    "modifiers": [
+     "shorter-step"
+    ]
+   },
+   {
+    "exercise": "bm:reverse-lunge",
+    "region": "knee",
+    "modifiers": [
+     "shorter-step",
+     "hold-support"
+    ]
+   },
+   {
+    "exercise": "bm:step-up",
+    "region": "knee",
+    "modifiers": [
+     "short-range",
+     "hold-support"
+    ]
+   },
+   {
+    "exercise": "bm:leg-extension",
+    "region": "knee",
+    "swap": "bm:terminal-knee-extension",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:jump-squat",
+    "region": "knee",
+    "swap": "bm:bodyweight-squat",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:skater-hops",
+    "region": "knee",
+    "swap": "bm:lateral-lunge",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:jogging",
+    "region": "knee",
+    "swap": "bm:cycling",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:jogging",
+    "region": "ankle",
+    "swap": "bm:cycling",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:jumping-jacks",
+    "region": "knee",
+    "modifiers": [
+     "no-bounce"
+    ]
+   },
+   {
+    "exercise": "bm:burpee",
+    "region": "knee",
+    "swap": "bm:mountain-climber",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:deadlift",
+    "region": "lowerback",
+    "swap": "bm:romanian-deadlift",
+    "modifiers": [
+     "lighter"
+    ]
+   },
+   {
+    "exercise": "bm:good-morning",
+    "region": "lowerback",
+    "swap": "bm:glute-bridge",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:romanian-deadlift",
+    "region": "lowerback",
+    "modifiers": [
+     "lighter",
+     "short-range"
+    ]
+   },
+   {
+    "exercise": "bm:bent-over-row",
+    "region": "lowerback",
+    "swap": "bm:one-arm-row",
+    "modifiers": [
+     "supported-chest"
+    ]
+   },
+   {
+    "exercise": "bm:reverse-fly",
+    "region": "lowerback",
+    "modifiers": [
+     "supported-chest"
+    ]
+   },
+   {
+    "exercise": "bm:kettlebell-swing",
+    "region": "lowerback",
+    "swap": "bm:glute-bridge",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:overhead-press",
+    "region": "lowerback",
+    "swap": "bm:landmine-press",
+    "modifiers": [
+     "half-kneeling"
+    ]
+   },
+   {
+    "exercise": "bm:overhead-press",
+    "region": "shoulder",
+    "swap": "bm:landmine-press",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:dumbbell-shoulder-press",
+    "region": "shoulder",
+    "swap": "bm:landmine-press",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:lateral-raise",
+    "region": "shoulder",
+    "modifiers": [
+     "lighter",
+     "below-shoulder"
+    ]
+   },
+   {
+    "exercise": "bm:front-raise",
+    "region": "shoulder",
+    "modifiers": [
+     "lighter",
+     "below-shoulder"
+    ]
+   },
+   {
+    "exercise": "bm:bench-press",
+    "region": "shoulder",
+    "modifiers": [
+     "lighter",
+     "neutral-grip",
+     "short-range"
+    ]
+   },
+   {
+    "exercise": "bm:push-up",
+    "region": "shoulder",
+    "swap": "bm:incline-push-up",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:push-up",
+    "region": "forearm",
+    "modifiers": [
+     "fists"
+    ]
+   },
+   {
+    "exercise": "bm:incline-push-up",
+    "region": "forearm",
+    "modifiers": [
+     "fists"
+    ]
+   },
+   {
+    "exercise": "bm:knee-push-up",
+    "region": "forearm",
+    "modifiers": [
+     "fists"
+    ]
+   },
+   {
+    "exercise": "bm:dips",
+    "region": "shoulder",
+    "swap": "bm:triceps-pushdown",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:pull-up",
+    "region": "shoulder",
+    "swap": "bm:lat-pulldown",
+    "modifiers": [
+     "neutral-grip"
+    ]
+   },
+   {
+    "exercise": "bm:chin-up",
+    "region": "shoulder",
+    "swap": "bm:lat-pulldown",
+    "modifiers": [
+     "neutral-grip"
+    ]
+   },
+   {
+    "exercise": "bm:lat-pulldown",
+    "region": "shoulder",
+    "modifiers": [
+     "neutral-grip",
+     "lighter"
+    ]
+   },
+   {
+    "exercise": "bm:overhead-triceps-extension",
+    "region": "shoulder",
+    "swap": "bm:triceps-pushdown",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:plank",
+    "region": "shoulder",
+    "modifiers": [
+     "kneeling"
+    ]
+   },
+   {
+    "exercise": "bm:plank",
+    "region": "lowerback",
+    "modifiers": [
+     "kneeling"
+    ]
+   },
+   {
+    "exercise": "bm:side-plank",
+    "region": "shoulder",
+    "modifiers": [
+     "kneeling"
+    ]
+   },
+   {
+    "exercise": "bm:mountain-climber",
+    "region": "shoulder",
+    "modifiers": [
+     "incline"
+    ]
+   },
+   {
+    "exercise": "bm:hollow-hold",
+    "region": "lowerback",
+    "swap": "bm:dead-bug",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:lying-leg-raise",
+    "region": "lowerback",
+    "swap": "bm:dead-bug",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:flutter-kicks",
+    "region": "lowerback",
+    "swap": "bm:dead-bug",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:russian-twist",
+    "region": "lowerback",
+    "swap": "bm:pallof-press",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:crunch",
+    "region": "neck",
+    "swap": "bm:mcgill-curl-up",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:bicycle-crunch",
+    "region": "neck",
+    "swap": "bm:dead-bug",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:bicycle-crunch",
+    "region": "lowerback",
+    "swap": "bm:dead-bug",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:ab-wheel",
+    "region": "lowerback",
+    "swap": "bm:plank",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:back-extension",
+    "region": "lowerback",
+    "swap": "bm:bird-dog",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:superman",
+    "region": "lowerback",
+    "swap": "bm:bird-dog",
+    "modifiers": []
+   },
+   {
+    "exercise": "bm:toe-touch",
+    "region": "lowerback",
+    "modifiers": [
+     "short-range",
+     "pain-free-range"
+    ]
+   },
+   {
+    "exercise": "bm:rowing-machine",
+    "region": "lowerback",
+    "swap": "bm:cycling",
+    "modifiers": []
+   }
+  ],
+  "defaults": {
+   "neck": [
+    "lighter",
+    "pain-free-range"
+   ],
+   "shoulder": [
+    "lighter",
+    "below-shoulder",
+    "pain-free-range"
+   ],
+   "chest": [
+    "lighter",
+    "short-range"
+   ],
+   "upperback": [
+    "lighter",
+    "pain-free-range"
+   ],
+   "upperarm": [
+    "lighter"
+   ],
+   "forearm": [
+    "neutral-grip",
+    "lighter"
+   ],
+   "core": [
+    "lighter",
+    "slow-lowering"
+   ],
+   "lowerback": [
+    "lighter",
+    "slow-lowering",
+    "pain-free-range"
+   ],
+   "hips": [
+    "short-range",
+    "pain-free-range"
+   ],
+   "glutes": [
+    "lighter"
+   ],
+   "quads": [
+    "lighter",
+    "short-range"
+   ],
+   "hamstrings": [
+    "lighter",
+    "short-range"
+   ],
+   "knee": [
+    "short-range",
+    "slow-lowering",
+    "pain-free-range"
+   ],
+   "shin": [
+    "no-bounce"
+   ],
+   "calf": [
+    "lighter",
+    "no-bounce"
+   ],
+   "ankle": [
+    "hold-support",
+    "no-bounce"
+   ]
+  },
+  "conditions": [
+   {
+    "kind": "acl-repair",
+    "name": "ACL repair",
+    "regions": [
+     "knee"
+    ],
+    "avoid": [
+     "bm:jump-squat",
+     "bm:skater-hops",
+     "bm:burpee",
+     "bm:jumping-jacks",
+     "bm:cossack-squat"
+    ],
+    "helps": [
+     "bm:terminal-knee-extension",
+     "bm:straight-leg-raise",
+     "bm:spanish-squat",
+     "bm:step-up",
+     "bm:single-leg-stand",
+     "bm:y-balance"
+    ]
+   },
+   {
+    "kind": "hip-replacement",
+    "name": "Hip replacement",
+    "regions": [
+     "hips"
+    ],
+    "avoid": [
+     "bm:deep-squat-hold",
+     "bm:pigeon-stretch",
+     "bm:90-90-hip-switch",
+     "bm:frog-stretch",
+     "bm:cossack-squat",
+     "bm:jump-squat"
+    ],
+    "helps": [
+     "bm:glute-bridge",
+     "bm:clamshell",
+     "bm:side-lying-hip-abduction",
+     "bm:sit-to-stand",
+     "bm:step-up",
+     "bm:single-leg-stand"
+    ]
+   },
+   {
+    "kind": "shoulder-impingement",
+    "name": "Shoulder impingement",
+    "regions": [
+     "shoulder"
+    ],
+    "avoid": [
+     "bm:dips",
+     "bm:overhead-triceps-extension",
+     "bm:front-raise"
+    ],
+    "helps": [
+     "bm:band-external-rotation",
+     "bm:face-pull",
+     "bm:band-pull-apart",
+     "bm:wall-slides",
+     "bm:ytw-raise",
+     "bm:scapular-push-up"
+    ]
+   },
+   {
+    "kind": "lumbar-disc",
+    "name": "Lumbar disc history",
+    "regions": [
+     "lowerback"
+    ],
+    "avoid": [
+     "bm:crunch",
+     "bm:bicycle-crunch",
+     "bm:russian-twist",
+     "bm:good-morning",
+     "bm:toe-touch",
+     "bm:superman"
+    ],
+    "helps": [
+     "bm:mcgill-curl-up",
+     "bm:bird-dog",
+     "bm:side-plank",
+     "bm:dead-bug",
+     "bm:glute-bridge",
+     "bm:pallof-press"
+    ]
+   },
+   {
+    "kind": "hypermobility",
+    "name": "Hypermobility",
+    "regions": [],
+    "avoid": [],
+    "helps": []
+   }
+  ]
+ }
+}

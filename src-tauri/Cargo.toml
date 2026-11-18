@@ -1,0 +1,47 @@
+[package]
+name = "body-mechanics"
+version = "0.1.0"
+description = "Body Mechanics on the desktop and Android (D2, #16): the UI and engine in the webview, with files, git and secrets given by this Rust"
+license = "MIT"
+repository = "https://github.com/heffrey78/body-mechanics"
+edition = "2024"
+publish = false
+
+[lib]
+name = "body_mechanics_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.7", features = [] }
+
+[dependencies]
+tauri = { version = "2.12", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# The git port over libgit2 (#21, from writer at e89d55c) and the files port.
+git2-port = { path = "../crates/git2-port" }
+bm-ports = { path = "../crates/bm-ports" }
+# The timer service on Android (#22); a no-op plugin elsewhere.
+bm-android = { path = "../crates/bm-android" }
+# For where libgit2 keeps the global configuration (the same git2 git2-port uses).
+git2 = { version = "0.21", default-features = false }
+# GitHub's sign-in and API (#38): rustls with bundled roots, so it works the same on Android.
+ureq = { version = "3", default-features = false, features = ["rustls", "json"] }
+
+# Secrets on the desktop (#25): the OS keychain (Secret Service on Linux).
+[target.'cfg(not(target_os = "android"))'.dependencies]
+keyring = { version = "3", features = ["sync-secret-service", "crypto-rust", "apple-native", "windows-native"] }
+
+# No system OpenSSL on Android: built from source for the target.
+[target.'cfg(target_os = "android")'.dependencies]
+git2-port = { path = "../crates/git2-port", features = ["vendored-openssl"] }
+
+# `tauri android build --debug` uses this profile: optimized, so the APK is a download a phone can take,
+# and still signed with a debug key for sideloading (as writer's mobile app does).
+[profile.dev.package."*"]
+opt-level = 2
+
+# No debug symbols in that build: with them the APK's library is 200 MB, too big to pass around.
+[profile.dev]
+debug = false
+strip = "debuginfo"

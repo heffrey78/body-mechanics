@@ -1,0 +1,125 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  # Types, the engine's tests, and the ports (#21): the git contract suite against libgit2's stdio
+  # binary (crates/git2-port), and the Rust tests of git2-port and the files port.
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            crates/git2-port
+            crates/bm-ports
+      - run: npm ci
+      - run: npm run check
+      - run: cargo build --release && cargo test --release --lib
+        working-directory: crates/git2-port
+      - run: cargo test
+        working-directory: crates/bm-ports
+      - name: Engine tests, the git contract suite included
+        run: npm test
+      - name: The contract suite ran, not skipped
+        run: |
+          npx vitest run packages/engine/test/git-port.test.ts --reporter=verbose | grep -q "the git port: libgit2"
+
+  # The Linux desktop app (#20): built and bundled as a .deb, then started under a virtual display with
+  # BM_SMOKE set: the page renders, asks Rust for the platform, runs a round trip through the git and
+  # files ports (#21), reports it, and the app exits.
+  desktop:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - name: WebKitGTK and friends
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf xvfb > /dev/null
+      - run: npm ci
+      - run: npx tauri build
+      - name: Smoke test
+        run: |
+          out=$(BM_SMOKE=1 timeout 60 xvfb-run -a src-tauri/target/release/body-mechanics)
+          echo "$out"
+          # The secrets check is only logged here: the virtual display has no keychain (Secret Service).
+          echo "$out" | grep -q '^BM_SMOKE platform=linux engine=.* ports=git+files_ok '
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-deb
+          path: src-tauri/target/release/bundle/deb/*.deb
+          if-no-files-found: error
+          retention-days: 14
+
+  # The Android APK (#20), built as writer's CI builds its own: the runner's SDK, an NDK from sdkmanager,
+  # Java 17 and Rust with the aarch64 Android target.
+  android:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      NDK_VERSION: 28.2.13676358
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - name: The NDK
+        run: |
+          ndk="$ANDROID_HOME/ndk/$NDK_VERSION"
+          [ -d "$ndk" ] || yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;$NDK_VERSION" > /dev/null
+          echo "NDK_HOME=$ndk" >> "$GITHUB_ENV"
+      - run: npm ci
+      - name: The owner's debug key, if the repository has one
+        env:
+          KEYSTORE: ${{ secrets.ANDROID_DEBUG_KEYSTORE }}
+        run: |
+          [ -n "$KEYSTORE" ] || { echo "::warning::No ANDROID_DEBUG_KEYSTORE secret: the APK is signed with a new key each run, so it won't install over an earlier build."; exit 0; }
+          mkdir -p ~/.android
+          echo "$KEYSTORE" | base64 -d > ~/.android/debug.keystore
+          echo "BM_ANDROID_DEBUG_KEYSTORE=$HOME/.android/debug.keystore" >> "$GITHUB_ENV"
+      - run: scripts/android-build.sh aarch64
+      - run: cp "$(find src-tauri/gen/android/app/build/outputs/apk -name '*.apk' | head -n 1)" body-mechanics-android.apk
+      - name: 16 KB pages (Android 15+)
+        run: |
+          # Every native library's LOAD segments aligned to 16 KB, and stored 16 KB-aligned in the APK.
+          READELF="$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf"
+          mkdir -p so && unzip -o -q body-mechanics-android.apk 'lib/*' -d so
+          for f in so/lib/*/*.so; do
+            for a in $("$READELF" -lW "$f" | awk '$1 == "LOAD" { print $NF }'); do
+              (( a >= 16384 )) || { echo "$f has a LOAD segment aligned to $a, not 16 KB"; exit 1; }
+            done
+          done
+          zipalign=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -n 1)zipalign
+          "$zipalign" -c -P 16 -v 4 body-mechanics-android.apk > zipalign.txt || { tail -n 20 zipalign.txt; exit 1; }
+          tail -n 1 zipalign.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: body-mechanics-android.apk
+          if-no-files-found: error
+          retention-days: 14
