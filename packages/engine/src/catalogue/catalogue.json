@@ -2009,11 +2009,13 @@
    ],
    "sweat": 1,
    "equipment": [
-    "step"
+    "step",
+    "dumbbells"
    ],
    "needs": [],
    "optional": [
-    "step"
+    "step",
+    "dumbbells"
    ],
    "source": {
     "kind": "own"
@@ -2048,12 +2050,14 @@
    "sweat": 1,
    "equipment": [
     "step",
-    "wall"
+    "wall",
+    "dumbbells"
    ],
    "needs": [],
    "optional": [
     "step",
-    "wall"
+    "wall",
+    "dumbbells"
    ],
    "variationOf": "bm:calf-raise",
    "source": {
