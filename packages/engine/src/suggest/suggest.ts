@@ -121,7 +121,7 @@ export function suggest(answers: Answers, ctx: Context): Suggestion[] {
   const body = ctx.body ?? [];
   type Cand = { item: LibraryItem; d: ReturnType<typeof dose>; minutes: number; modifiers: string[]; body: string[]; insteadOf?: LibraryItem; caution?: string };
   const fits = (item: LibraryItem) => {
-    if (!item.works.length) return false; // never suggest a movement without a body region (#3)
+    if (!item.works.length || item.deleted) return false; // never suggest a movement without a body region (#3), or a deleted one
     if (doneSet.has(item.id) || ctx.refused.has(item.id)) return false;
     if (item.sweat > answers.sweat) return false;
     return !answers.location || fitsNeeds(item.needs, have, ctx.standsIn);

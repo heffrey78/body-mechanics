@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   COMMIT_EMAIL, COMMIT_NAME, Committer, ENGINE_VERSION, NotSetUp, RecordIndex, SessionLog, Vault, clearDraft, createExercise, deviceClock,
-  GitHub, Syncer, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, loadEquipment, standsInOf, type EquipmentItem, loadBody, newMark, newCondition, editBody, modifiersOf, applyModified, deletedSession, checkIn, resolveMark, reopenMark, isDue, isActive, type Body, type Mark, type Condition, type CheckInFields, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
+  GitHub, Syncer, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, loadEquipment, loadExerciseRecords, libraryFrom, type Exercise, type ExerciseOverride, standsInOf, type EquipmentItem, loadBody, newMark, newCondition, editBody, modifiersOf, applyModified, deletedSession, checkIn, resolveMark, reopenMark, isDue, isActive, type Body, type Mark, type Condition, type CheckInFields, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
   portsRoundTrip, routineFromSession, saveDraft,
   type Clock, type Location, type Suggestion, type SyncStatus, type TargetUpdate, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
 } from "@bm/engine";
@@ -20,6 +20,7 @@ import { HomeScreen } from "./screens/HomeScreen.tsx";
 import { BodyScreen, markTitle, type NewMarkFields } from "./screens/BodyScreen.tsx";
 import { ConditionsScreen } from "./screens/ConditionsScreen.tsx";
 import { EquipmentScreen } from "./screens/EquipmentScreen.tsx";
+import { ExercisesScreen } from "./screens/ExercisesScreen.tsx";
 import { PlanScreen } from "./screens/PlanScreen.tsx";
 import { NewMovement } from "./screens/NewMovement.tsx";
 import { SessionScreen, type Pending } from "./screens/SessionScreen.tsx";
@@ -39,7 +40,7 @@ async function recordsRoot(): Promise<string> {
 export function App() {
   const [theme, setTheme] = useTheme();
   const [tab, setTab] = useState<TabId>("home");
-  const [sub, setSub] = useState<"theme" | "credits" | "checks" | "locations" | "sync" | "conditions" | "equipment" | null>(null);
+  const [sub, setSub] = useState<"theme" | "credits" | "checks" | "locations" | "sync" | "conditions" | "equipment" | "exercises" | null>(null);
   // GitHub sync (#38): the connection, the records' remote, and what the last sync did.
   // In a plain browser there are no host ports: sign-in is off there (`available`), and its secrets live in memory.
   const github = useMemo(() => new GitHub(httpPort, isTauri() ? hostPorts().secrets : memorySecretsPort()), []);
@@ -49,6 +50,9 @@ export function App() {
   const [syncer, setSyncer] = useState<Syncer | null>(null);
   const [joining, setJoining] = useState(false);
   const [locations, setLocations] = useState<Location[]>([]);
+  /** Your own exercises and your overrides of catalogue ones (#61): the library is built from them. */
+  const [exerciseRecords, setExerciseRecords] = useState<{ own: Exercise[]; overrides: ExerciseOverride[] }>({ own: [], overrides: [] });
+  const keepExercises = (r: { own: Exercise[]; overrides: ExerciseOverride[] }) => { setExerciseRecords(r); setLibrary(libraryFrom(r)); };
   /** Your own equipment (#60). */
   const [equipment, setEquipment] = useState<EquipmentItem[]>([]);
   /** Marks and conditions (#45): Suggest next and plans work around them (#47). */
@@ -102,8 +106,8 @@ export function App() {
     setProfile(p);
     setTheme(p.theme);
     if (created) c?.changed("Profile");
-    const [lib, built, clock, rs, ls, bd] = await Promise.all([loadLibrary(v), RecordIndex.build(v, files), deviceClock(v), loadRoutines(v), loadLocations(v), loadBody(v)]);
-    setLibrary(lib);
+    const [lib, built, clock, rs, ls, bd] = await Promise.all([loadExerciseRecords(v), RecordIndex.build(v, files), deviceClock(v), loadRoutines(v), loadLocations(v), loadBody(v)]);
+    keepExercises(lib);
     setRoutines(rs);
     setLocations(ls);
     setBodyRecords(bd);
@@ -209,8 +213,8 @@ export function App() {
 
   /** After a sync brought in other devices' records: read the lists and the index again. */
   const reload = async (v: Vault) => {
-    const [lib, built, rs, ls, prof, bd] = await Promise.all([loadLibrary(v), RecordIndex.build(v, hostPorts().files), loadRoutines(v), loadLocations(v), loadProfile(v), loadBody(v)]);
-    setLibrary(lib);
+    const [lib, built, rs, ls, prof, bd] = await Promise.all([loadExerciseRecords(v), RecordIndex.build(v, hostPorts().files), loadRoutines(v), loadLocations(v), loadProfile(v), loadBody(v)]);
+    keepExercises(lib);
     setIndex(built.index);
     setRoutines(rs);
     setLocations(ls);
@@ -437,6 +441,23 @@ export function App() {
     );
   } else if (tab === "more" && sub === "locations") {
     body = <LocationsScreen locations={locations} custom={equipment} onSave={saveLocation} onAddStarters={() => starterLocations().forEach((l) => saveLocation(l))} onBack={() => setSub(null)} />;
+  } else if (tab === "more" && sub === "exercises") {
+    body = <ExercisesScreen library={library} custom={equipment} own={exerciseRecords.own} overrides={exerciseRecords.overrides} onBack={() => setSub(null)}
+      onSaveOwn={(next) => {
+        if (!vault || !clock) return;
+        const before = exerciseRecords.own.find((x) => x.id === next.id);
+        const stamped = stampChanges(before as Record<string, unknown> | undefined, next as unknown as Record<string, unknown>, clock.tick()) as unknown as Exercise;
+        keepExercises({ ...exerciseRecords, own: [...exerciseRecords.own.filter((x) => x.id !== next.id), stamped] });
+        void vault.write(stamped).then(() => committer?.changed(`${stamped.deleted ? "Deleted exercise" : "Exercise"}: ${stamped.name}`));
+      }}
+      onSaveOverride={(next) => {
+        if (!vault || !clock) return;
+        const before = exerciseRecords.overrides.find((x) => x.id === next.id);
+        const stamped = stampChanges(before as Record<string, unknown> | undefined, next as unknown as Record<string, unknown>, clock.tick()) as unknown as ExerciseOverride;
+        keepExercises({ ...exerciseRecords, overrides: [...exerciseRecords.overrides.filter((x) => x.id !== next.id), ...(stamped.deleted ? [] : [stamped])] });
+        const name = library.find((x) => x.id === next.of)?.name ?? next.of;
+        void vault.write(stamped).then(() => committer?.changed(`${stamped.deleted ? "Reset" : "Adjusted"}: ${name}`));
+      }} />;
   } else if (tab === "more" && sub === "equipment") {
     body = <EquipmentScreen items={equipment} onBack={() => setSub(null)} onSave={(next) => {
       if (!vault || !clock) return;
@@ -531,6 +552,8 @@ export function App() {
           if (!vault) return;
           const x = await createExercise(vault, { ...f, aliases: [] }, committer ?? undefined);
           setLibrary((lib) => [...lib, x]);
+          // The records too, so More › Exercises can edit it (#61).
+          void loadExerciseRecords(vault).then(keepExercises);
           await startWith(x);
         })()}
       />

@@ -7,7 +7,7 @@
 import { Clock } from "../records/hlc.ts";
 import { newId } from "../records/ids.ts";
 import type { Effort, Equipment, Kind, Measure, Region } from "../records/vocab.ts";
-import type { Entry, Exercise, LoggedSet, Modifier, Session } from "../records/schemas.ts";
+import type { Entry, Exercise, ExerciseOverride, LoggedSet, Modifier, Session } from "../records/schemas.ts";
 import { catalogue, type CatalogueEntry } from "../catalogue/index.ts";
 import { mentioned, needsFromLegacy } from "../records/equipment.ts";
 import type { Vault } from "../vault/vault.ts";
@@ -208,6 +208,10 @@ export interface LibraryItem {
   sweat: 0 | 1 | 2;
   own: boolean;
   instructions?: string;
+  /** A catalogue exercise you've adjusted (#61). */
+  overridden?: true;
+  /** One of your own, deleted (#61): kept for its name in history, out of search and suggestions. */
+  deleted?: true;
 }
 
 /** D4's needs and optional, from the new fields or the old flat list. */
@@ -226,15 +230,40 @@ export const fromCatalogue = (e: CatalogueEntry): LibraryItem => ({
 const fromOwn = (e: Exercise): LibraryItem => ({
   id: e.id, name: e.name, aliases: e.aliases, works: e.works, strains: e.strains, kinds: e.kinds, measure: e.measure,
   sided: e.sided, ...equipmentOf(e), sweat: e.sweat, own: true,
+  ...(e.instructions ? { instructions: e.instructions } : {}), ...(e.deleted ? { deleted: true as const } : {}),
 });
+
+/** A catalogue exercise with your changes laid over it (#61, D4). */
+function withOverride(item: LibraryItem, o: ExerciseOverride): LibraryItem {
+  const out: LibraryItem = { ...item, overridden: true };
+  for (const k of ["measure", "sided", "works", "strains", "kinds", "sweat"] as const) if (o[k] !== undefined) (out as unknown as Record<string, unknown>)[k] = o[k];
+  if (o.needs || o.optional) {
+    const needs = o.needs ?? item.needs, optional = o.optional ?? item.optional;
+    Object.assign(out, { needs, optional, equipment: mentioned({ needs, optional }) });
+  }
+  return out;
+}
+
+/** Your exercises and your overrides of catalogue ones (#61), as records, for editing. */
+export async function loadExerciseRecords(vault: Vault): Promise<{ own: Exercise[]; overrides: ExerciseOverride[] }> {
+  const read = async (dir: string) => [...(await vault.readMany(await vault.list(dir))).records.values()];
+  const [ex, ov] = await Promise.all([read("exercises"), read("overrides")]);
+  return {
+    own: ex.filter((r): r is Exercise => r.type === "exercise"),
+    overrides: ov.filter((r): r is ExerciseOverride => r.type === "override" && !r.deleted),
+  };
+}
+
+/** The library from the records: the catalogue (with your overrides) and your own (merged ones left out). */
+export function libraryFrom(records: { own: Exercise[]; overrides: ExerciseOverride[] }): LibraryItem[] {
+  const over = new Map(records.overrides.map((o) => [o.of, o]));
+  const cat = catalogue().entries.map((e) => { const item = fromCatalogue(e); const o = over.get(e.id); return o ? withOverride(item, o) : item; });
+  return [...cat, ...records.own.filter((r) => !r.mergedInto).map(fromOwn)];
+}
 
 /** The catalogue and the person's own exercises (merged ones left out: they count as their catalogue entry). */
 export async function loadLibrary(vault: Vault): Promise<LibraryItem[]> {
-  const own: LibraryItem[] = [];
-  const paths = await vault.list("exercises");
-  const { records } = await vault.readMany(paths);
-  for (const r of records.values()) if (r.type === "exercise" && !r.mergedInto) own.push(fromOwn(r));
-  return [...catalogue().entries.map(fromCatalogue), ...own];
+  return libraryFrom(await loadExerciseRecords(vault));
 }
 
 /** A new movement of the person's own (#2, #15), saved as a record. */

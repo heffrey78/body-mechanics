@@ -59,11 +59,37 @@ export const Exercise = z.strictObject({
   optional: z.array(equipmentRef).optional(),
   sweat: z.union([z.literal(0), z.literal(1), z.literal(2)]),
   variationOf: exerciseRef.optional(),
+  /** How to do it, in your own words (#61). */
+  instructions: z.string().max(4000).optional(),
   /** Set when it was merged into a catalogue exercise (#15): its history counts toward that one. */
   mergedInto: exerciseRef.optional(),
+  /** Deleted (#61): out of search and suggestions; sessions that used it keep its name. */
+  deleted: z.literal(true).optional(),
   edits,
 });
 export type Exercise = z.infer<typeof Exercise>;
+
+/**
+ * Your version of a catalogue exercise (#61, D4): only the fields you changed, laid over the catalogue's,
+ * so catalogue fixes to the rest still come through. Deleting it resets the exercise.
+ */
+export const ExerciseOverride = z.strictObject({
+  type: z.literal("override"),
+  v: z.literal(FORMAT_VERSION),
+  id,
+  of: z.string().regex(/^bm:[a-z0-9-]+$/, "a catalogue id like bm:box-squat"),
+  measure: z.enum(MEASURES).optional(),
+  sided: z.boolean().optional(),
+  works: z.array(z.enum(REGIONS)).optional(),
+  strains: z.array(z.enum(REGIONS)).optional(),
+  kinds: z.array(z.enum(KINDS)).optional(),
+  needs: z.array(z.array(equipmentRef).min(1)).optional(),
+  optional: z.array(equipmentRef).optional(),
+  sweat: z.union([z.literal(0), z.literal(1), z.literal(2)]).optional(),
+  deleted: z.literal(true).optional(),
+  edits,
+});
+export type ExerciseOverride = z.infer<typeof ExerciseOverride>;
 
 // ---------------------------------------------------------------- session
 
@@ -311,6 +337,6 @@ export const Format = z.strictObject({
 });
 export type Format = z.infer<typeof Format>;
 
-export const RECORD_SCHEMAS = { profile: Profile, exercise: Exercise, session: Session, routine: Routine, location: Location, mark: Mark, condition: Condition, equipment: EquipmentItem } as const;
+export const RECORD_SCHEMAS = { profile: Profile, exercise: Exercise, session: Session, routine: Routine, location: Location, mark: Mark, condition: Condition, equipment: EquipmentItem, override: ExerciseOverride } as const;
 export type RecordType = keyof typeof RECORD_SCHEMAS;
-export type AnyRecord = Profile | Exercise | Session | Routine | Location | Mark | Condition | EquipmentItem;
+export type AnyRecord = Profile | Exercise | Session | Routine | Location | Mark | Condition | EquipmentItem | ExerciseOverride;

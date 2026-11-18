@@ -77,6 +77,8 @@ export function search<T extends Searchable>(query: string, items: T[], limit = 
   if (!qs.length) return [];
   const hits: Hit<T>[] = [];
   for (const item of items) {
+    // A deleted exercise (#61) is kept for history's names, never found.
+    if ((item as { deleted?: boolean }).deleted) continue;
     const nameWords = new Set(norm([item.name, ...item.aliases].join(" ")).split(" "));
     // Body words, the main region's counting more than the rest.
     const bodyWords = new Map<string, number>();
