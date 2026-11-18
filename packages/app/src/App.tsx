@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   COMMIT_EMAIL, COMMIT_NAME, Committer, ENGINE_VERSION, NotSetUp, RecordIndex, SessionLog, Vault, clearDraft, createExercise, deviceClock,
-  GitHub, Syncer, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, loadBody, newMark, newCondition, editBody, modifiersOf, applyModified, deletedSession, checkIn, resolveMark, reopenMark, isDue, isActive, type Body, type Mark, type Condition, type CheckInFields, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
+  GitHub, Syncer, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, loadEquipment, standsInOf, type EquipmentItem, loadBody, newMark, newCondition, editBody, modifiersOf, applyModified, deletedSession, checkIn, resolveMark, reopenMark, isDue, isActive, type Body, type Mark, type Condition, type CheckInFields, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
   portsRoundTrip, routineFromSession, saveDraft,
   type Clock, type Location, type Suggestion, type SyncStatus, type TargetUpdate, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
 } from "@bm/engine";
@@ -19,6 +19,7 @@ import { CreditsScreen } from "./screens/CreditsScreen.tsx";
 import { HomeScreen } from "./screens/HomeScreen.tsx";
 import { BodyScreen, markTitle, type NewMarkFields } from "./screens/BodyScreen.tsx";
 import { ConditionsScreen } from "./screens/ConditionsScreen.tsx";
+import { EquipmentScreen } from "./screens/EquipmentScreen.tsx";
 import { PlanScreen } from "./screens/PlanScreen.tsx";
 import { NewMovement } from "./screens/NewMovement.tsx";
 import { SessionScreen, type Pending } from "./screens/SessionScreen.tsx";
@@ -38,7 +39,7 @@ async function recordsRoot(): Promise<string> {
 export function App() {
   const [theme, setTheme] = useTheme();
   const [tab, setTab] = useState<TabId>("home");
-  const [sub, setSub] = useState<"theme" | "credits" | "checks" | "locations" | "sync" | "conditions" | null>(null);
+  const [sub, setSub] = useState<"theme" | "credits" | "checks" | "locations" | "sync" | "conditions" | "equipment" | null>(null);
   // GitHub sync (#38): the connection, the records' remote, and what the last sync did.
   // In a plain browser there are no host ports: sign-in is off there (`available`), and its secrets live in memory.
   const github = useMemo(() => new GitHub(httpPort, isTauri() ? hostPorts().secrets : memorySecretsPort()), []);
@@ -48,6 +49,8 @@ export function App() {
   const [syncer, setSyncer] = useState<Syncer | null>(null);
   const [joining, setJoining] = useState(false);
   const [locations, setLocations] = useState<Location[]>([]);
+  /** Your own equipment (#60). */
+  const [equipment, setEquipment] = useState<EquipmentItem[]>([]);
   /** Marks and conditions (#45): Suggest next and plans work around them (#47). */
   const [bodyRecords, setBodyRecords] = useState<Body>({ marks: [], conditions: [] });
   /** A mark or condition to open on the Body tab (from Home's check-in card). */
@@ -104,6 +107,7 @@ export function App() {
     setRoutines(rs);
     setLocations(ls);
     setBodyRecords(bd);
+    void loadEquipment(v).then(setEquipment);
     // The last location used is where the next session starts (#41).
     const lastAt = built.index.sessions().find((x) => x.location)?.location;
     setLocation(lastAt && ls.some((l) => l.id === lastAt) ? lastAt : null);
@@ -188,7 +192,7 @@ export function App() {
   const suggestPanel = suggesting && log ? (
     <SuggestPanel
       answers={session ? sessionAnswers(session) : homeAnswers}
-      defaultLocation={location} locations={locations} library={library} index={index} body={bodyRecords}
+      defaultLocation={location} locations={locations} library={library} index={index} body={bodyRecords} standsIn={standsInOf(equipment)}
       done={session ? session.entries.filter((e) => !e.deleted).map((e) => e.exercise) : []}
       {...(session ? { startedAt: session.startedAt } : {})}
       seed={session?.id ?? new Date().toISOString().slice(0, 10)} refused={refused} units={profile?.units ?? "kg"}
@@ -211,6 +215,7 @@ export function App() {
     setRoutines(rs);
     setLocations(ls);
     setBodyRecords(bd);
+    void loadEquipment(v).then(setEquipment);
     setProfile(prof.profile);
     setTheme(prof.profile.theme);
   };
@@ -431,7 +436,15 @@ export function App() {
       />
     );
   } else if (tab === "more" && sub === "locations") {
-    body = <LocationsScreen locations={locations} onSave={saveLocation} onAddStarters={() => starterLocations().forEach((l) => saveLocation(l))} onBack={() => setSub(null)} />;
+    body = <LocationsScreen locations={locations} custom={equipment} onSave={saveLocation} onAddStarters={() => starterLocations().forEach((l) => saveLocation(l))} onBack={() => setSub(null)} />;
+  } else if (tab === "more" && sub === "equipment") {
+    body = <EquipmentScreen items={equipment} onBack={() => setSub(null)} onSave={(next) => {
+      if (!vault || !clock) return;
+      const before = equipment.find((x) => x.id === next.id);
+      const stamped = stampChanges(before as Record<string, unknown> | undefined, next as unknown as Record<string, unknown>, clock.tick()) as unknown as EquipmentItem;
+      setEquipment((xs) => [...xs.filter((x) => x.id !== next.id), ...(stamped.deleted ? [] : [stamped])].sort((a, b) => a.name.localeCompare(b.name)));
+      void vault.write(stamped).then(() => committer?.changed(`${stamped.deleted ? "Deleted equipment" : "Equipment"}: ${stamped.name}`));
+    }} />;
   } else if (tab === "more" && sub === "conditions") {
     body = <ConditionsScreen conditions={bodyRecords.conditions} onBack={() => setSub(null)}
       onSave={(c) => {
@@ -507,7 +520,7 @@ export function App() {
       />
     );
   } else if (tab === "home" && home.screen === "plan") {
-    body = <PlanScreen defaultLocation={location} locations={locations} library={library} index={index} body={bodyRecords} units={profile?.units ?? "kg"}
+    body = <PlanScreen defaultLocation={location} locations={locations} library={library} index={index} body={bodyRecords} standsIn={standsInOf(equipment)} units={profile?.units ?? "kg"}
       onStart={(items) => void startPlan(items)} onBack={() => setHome({ screen: "start" })} />;
   } else if (tab === "home" && home.screen === "new") {
     body = (

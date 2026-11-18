@@ -21,6 +21,8 @@ export function recordPath(record: AnyRecord): string {
       return `marks/${record.id}.yaml.age`;
     case "condition":
       return `conditions/${record.id}.yaml.age`;
+    case "equipment":
+      return `equipment/${record.id}.yaml.age`;
     case "session": {
       const [year, month] = record.startedAt.split("-");
       return `sessions/${year}/${month}/${record.id}.yaml.age`;

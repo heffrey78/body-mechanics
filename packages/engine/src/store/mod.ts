@@ -9,7 +9,7 @@ export { exportAll, setsCsv } from "./export.ts";
 export { loadProfile, showLoad, toKg } from "./profile.ts";
 export { SessionLog, deviceClock, loadLibrary, createExercise, deletedSession, fromCatalogue, type Amount, type LibraryItem } from "./session-log.ts";
 export { nextSet, describeSet, FIELD, type NextSet } from "./next-set.ts";
-export { loadRoutines, loadLocations, starterLocations } from "./plans.ts";
+export { loadRoutines, loadLocations, loadEquipment, standsInOf, starterLocations } from "./plans.ts";
 export { loadBody, currentState, history, isActive, isDue, redFlags, offersCondition, newMark, newCondition, editBody, checkIn, resolveMark, reopenMark, CHECK_IN_DAYS, CONDITION_AFTER_DAYS, type Body, type CheckInFields } from "./body.ts";
 export { stampChanges, editRoutine, newRoutine, newItem, routineFromSession, planStatus, nextStep, type PlanStep } from "./routines.ts";
 export { progression, targetUpdates, applyUpdates, loadStep, type Progression, type TargetUpdate } from "./progression.ts";

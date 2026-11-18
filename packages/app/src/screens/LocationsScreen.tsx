@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { EQUIPMENT, newId, type Location } from "@bm/engine";
+import { EQUIPMENT, newId, type EquipmentItem, type Location } from "@bm/engine";
 import { Button, Chip, Segmented } from "../ui/components.tsx";
-import { EQUIPMENT_LABEL } from "../ui/labels.ts";
+import { EQUIPMENT_LABEL, equipmentLabel } from "../ui/labels.ts";
 
 export const SWEAT_WORDS = ["No", "A little", "Bring it"] as const;
 
@@ -9,15 +9,18 @@ export const SWEAT_WORDS = ["No", "A little", "Bring it"] as const;
  * More › Locations (#41): where you exercise, what's there, and how much sweat is fine by default.
  * Every change is saved as it's made.
  */
-export function LocationsScreen({ locations, onSave, onAddStarters, onBack }: {
+export function LocationsScreen({ locations, custom, onSave, onAddStarters, onBack }: {
   locations: Location[];
+  /** Your own equipment (#60), offered alongside the built-in. */
+  custom: EquipmentItem[];
   onSave: (l: Location) => void;
   onAddStarters: () => void;
   onBack: () => void;
 }) {
   const [open, setOpen] = useState<string | null>(null);
   const loc = locations.find((l) => l.id === open);
-  if (loc) return <LocationEditor key={loc.id} location={loc} onSave={onSave} onBack={() => setOpen(null)} />;
+  const names = new Map(custom.map((c) => [c.id, c]));
+  if (loc) return <LocationEditor key={loc.id} location={loc} custom={custom} onSave={onSave} onBack={() => setOpen(null)} />;
   return (
     <div className="pad">
       <div className="hrow"><Button variant="ghost" onClick={onBack}>‹ More</Button></div>
@@ -37,7 +40,7 @@ export function LocationsScreen({ locations, onSave, onAddStarters, onBack }: {
             <button key={l.id} type="button" className="result" onClick={() => setOpen(l.id)}>
               <span style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <span className="strong">{l.name}</span>
-                <span className="muted" style={{ fontSize: 13 }}>{l.equipment.map((e) => EQUIPMENT_LABEL[e]).join(", ") || "Nothing"}</span>
+                <span className="muted" style={{ fontSize: 13 }}>{l.equipment.filter((e) => (EQUIPMENT as readonly string[]).includes(e) || names.has(e)).map((e) => equipmentLabel(e, names)).join(", ") || "Nothing"}</span>
               </span>
               <span className="muted" style={{ whiteSpace: "nowrap" }}>Sweat: {SWEAT_WORDS[l.sweat]}</span>
             </button>
@@ -48,11 +51,13 @@ export function LocationsScreen({ locations, onSave, onAddStarters, onBack }: {
   );
 }
 
-function LocationEditor({ location, onSave, onBack }: { location: Location; onSave: (l: Location) => void; onBack: () => void }) {
+function LocationEditor({ location, custom, onSave, onBack }: { location: Location; custom: EquipmentItem[]; onSave: (l: Location) => void; onBack: () => void }) {
   const [name, setName] = useState(location.name);
   const [confirm, setConfirm] = useState(false);
-  const toggle = (e: Location["equipment"][number]) =>
-    onSave({ ...location, equipment: location.equipment.includes(e) ? location.equipment.filter((x) => x !== e) : EQUIPMENT.filter((x) => x === e || location.equipment.includes(x)) });
+  // Built-in items in their usual order, then your own in theirs.
+  const order: string[] = [...EQUIPMENT, ...custom.map((c) => c.id)];
+  const toggle = (e: string) =>
+    onSave({ ...location, equipment: location.equipment.includes(e) ? location.equipment.filter((x) => x !== e) : order.filter((x) => x === e || location.equipment.includes(x)) });
   return (
     <div className="pad">
       <div className="hrow"><Button variant="ghost" onClick={onBack}>‹ Locations</Button></div>
@@ -63,7 +68,11 @@ function LocationEditor({ location, onSave, onBack }: { location: Location; onSa
         options={(["0", "1", "2"] as const).map((id) => ({ id, label: SWEAT_WORDS[Number(id)]! }))} />
       <span className="muted">You can change it for a session without changing the location.</span>
       <span className="label">What's here</span>
-      <div className="chips">{EQUIPMENT.map((e) => <Chip key={e} on={location.equipment.includes(e)} onClick={() => toggle(e)}>{EQUIPMENT_LABEL[e]}</Chip>)}</div>
+      <div className="chips">
+        {EQUIPMENT.map((e) => <Chip key={e} on={location.equipment.includes(e)} onClick={() => toggle(e)}>{EQUIPMENT_LABEL[e]}</Chip>)}
+        {custom.map((c) => <Chip key={c.id} on={location.equipment.includes(c.id)} onClick={() => toggle(c.id)}>{c.name}</Chip>)}
+      </div>
+      {custom.length ? null : <span className="muted">Something else here? Add it in More › Equipment.</span>}
       {confirm ? (
         <div className="card">
           <span>Delete “{location.name}”? Sessions logged there keep their history.</span>

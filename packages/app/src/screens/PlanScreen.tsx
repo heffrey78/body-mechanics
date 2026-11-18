@@ -19,12 +19,14 @@ export function planItem(s: Suggestion): RoutineItem {
  * Plan a session (#50): the focus questions, then a plan built around the body: sections by kind, each
  * exercise with why, how to do it gently, Swap; what the plan leaves alone; Start runs it as a plan.
  */
-export function PlanScreen({ defaultLocation, locations, library, index, body, units, onStart, onBack }: {
+export function PlanScreen({ defaultLocation, locations, library, index, body, standsIn, units, onStart, onBack }: {
   defaultLocation: string | null;
   locations: Location[];
   library: LibraryItem[];
   index: RecordIndex | null;
   body: Body;
+  /** Your own equipment → the built-in items it stands in for (#60). */
+  standsIn: ReadonlyMap<string, readonly string[]>;
   units: "kg" | "lb";
   onStart: (items: RoutineItem[]) => void;
   onBack: () => void;
@@ -39,13 +41,13 @@ export function PlanScreen({ defaultLocation, locations, library, index, body, u
     return buildPlan(
       { ...(location ? { location } : {}), ...(answers.minutes ? { minutesLeft: answers.minutes } : {}), sweat: answers.sweat, area: answers.area, kinds: answers.kinds },
       {
-        library, done: [], refused: new Set(), units, now: new Date(), seed, body: concerns(body),
+        library, done: [], refused: new Set(), units, now: new Date(), seed, body: concerns(body), standsIn,
         history: (index?.sessions() ?? []).filter((s) => Date.parse(s.startedAt) >= fortnight),
         lastTime: (x) => index?.lastTime(x)?.entry,
       },
       skip,
     );
-  }, [answers, locations, library, index, body, units, seed, skip]);
+  }, [answers, locations, library, index, body, units, seed, skip, standsIn]);
 
   if (!answers || !plan) {
     return (

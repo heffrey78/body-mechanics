@@ -50,6 +50,8 @@ export interface Context {
   now: Date;
   /** Breaks ties, so equal suggestions vary between sessions but not within one (the session id). */
   seed?: string;
+  /** Custom equipment → the built-in items it stands in for (#60). */
+  standsIn?: ReadonlyMap<string, readonly string[]>;
   /** The body's active marks and conditions (#47), from concerns(). */
   body?: readonly Concern[];
 }
@@ -122,7 +124,7 @@ export function suggest(answers: Answers, ctx: Context): Suggestion[] {
     if (!item.works.length) return false; // never suggest a movement without a body region (#3)
     if (doneSet.has(item.id) || ctx.refused.has(item.id)) return false;
     if (item.sweat > answers.sweat) return false;
-    return !answers.location || fitsNeeds(item.needs, have);
+    return !answers.location || fitsNeeds(item.needs, have, ctx.standsIn);
   };
   const hard: Cand[] = [];
   for (const original of ctx.library) {

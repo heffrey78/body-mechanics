@@ -30,7 +30,7 @@ export function describeDose(s: Suggestion, units: "kg" | "lb"): string {
  * focus), then straight to a suggestion with the same answers. Start takes it; Another idea moves
  * down the ranks; Not this turns it down for the session; Change answers goes back to the questions.
  */
-export function SuggestPanel({ answers, defaultLocation, locations, library, index, body, done, startedAt, seed, refused, units, onAnswers, onRefuse, onAccept, onClose }: {
+export function SuggestPanel({ answers, defaultLocation, locations, library, index, body, standsIn, done, startedAt, seed, refused, units, onAnswers, onRefuse, onAccept, onClose }: {
   /** This session's answers, or null when they haven't been given yet. */
   answers: SuggestAnswers | null;
   /** Where Home says you are, for the first question. */
@@ -40,6 +40,8 @@ export function SuggestPanel({ answers, defaultLocation, locations, library, ind
   index: RecordIndex | null;
   /** Marks and conditions (#47). */
   body: Body;
+  /** Your own equipment → the built-in items it stands in for (#60). */
+  standsIn: ReadonlyMap<string, readonly string[]>;
   done: string[];
   /** When the session started (for time left); undefined before one has. */
   startedAt?: string;
@@ -62,12 +64,12 @@ export function SuggestPanel({ answers, defaultLocation, locations, library, ind
     return suggest(
       { ...(location ? { location } : {}), ...(minutesLeft !== undefined ? { minutesLeft } : {}), sweat: answers.sweat, area: answers.area, kinds: answers.kinds },
       {
-        library, done, refused, units, now: new Date(), seed, body: concerns(body),
+        library, done, refused, units, now: new Date(), seed, body: concerns(body), standsIn,
         history: (index?.sessions() ?? []).filter((s) => Date.parse(s.startedAt) >= fortnight && (!startedAt || s.startedAt !== startedAt)),
         lastTime: (x) => index?.lastTime(x, startedAt)?.entry,
       },
     );
-  }, [answers, locations, library, index, body, done, refused, units, seed, startedAt]);
+  }, [answers, locations, library, index, body, done, refused, units, seed, startedAt, standsIn]);
 
   if (asking || !answers) {
     return <Questions initial={answers} defaultLocation={defaultLocation} locations={locations} onDone={(a) => { onAnswers(a); setRank(0); setAsking(false); }} onClose={onClose} />;

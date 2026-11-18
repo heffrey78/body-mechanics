@@ -15,3 +15,8 @@ export const EQUIPMENT_LABEL: Record<Equipment, string> = {
 export const MEASURE_LABEL: Record<Measure, string> = { reps: "Reps", time: "Time", distance: "Distance" };
 export const KIND_LABEL: Record<Kind, string> = { mobility: "Mobility", strength: "Strength", endurance: "Endurance", balance: "Balance" };
 export const SWEAT_LABEL = ["No sweat", "Some", "Lots"] as const;
+
+/** A built-in item's label, or a custom item's name (#60); an unknown id (deleted, or not synced yet) as "Other". */
+export function equipmentLabel(id: string, custom: ReadonlyMap<string, { name: string }>): string {
+  return (EQUIPMENT_LABEL as Record<string, string>)[id] ?? custom.get(id)?.name ?? "Other";
+}

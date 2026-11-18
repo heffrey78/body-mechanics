@@ -200,21 +200,21 @@ export interface LibraryItem {
   measure: Measure;
   sided: boolean;
   /** Every item it mentions, for display and filters (D4: `needs` and `optional` decide). */
-  equipment: Equipment[];
-  /** Required alternatives (D4). */
-  needs: Equipment[][];
+  equipment: string[];
+  /** Required alternatives (D4): built-in items or custom equipment ids (#60). */
+  needs: string[][];
   /** Never required (D4). */
-  optional: Equipment[];
+  optional: string[];
   sweat: 0 | 1 | 2;
   own: boolean;
   instructions?: string;
 }
 
 /** D4's needs and optional, from the new fields or the old flat list. */
-function equipmentOf(e: { equipment: Equipment[]; needs?: Equipment[][] | undefined; optional?: Equipment[] | undefined }): Pick<LibraryItem, "equipment" | "needs" | "optional"> {
-  const needs = e.needs ?? (needsFromLegacy(e.equipment) as Equipment[][]);
+function equipmentOf(e: { equipment: Equipment[]; needs?: string[][] | undefined; optional?: string[] | undefined }): Pick<LibraryItem, "equipment" | "needs" | "optional"> {
+  const needs = e.needs ?? needsFromLegacy(e.equipment);
   const optional = e.optional ?? [];
-  return { needs, optional, equipment: mentioned({ needs, optional }) as Equipment[] };
+  return { needs, optional, equipment: mentioned({ needs, optional }) };
 }
 
 /** A catalogue entry as the library lists it. */

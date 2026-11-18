@@ -18,6 +18,8 @@ const iso = z.iso.datetime({ offset: false, precision: 3 });
 const edits = z.record(z.string(), hlc).optional();
 const nonNegInt = z.number().int().nonnegative();
 const kg = z.number().nonnegative().max(1000);
+/** Built-in equipment, or a piece of the person's own (a custom equipment record's id, #60). */
+const equipmentRef = z.union([z.enum(EQUIPMENT), id]);
 /** A catalogue exercise ("wger:123", "bm:mcgill-curl-up") or one of the person's own (a record id). */
 const exerciseRef = z.union([id, z.string().regex(/^[a-z]+:[a-z0-9-]+$/, "a catalogue id like wger:123")]);
 
@@ -52,9 +54,9 @@ export const Exercise = z.strictObject({
   /** The old flat list (D1), read with the stand-in groups when `needs` isn't set (D4). */
   equipment: z.array(z.enum(EQUIPMENT)).default([]),
   /** What it needs (D4): alternatives, one of each group required. */
-  needs: z.array(z.array(z.enum(EQUIPMENT)).min(1)).optional(),
+  needs: z.array(z.array(equipmentRef).min(1)).optional(),
   /** Nice to have, never required (D4). */
-  optional: z.array(z.enum(EQUIPMENT)).optional(),
+  optional: z.array(equipmentRef).optional(),
   sweat: z.union([z.literal(0), z.literal(1), z.literal(2)]),
   variationOf: exerciseRef.optional(),
   /** Set when it was merged into a catalogue exercise (#15): its history counts toward that one. */
@@ -202,7 +204,8 @@ export const Location = z.strictObject({
   v: z.literal(FORMAT_VERSION),
   id,
   name: z.string().min(1).max(80),
-  equipment: z.array(z.enum(EQUIPMENT)),
+  /** Built-in items and custom equipment ids (#60). */
+  equipment: z.array(equipmentRef),
   /** How much sweat is fine here, by default (#3): 0 none, 1 a little, 2 bring it. */
   sweat: z.union([z.literal(0), z.literal(1), z.literal(2)]),
   deleted: z.literal(true).optional(),
@@ -284,6 +287,21 @@ export const Condition = z.strictObject({
 });
 export type Condition = z.infer<typeof Condition>;
 
+// ---------------------------------------------------------------- custom equipment (#60, D4)
+
+/** A piece of the person's own equipment: a TRX, a plyo box (standing in for a step, a bench, a chair). */
+export const EquipmentItem = z.strictObject({
+  type: z.literal("equipment"),
+  v: z.literal(FORMAT_VERSION),
+  id,
+  name: z.string().min(1).max(60),
+  /** Built-in items it can stand in for. */
+  standsIn: z.array(z.enum(EQUIPMENT)).default([]),
+  deleted: z.literal(true).optional(),
+  edits,
+});
+export type EquipmentItem = z.infer<typeof EquipmentItem>;
+
 // ---------------------------------------------------------------- format.yaml (plain, not encrypted)
 
 export const Format = z.strictObject({
@@ -293,6 +311,6 @@ export const Format = z.strictObject({
 });
 export type Format = z.infer<typeof Format>;
 
-export const RECORD_SCHEMAS = { profile: Profile, exercise: Exercise, session: Session, routine: Routine, location: Location, mark: Mark, condition: Condition } as const;
+export const RECORD_SCHEMAS = { profile: Profile, exercise: Exercise, session: Session, routine: Routine, location: Location, mark: Mark, condition: Condition, equipment: EquipmentItem } as const;
 export type RecordType = keyof typeof RECORD_SCHEMAS;
-export type AnyRecord = Profile | Exercise | Session | Routine | Location | Mark | Condition;
+export type AnyRecord = Profile | Exercise | Session | Routine | Location | Mark | Condition | EquipmentItem;
