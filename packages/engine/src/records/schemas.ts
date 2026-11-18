@@ -49,7 +49,12 @@ export const Exercise = z.strictObject({
   /** Regions it loads, for the body map's warnings (#4). */
   strains: z.array(z.enum(REGIONS)).default([]),
   kinds: z.array(z.enum(KINDS)).default([]),
+  /** The old flat list (D1), read with the stand-in groups when `needs` isn't set (D4). */
   equipment: z.array(z.enum(EQUIPMENT)).default([]),
+  /** What it needs (D4): alternatives, one of each group required. */
+  needs: z.array(z.array(z.enum(EQUIPMENT)).min(1)).optional(),
+  /** Nice to have, never required (D4). */
+  optional: z.array(z.enum(EQUIPMENT)).optional(),
   sweat: z.union([z.literal(0), z.literal(1), z.literal(2)]),
   variationOf: exerciseRef.optional(),
   /** Set when it was merged into a catalogue exercise (#15): its history counts toward that one. */

@@ -17,6 +17,9 @@ export const CatalogueEntry = z.strictObject({
   kinds: z.array(z.enum(KINDS)).min(1),
   sweat: z.union([z.literal(0), z.literal(1), z.literal(2)]),
   equipment: z.array(z.enum(EQUIPMENT)),
+  /** D4: alternatives (one of each group) and optional items; without them, `equipment` is read the old way. */
+  needs: z.array(z.array(z.enum(EQUIPMENT)).min(1)).optional(),
+  optional: z.array(z.enum(EQUIPMENT)).optional(),
   variationOf: z.string().regex(/^bm:[a-z0-9-]+$/).optional(),
   source: z.discriminatedUnion("kind", [
     z.strictObject({ kind: z.literal("wger"), id: z.number().int(), url: z.url() }),

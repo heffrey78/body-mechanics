@@ -9,6 +9,7 @@ import { newId } from "../records/ids.ts";
 import type { Effort, Equipment, Kind, Measure, Region } from "../records/vocab.ts";
 import type { Entry, Exercise, LoggedSet, Modifier, Session } from "../records/schemas.ts";
 import { catalogue, type CatalogueEntry } from "../catalogue/index.ts";
+import { mentioned, needsFromLegacy } from "../records/equipment.ts";
 import type { Vault } from "../vault/vault.ts";
 import type { Committer } from "./committer.ts";
 import type { RecordIndex } from "./index.ts";
@@ -198,20 +199,33 @@ export interface LibraryItem {
   kinds: Kind[];
   measure: Measure;
   sided: boolean;
+  /** Every item it mentions, for display and filters (D4: `needs` and `optional` decide). */
   equipment: Equipment[];
+  /** Required alternatives (D4). */
+  needs: Equipment[][];
+  /** Never required (D4). */
+  optional: Equipment[];
   sweat: 0 | 1 | 2;
   own: boolean;
   instructions?: string;
 }
 
-const fromCatalogue = (e: CatalogueEntry): LibraryItem => ({
+/** D4's needs and optional, from the new fields or the old flat list. */
+function equipmentOf(e: { equipment: Equipment[]; needs?: Equipment[][] | undefined; optional?: Equipment[] | undefined }): Pick<LibraryItem, "equipment" | "needs" | "optional"> {
+  const needs = e.needs ?? (needsFromLegacy(e.equipment) as Equipment[][]);
+  const optional = e.optional ?? [];
+  return { needs, optional, equipment: mentioned({ needs, optional }) as Equipment[] };
+}
+
+/** A catalogue entry as the library lists it. */
+export const fromCatalogue = (e: CatalogueEntry): LibraryItem => ({
   id: e.id, name: e.name, aliases: e.aliases, works: e.works, strains: e.strains, kinds: e.kinds, measure: e.measure,
-  sided: e.sided, equipment: e.equipment, sweat: e.sweat, own: false, instructions: e.instructions,
+  sided: e.sided, ...equipmentOf(e), sweat: e.sweat, own: false, instructions: e.instructions,
 });
 
 const fromOwn = (e: Exercise): LibraryItem => ({
   id: e.id, name: e.name, aliases: e.aliases, works: e.works, strains: e.strains, kinds: e.kinds, measure: e.measure,
-  sided: e.sided, equipment: e.equipment, sweat: e.sweat, own: true,
+  sided: e.sided, ...equipmentOf(e), sweat: e.sweat, own: true,
 });
 
 /** The catalogue and the person's own exercises (merged ones left out: they count as their catalogue entry). */

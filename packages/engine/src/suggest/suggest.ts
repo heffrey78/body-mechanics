@@ -16,6 +16,7 @@ import type { LibraryItem } from "../store/session-log.ts";
 import type { EntrySummary, SessionSummary } from "../store/index.ts";
 import { progression } from "../store/progression.ts";
 import { FIELD } from "../store/next-set.ts";
+import { fits as fitsNeeds, needsFromLegacy } from "../records/equipment.ts";
 import { assess, describeConcern, helpersFor, type Concern } from "../body/assess.ts";
 
 export const AREAS: Record<"upper" | "lower" | "core", Region[]> = {
@@ -121,7 +122,7 @@ export function suggest(answers: Answers, ctx: Context): Suggestion[] {
     if (!item.works.length) return false; // never suggest a movement without a body region (#3)
     if (doneSet.has(item.id) || ctx.refused.has(item.id)) return false;
     if (item.sweat > answers.sweat) return false;
-    return !answers.location || equipped(item.equipment, have);
+    return !answers.location || fitsNeeds(item.needs, have);
   };
   const hard: Cand[] = [];
   for (const original of ctx.library) {
@@ -212,7 +213,9 @@ export function suggest(answers: Answers, ctx: Context): Suggestion[] {
     if (answers.sweat === 2) score += item.sweat * 0.5;
     if (answers.sweat === 0) reasons.push("No sweat");
     if (answers.location) {
-      const used = item.equipment.filter((e) => have.has(e)).map((e) => e.replace("-", " "));
+      // What it'll use here: the first alternative present in each required group, then optional extras.
+      const used = [...item.needs.map((alts) => alts.find((e) => have.has(e))), ...item.optional.filter((e) => have.has(e))]
+        .filter((e): e is NonNullable<typeof e> => !!e).map((e) => e.replace("-", " "));
       reasons.push(used.length ? `Uses the ${used.join(" and ")} at ${answers.location.name}` : "Needs no equipment");
     }
     if (answers.minutesLeft !== undefined) reasons.push(`About ${minutes} min`);
@@ -244,19 +247,9 @@ function hash(s: string): number {
 }
 
 /**
- * Equipment an exercise lists is needed together, except within a group of things that stand in for
- * each other: a load (dumbbells, a kettlebell or a barbell), resistance (a band or a cable), something
- * to step on or sit on (a step, a bench or a chair), and the floor or a mat. So a goblet squat
- * (dumbbells, kettlebell) needs either, and a bench press (barbell, bench) needs both.
+ * The old reading of a flat equipment list (D1): needed together, except within the stand-in groups.
+ * Kept for callers with a flat list; exercises themselves now carry `needs` (D4).
  */
-const GROUPS: readonly (readonly string[])[] = [["dumbbells", "kettlebell", "barbell"], ["band", "cable"], ["step", "bench", "chair"], ["floor", "mat"]];
 export function equipped(needs: readonly string[], have: ReadonlySet<string>): boolean {
-  const groupOf = (e: string) => GROUPS.findIndex((g) => g.includes(e));
-  const byGroup = new Map<number | string, string[]>();
-  for (const e of needs) {
-    const g = groupOf(e);
-    const key = g >= 0 ? g : e;
-    byGroup.set(key, [...(byGroup.get(key) ?? []), e]);
-  }
-  return [...byGroup.values()].every((options) => options.some((e) => have.has(e)));
+  return fitsNeeds(needsFromLegacy(needs), have);
 }

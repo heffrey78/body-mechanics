@@ -1,13 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
-  AREAS, applyModified, assess, buildPlan, catalogue, concerns, describeConcern, helpersFor, recipe, newCondition, newMark, reviewRoutine, starterLocations, suggest,
+  AREAS, fromCatalogue, applyModified, assess, buildPlan, catalogue, concerns, describeConcern, helpersFor, recipe, newCondition, newMark, reviewRoutine, starterLocations, suggest,
   type Concern, type Context, type LibraryItem, type Location,
 } from "../src/index.ts";
 
-const library: LibraryItem[] = catalogue().entries.map((e) => ({
-  id: e.id, name: e.name, aliases: e.aliases, works: e.works, strains: e.strains, kinds: e.kinds, measure: e.measure,
-  sided: e.sided, equipment: e.equipment, sweat: e.sweat, own: false,
-}));
+const library: LibraryItem[] = catalogue().entries.map(fromCatalogue);
 const byId = new Map(library.map((x) => [x.id, x]));
 const ex = (id: string) => byId.get(`bm:${id}`)!;
 const now = new Date("2026-11-17T08:00:00.000Z");

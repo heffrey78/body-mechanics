@@ -7,7 +7,7 @@ export { mergeRecords, type MergeResult } from "./merge.ts";
 export { sync, mergeWith, type SyncOutcome, type SyncOptions } from "./sync.ts";
 export { exportAll, setsCsv } from "./export.ts";
 export { loadProfile, showLoad, toKg } from "./profile.ts";
-export { SessionLog, deviceClock, loadLibrary, createExercise, deletedSession, type Amount, type LibraryItem } from "./session-log.ts";
+export { SessionLog, deviceClock, loadLibrary, createExercise, deletedSession, fromCatalogue, type Amount, type LibraryItem } from "./session-log.ts";
 export { nextSet, describeSet, FIELD, type NextSet } from "./next-set.ts";
 export { loadRoutines, loadLocations, starterLocations } from "./plans.ts";
 export { loadBody, currentState, history, isActive, isDue, redFlags, offersCondition, newMark, newCondition, editBody, checkIn, resolveMark, reopenMark, CHECK_IN_DAYS, CONDITION_AFTER_DAYS, type Body, type CheckInFields } from "./body.ts";

@@ -1,10 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { AREAS, catalogue, equipped, starterLocations, suggest, type Answers, type Context, type LibraryItem, type Location } from "../src/index.ts";
+import { AREAS, catalogue, fromCatalogue, equipped, starterLocations, suggest, type Answers, type Context, type LibraryItem, type Location } from "../src/index.ts";
 
-const library: LibraryItem[] = catalogue().entries.map((e) => ({
-  id: e.id, name: e.name, aliases: e.aliases, works: e.works, strains: e.strains, kinds: e.kinds, measure: e.measure,
-  sided: e.sided, equipment: e.equipment, sweat: e.sweat, own: false,
-}));
+const library: LibraryItem[] = catalogue().entries.map(fromCatalogue);
 const places = Object.fromEntries(starterLocations().map((l) => [l.name, l])) as Record<string, Location>;
 const now = new Date("2026-11-17T08:00:00.000Z");
 const ctx = (over: Partial<Context> = {}): Context => ({ library, done: [], refused: new Set(), history: [], lastTime: () => undefined, units: "kg", now, ...over });
@@ -55,7 +52,7 @@ describe("Suggest next (#42), the #13 scenarios without marks", () => {
 
 describe("Suggest next: the rules", () => {
   it("never suggests a movement without a body region; once tagged, it can be", () => {
-    const own: LibraryItem = { id: "oooooooooooooooo", name: "Couch sit to stand", aliases: [], works: [], strains: [], kinds: ["strength"], measure: "reps", sided: false, equipment: [], sweat: 0, own: true };
+    const own: LibraryItem = { id: "oooooooooooooooo", name: "Couch sit to stand", aliases: [], works: [], strains: [], kinds: ["strength"], measure: "reps", sided: false, equipment: [], needs: [], optional: [], sweat: 0, own: true };
     const answers: Answers = { sweat: 0, area: ["quads"], kinds: ["strength"] };
     expect(suggest(answers, ctx({ library: [...library, own] })).some((x) => x.item.id === own.id)).toBe(false);
     const tagged = { ...own, works: ["quads" as const, "glutes" as const] };
