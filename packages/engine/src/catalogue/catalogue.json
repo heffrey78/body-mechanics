@@ -1,6 +1,6 @@
 {
  "version": "1",
- "builtFrom": "wger exerciseinfo, 2026-11-17",
+ "builtFrom": "wger exerciseinfo, 2026-11-18",
  "entries": [
   {
    "id": "bm:cat-cow",
@@ -96,7 +96,14 @@
    ],
    "sweat": 0,
    "equipment": [
-    "chair"
+    "chair",
+    "bench"
+   ],
+   "needs": [
+    [
+     "chair",
+     "bench"
+    ]
    ],
    "source": {
     "kind": "own"
@@ -951,7 +958,14 @@
    ],
    "sweat": 0,
    "equipment": [
-    "bench"
+    "bench",
+    "chair"
+   ],
+   "needs": [
+    [
+     "bench",
+     "chair"
+    ]
    ],
    "source": {
     "kind": "wger",
@@ -1286,7 +1300,14 @@
    ],
    "sweat": 0,
    "equipment": [
-    "chair"
+    "chair",
+    "bench"
+   ],
+   "needs": [
+    [
+     "chair",
+     "bench"
+    ]
    ],
    "source": {
     "kind": "wger",
@@ -1437,7 +1458,16 @@
    ],
    "sweat": 1,
    "equipment": [
-    "chair"
+    "chair",
+    "bench",
+    "step"
+   ],
+   "needs": [
+    [
+     "chair",
+     "bench",
+     "step"
+    ]
    ],
    "variationOf": "bm:bodyweight-squat",
    "source": {
@@ -1513,7 +1543,16 @@
    ],
    "sweat": 2,
    "equipment": [
-    "bench"
+    "bench",
+    "chair",
+    "step"
+   ],
+   "needs": [
+    [
+     "bench",
+     "chair",
+     "step"
+    ]
    ],
    "variationOf": "bm:split-squat",
    "source": {
@@ -1590,7 +1629,13 @@
    ],
    "sweat": 2,
    "equipment": [
-    "dumbbells"
+    "dumbbells",
+    "kettlebell"
+   ],
+   "needs": [],
+   "optional": [
+    "dumbbells",
+    "kettlebell"
    ],
    "source": {
     "kind": "wger",
@@ -1629,7 +1674,15 @@
    "sweat": 2,
    "equipment": [
     "step",
-    "bench"
+    "bench",
+    "chair"
+   ],
+   "needs": [
+    [
+     "step",
+     "bench",
+     "chair"
+    ]
    ],
    "source": {
     "kind": "wger",
@@ -1668,7 +1721,15 @@
    "sweat": 2,
    "equipment": [
     "dumbbells",
+    "kettlebell",
     "barbell"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "kettlebell",
+     "barbell"
+    ]
    ],
    "source": {
     "kind": "wger",
@@ -1749,7 +1810,16 @@
    ],
    "sweat": 2,
    "equipment": [
-    "barbell"
+    "barbell",
+    "kettlebell",
+    "dumbbells"
+   ],
+   "needs": [
+    [
+     "barbell",
+     "kettlebell",
+     "dumbbells"
+    ]
    ],
    "source": {
     "kind": "wger",
@@ -1784,8 +1854,20 @@
    ],
    "sweat": 2,
    "equipment": [
+    "bench",
+    "chair",
     "barbell",
-    "bench"
+    "dumbbells"
+   ],
+   "needs": [
+    [
+     "bench",
+     "chair"
+    ]
+   ],
+   "optional": [
+    "barbell",
+    "dumbbells"
    ],
    "source": {
     "kind": "wger",
@@ -1929,6 +2011,10 @@
    "equipment": [
     "step"
    ],
+   "needs": [],
+   "optional": [
+    "step"
+   ],
    "source": {
     "kind": "own"
    },
@@ -1961,7 +2047,13 @@
    ],
    "sweat": 1,
    "equipment": [
-    "step"
+    "step",
+    "wall"
+   ],
+   "needs": [],
+   "optional": [
+    "step",
+    "wall"
    ],
    "variationOf": "bm:calf-raise",
    "source": {
@@ -2280,7 +2372,14 @@
    ],
    "sweat": 2,
    "equipment": [
-    "kettlebell"
+    "kettlebell",
+    "dumbbells"
+   ],
+   "needs": [
+    [
+     "kettlebell",
+     "dumbbells"
+    ]
    ],
    "source": {
     "kind": "wger",
@@ -2316,7 +2415,14 @@
    ],
    "sweat": 1,
    "equipment": [
-    "chair"
+    "chair",
+    "bench"
+   ],
+   "needs": [
+    [
+     "chair",
+     "bench"
+    ]
    ],
    "source": {
     "kind": "own"
@@ -2453,7 +2559,14 @@
    ],
    "sweat": 0,
    "equipment": [
-    "band"
+    "band",
+    "cable"
+   ],
+   "needs": [
+    [
+     "band",
+     "cable"
+    ]
    ],
    "source": {
     "kind": "wger",
@@ -2589,7 +2702,14 @@
    ],
    "sweat": 1,
    "equipment": [
-    "bench"
+    "bench",
+    "chair"
+   ],
+   "needs": [
+    [
+     "bench",
+     "chair"
+    ]
    ],
    "source": {
     "kind": "wger",
@@ -2666,7 +2786,18 @@
    ],
    "sweat": 1,
    "equipment": [
-    "bench"
+    "bench",
+    "chair",
+    "desk",
+    "step"
+   ],
+   "needs": [
+    [
+     "bench",
+     "chair",
+     "desk",
+     "step"
+    ]
    ],
    "variationOf": "bm:push-up",
    "source": {
@@ -2777,7 +2908,17 @@
    "sweat": 2,
    "equipment": [
     "barbell",
+    "dumbbells",
     "bench"
+   ],
+   "needs": [
+    [
+     "barbell",
+     "dumbbells"
+    ],
+    [
+     "bench"
+    ]
    ],
    "source": {
     "kind": "wger",
@@ -2814,7 +2955,14 @@
    ],
    "sweat": 2,
    "equipment": [
-    "barbell"
+    "barbell",
+    "dumbbells"
+   ],
+   "needs": [
+    [
+     "barbell",
+     "dumbbells"
+    ]
    ],
    "source": {
     "kind": "wger",
@@ -2854,7 +3002,14 @@
    ],
    "sweat": 1,
    "equipment": [
-    "dumbbells"
+    "dumbbells",
+    "kettlebell"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "kettlebell"
+    ]
    ],
    "variationOf": "bm:overhead-press",
    "source": {
@@ -3044,7 +3199,15 @@
    "sweat": 1,
    "equipment": [
     "dumbbells",
+    "kettlebell",
     "barbell"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "kettlebell",
+     "barbell"
+    ]
    ],
    "source": {
     "kind": "wger",
@@ -3082,7 +3245,19 @@
    "sweat": 1,
    "equipment": [
     "dumbbells",
-    "bench"
+    "kettlebell",
+    "bench",
+    "chair"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "kettlebell"
+    ],
+    [
+     "bench",
+     "chair"
+    ]
    ],
    "variationOf": "bm:bent-over-row",
    "source": {
@@ -3116,7 +3291,16 @@
    ],
    "sweat": 1,
    "equipment": [
-    "cable"
+    "cable",
+    "machine",
+    "band"
+   ],
+   "needs": [
+    [
+     "cable",
+     "machine",
+     "band"
+    ]
    ],
    "source": {
     "kind": "wger",
@@ -3155,7 +3339,14 @@
    ],
    "sweat": 1,
    "equipment": [
-    "cable"
+    "cable",
+    "machine"
+   ],
+   "needs": [
+    [
+     "cable",
+     "machine"
+    ]
    ],
    "source": {
     "kind": "wger",
@@ -3265,7 +3456,14 @@
    ],
    "sweat": 0,
    "equipment": [
-    "band"
+    "band",
+    "cable"
+   ],
+   "needs": [
+    [
+     "band",
+     "cable"
+    ]
    ],
    "source": {
     "kind": "wger",
@@ -3300,7 +3498,14 @@
    ],
    "sweat": 1,
    "equipment": [
-    "dumbbells"
+    "dumbbells",
+    "band"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "band"
+    ]
    ],
    "source": {
     "kind": "own"
@@ -3337,7 +3542,14 @@
    ],
    "sweat": 1,
    "equipment": [
-    "dumbbells"
+    "dumbbells",
+    "band"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "band"
+    ]
    ],
    "source": {
     "kind": "wger",
@@ -3375,7 +3587,14 @@
    ],
    "sweat": 1,
    "equipment": [
-    "dumbbells"
+    "dumbbells",
+    "band"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "band"
+    ]
    ],
    "source": {
     "kind": "wger",
@@ -3408,7 +3627,16 @@
    ],
    "sweat": 0,
    "equipment": [
-    "dumbbells"
+    "dumbbells",
+    "kettlebell",
+    "band"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "kettlebell",
+     "band"
+    ]
    ],
    "source": {
     "kind": "own"
@@ -3441,7 +3669,16 @@
    ],
    "sweat": 0,
    "equipment": [
-    "dumbbells"
+    "dumbbells",
+    "kettlebell",
+    "band"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "kettlebell",
+     "band"
+    ]
    ],
    "variationOf": "bm:biceps-curl",
    "source": {
@@ -3481,7 +3718,14 @@
    ],
    "sweat": 1,
    "equipment": [
-    "bench"
+    "bench",
+    "chair"
+   ],
+   "needs": [
+    [
+     "bench",
+     "chair"
+    ]
    ],
    "source": {
     "kind": "wger",
@@ -3515,7 +3759,16 @@
    ],
    "sweat": 0,
    "equipment": [
-    "dumbbells"
+    "dumbbells",
+    "kettlebell",
+    "band"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "kettlebell",
+     "band"
+    ]
    ],
    "source": {
     "kind": "wger",
@@ -3585,7 +3838,16 @@
    ],
    "sweat": 0,
    "equipment": [
-    "dumbbells"
+    "dumbbells",
+    "kettlebell",
+    "barbell"
+   ],
+   "needs": [
+    [
+     "dumbbells",
+     "kettlebell",
+     "barbell"
+    ]
    ],
    "source": {
     "kind": "wger",

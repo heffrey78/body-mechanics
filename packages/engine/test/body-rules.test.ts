@@ -54,8 +54,8 @@ describe("the body in the engine (#47)", () => {
     const none = suggest(lower, ctx(moderate));
     for (const s of none) expect(s.item.strains, s.item.name).not.toContain("knee");
     const some = suggest(lower, ctx(mild));
-    // The gym has no chair for a box squat: the goblet squat stays, done more gently.
-    expect(some.find((s) => s.item.id === "bm:goblet-squat")?.modifiers).toEqual(["slow-lowering"]);
+    // At the gym the bench does for a box squat (#59): the goblet squat becomes one.
+    expect(some.find((s) => s.insteadOf?.id === "bm:goblet-squat")?.item.id).toBe("bm:box-squat");
     // At home there is one: the bodyweight squat becomes a box squat, and says why.
     const atHome = suggest({ ...lower, location: home, sweat: 1 }, ctx(mild));
     const swapped = atHome.find((s) => s.item.id === "bm:box-squat");

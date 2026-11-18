@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { AREAS, catalogue, fromCatalogue, equipped, starterLocations, suggest, type Answers, type Context, type LibraryItem, type Location } from "../src/index.ts";
+import { AREAS, catalogue, fits, fromCatalogue, equipped, starterLocations, suggest, type Answers, type Context, type LibraryItem, type Location } from "../src/index.ts";
 
 const library: LibraryItem[] = catalogue().entries.map(fromCatalogue);
 const places = Object.fromEntries(starterLocations().map((l) => [l.name, l])) as Record<string, Location>;
@@ -23,7 +23,7 @@ describe("Suggest next (#42), the #13 scenarios without marks", () => {
     const s = suggest({ location: office, minutesLeft: 10, sweat: 0, area: [], kinds: [] }, ctx());
     expect(s.length).toBeGreaterThan(5);
     for (const x of s) {
-      expect(equipped(x.item.equipment, new Set(office.equipment)), x.item.name).toBe(true);
+      expect(fits(x.item.needs, new Set(office.equipment)), x.item.name).toBe(true);
       expect(x.item.sweat).toBe(0);
       expect(x.minutes).toBeLessThanOrEqual(10);
       expect(x.reasons.length).toBeGreaterThan(0);
@@ -92,7 +92,7 @@ describe("Suggest next: the rules", () => {
       const s = suggest({ location, sweat, area, kinds: [...k], ...(m !== undefined ? { minutesLeft: m } : {}) }, ctx({ done: ["bm:plank"], refused: new Set(["bm:cat-cow"]) }));
       for (const x of s) {
         expect(x.item.sweat).toBeLessThanOrEqual(sweat);
-        expect(equipped(x.item.equipment, new Set(location.equipment))).toBe(true);
+        expect(fits(x.item.needs, new Set(location.equipment)), x.item.name).toBe(true);
         if (m !== undefined) expect(x.minutes).toBeLessThanOrEqual(m);
         expect(["bm:plank", "bm:cat-cow"]).not.toContain(x.item.id);
         expect(x.reasons.length).toBeGreaterThan(0);

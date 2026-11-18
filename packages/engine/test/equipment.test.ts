@@ -27,9 +27,11 @@ describe("equipment as alternatives and optional items (D4, #58)", () => {
   it("suggests a box squat at a gym with only a bench once it says chair, bench or step", () => {
     const gym = starterLocations().find((l) => l.name === "Gym")!;
     const answers = { location: gym, sweat: 2 as const, area: ["quads" as const], kinds: ["strength" as const] };
-    const box = (over: Partial<LibraryItem>) => library.map((x) => (x.id === "bm:box-squat" ? { ...x, ...over } : x));
-    expect(suggest(answers, ctx(library)).some((s) => s.item.id === "bm:box-squat")).toBe(false);
-    expect(suggest(answers, ctx(box({ needs: [["chair", "bench", "step"]] }))).some((s) => s.item.id === "bm:box-squat")).toBe(true);
+    // The catalogue says chair, bench or step now (#59); read the old way (a chair only), the gym misses it.
+    expect(library.find((x) => x.id === "bm:box-squat")!.needs).toEqual([["chair", "bench", "step"]]);
+    expect(suggest(answers, ctx(library)).some((s) => s.item.id === "bm:box-squat")).toBe(true);
+    const old = library.map((x) => (x.id === "bm:box-squat" ? { ...x, needs: needsFromLegacy(["chair"]) as LibraryItem["needs"] } : x));
+    expect(suggest(answers, ctx(old)).some((s) => s.item.id === "bm:box-squat")).toBe(false);
     // A mat as optional: suggested at the office, which has none.
     const office = starterLocations().find((l) => l.name === "Office")!;
     const withMat = library.map((x) => (x.id === "bm:chin-tuck" ? { ...x, needs: [], optional: ["mat" as const] } : x));

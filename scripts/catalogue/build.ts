@@ -11,6 +11,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { parse } from "yaml";
 import { BodyRules, Catalogue, CatalogueEntry } from "../../packages/engine/src/catalogue/schema.ts";
 import { REGIONS } from "../../packages/engine/src/records/vocab.ts";
+import { mentioned } from "../../packages/engine/src/records/equipment.ts";
 
 const CACHE = "catalogue/.cache/wger.json";
 const WGER = "https://wger.de/api/v2/exerciseinfo/?limit=1000&format=json";
@@ -57,7 +58,9 @@ const seen = new Set<string>();
 for (const c of curated) {
   if (seen.has(c.id)) problems.push(`${c.id}: listed twice`);
   seen.add(c.id);
-  const { source: from, aliases = [], ...tags } = c;
+  const { source: from, aliases = [], ...raw } = c;
+  // D4 (#59): where an entry states needs and optional, its equipment is everything they mention.
+  const tags = raw.needs || raw.optional ? { ...raw, equipment: mentioned({ needs: raw.needs ?? [], optional: raw.optional ?? [] }) as typeof raw.equipment } : raw;
   let entry: unknown;
   if (from === "own") {
     const instructions = own[c.id];
