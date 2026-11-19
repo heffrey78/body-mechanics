@@ -2,8 +2,8 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 /**
- * Contrast of the shipped theme tokens (#23, #17's validation metrics): every text colour against the
- * surfaces it sits on, in all six theme and mode combinations, at least 4.5:1.
+ * Contrast of the shipped theme tokens (#23, #72, #17's validation metrics): every text colour against the
+ * surfaces it sits on, in all ten theme and mode combinations, at least 4.5:1.
  */
 const css = readFileSync(new URL("../src/theme/themes.css", import.meta.url), "utf8");
 
@@ -31,9 +31,9 @@ const PAIRS: [string, string][] = [
 ];
 
 describe("theme contrast", () => {
-  it("has all six theme and mode combinations", () => {
+  it("has all ten theme and mode combinations", () => {
     expect(blocks.map((b) => b.name).sort()).toEqual(
-      ["clinic dark", "clinic light", "studio dark", "studio light", "utility dark", "utility light"],
+      ["fieldnotes", "handheld", "riso", "slate", "turquoise"].flatMap((t) => [`${t} dark`, `${t} light`]),
     );
   });
 

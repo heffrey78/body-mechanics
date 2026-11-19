@@ -174,7 +174,7 @@ describe("the profile", () => {
     const { ports, vault: v } = await newVault();
     const first = await loadProfile(v, { units: "lb" });
     expect(first.created).toBe(true);
-    expect(first.profile).toMatchObject({ type: "profile", units: "lb", theme: { name: "clinic", mode: "system" } });
+    expect(first.profile).toMatchObject({ type: "profile", units: "lb", theme: { name: "fieldnotes", mode: "system" } });
     const again = await loadProfile(await Vault.open(ports, "/r"));
     expect(again).toMatchObject({ created: false, profile: { id: first.profile.id, units: "lb" } });
     expect(showLoad(16, "kg")).toBe("16 kg");
