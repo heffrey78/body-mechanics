@@ -10,6 +10,8 @@ out=$(mktemp -d)
 npx tauri icon app-icon.json -o "$out" >/dev/null 2>&1
 for f in 32x32.png 64x64.png 128x128.png 128x128@2x.png icon.png icon.icns; do cp "$out/$f" "icons/$f"; done
 rm -rf icons/android && cp -r "$out/android" icons/android
+# Launchers that ask for the round icon get the adaptive one too, on Android 8 and later.
+cp icons/android/mipmap-anydpi-v26/ic_launcher.xml icons/android/mipmap-anydpi-v26/ic_launcher_round.xml
 for d in mdpi:48 hdpi:72 xhdpi:96 xxhdpi:144 xxxhdpi:192; do
   rsvg-convert -w "${d##*:}" -h "${d##*:}" app-icon-round.svg -o "icons/android/mipmap-${d%%:*}/ic_launcher_round.png"
 done
