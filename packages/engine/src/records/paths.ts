@@ -23,6 +23,8 @@ export function recordPath(record: AnyRecord): string {
       return `conditions/${record.id}.yaml.age`;
     case "equipment":
       return `equipment/${record.id}.yaml.age`;
+    case "demo":
+      return `demos/${record.id}.yaml.age`;
     case "override":
       return `overrides/${record.id}.yaml.age`;
     case "session": {
