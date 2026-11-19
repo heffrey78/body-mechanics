@@ -1,6 +1,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { search, type LibraryItem, type Location, type Minding, type Routine, type WeekStrip } from "@bm/engine";
 import { Button, Chip, Tag } from "../ui/components.tsx";
+import { RingFace } from "../ui/RingFace.tsx";
 import { REGION_LABEL } from "../ui/labels.ts";
 
 /**
@@ -41,7 +42,7 @@ export function HomeScreen({ onPlan, library, recent, sessionOpen, locations, lo
   };
   return (
     <div className="pad">
-      <span className="brand">Body Mechanics</span>
+      <span className="brand"><RingFace size={30} />Body Mechanics</span>
       <div>
         <p className="kicker">{now.toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" })}</p>
         <h1 className="title hello">{sessionOpen ? "Mid-session." : "Ready when you are."}</h1>

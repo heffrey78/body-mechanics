@@ -30,6 +30,8 @@ const PAIRS: [string, string][] = [
   ["k-ink", "pain"], ["k-ink", "stiff"], ["k-ink", "weak"], ["inj-ink", "inj"], ["k-ink", "cond"],
   ["ink", "tint-1"], ["ink", "tint-2"],
 ];
+/** The logo's face on its screen (#74): a graphic, so 3:1. */
+const MARK_PAIRS: [string, string][] = [["mark-face", "mark-screen"]];
 /** Light modes: the cue sits on the card. Dark modes: on the dimmed exercise card, with everything else inside it (#73). */
 const LIGHT_PAIRS: [string, string][] = [["cue", "surface"]];
 const DARK_PAIRS: [string, string][] = [
@@ -53,6 +55,9 @@ describe("theme contrast", () => {
         return ratio(vars[fg]!, vars[bg]!) < 4.5;
       }).map(([fg, bg]) => `${fg}/${bg} ${ratio(vars[fg]!, vars[bg]!).toFixed(2)}`);
       expect(failing).toEqual([]);
+    });
+    it(`${name}: the logo's face reads on its screen (3:1)`, () => {
+      for (const [fg, bg] of MARK_PAIRS) expect(ratio(vars[fg]!, vars[bg]!), `${fg}/${bg}`).toBeGreaterThanOrEqual(3);
     });
   }
 });

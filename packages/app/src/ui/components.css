@@ -112,7 +112,7 @@ button { font-family: inherit; }
 /* Home (#73). */
 .kicker { margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; color: var(--muted); }
 .title.hello { font-size: 34px; line-height: 1.1; }
-.brand { font-family: var(--font-display); font-weight: 700; font-size: 18px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 700; font-size: 18px; }
 .minding { gap: 4px; }
 .minding .label { display: flex; align-items: center; gap: 6px; }
 .minding .dot { width: 8px; height: 8px; border-radius: 4px; background: var(--tabbar); }

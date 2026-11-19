@@ -6,7 +6,8 @@
    active tab), so a theme can keep its loud colour as a marker and give buttons a quieter one.
    --cue is the body's line on the session card; --tint-1/2 colour Home's routine cards (ink text).
    Dark modes also set --f-*: the session's current-exercise card, a dimmed light island (#73) where
-   components.css maps the usual names onto these. */
+   components.css maps the usual names onto these. --mark, --mark-screen and --mark-face colour the
+   Ring face logo (#74): its body, its screen and the face on it; its joint dot is --tabbar. */
 [data-theme] {
   --font-body:'Work Sans',system-ui,sans-serif;
   --font-display:'Zilla Slab',Georgia,serif;
@@ -19,6 +20,9 @@
 
 /* Field Notes: warm paper and navy ink; orange is only a marker. */
 [data-theme="fieldnotes"][data-mode="light"] {
+  --mark:#1F2A44;
+  --mark-screen:#F6F2EA;
+  --mark-face:#1F2A44;
   --cue:#9A3412;
   --tint-1:#E9E1D0;
   --tint-2:#F3DCCB;
@@ -62,6 +66,9 @@
   --outline:1px;
 }
 [data-theme="fieldnotes"][data-mode="dark"] {
+  --mark:#DDD5C5;
+  --mark-screen:#1F2A44;
+  --mark-face:#F2EDE3;
   --cue:#8E3210;
   --tint-1:#2E374D;
   --tint-2:#3A2A22;
@@ -123,6 +130,9 @@
 
 /* Slate: graphite and stone, a slate-blue button, signal red for the marker. */
 [data-theme="slate"][data-mode="light"] {
+  --mark:#33414F;
+  --mark-screen:#E2DED6;
+  --mark-face:#24282C;
   --cue:#A3322A;
   --tint-1:#DDE3EA;
   --tint-2:#F3DCD6;
@@ -166,6 +176,9 @@
   --outline:1px;
 }
 [data-theme="slate"][data-mode="dark"] {
+  --mark:#E2DED6;
+  --mark-screen:#33414F;
+  --mark-face:#F3F2EF;
   --cue:#9E2F25;
   --tint-1:#2E3A47;
   --tint-2:#3D2420;
@@ -227,6 +240,9 @@
 
 /* Turquoise: the owner's palette, deep blue-teal with coral, peach and sage. */
 [data-theme="turquoise"][data-mode="light"] {
+  --mark:#194350;
+  --mark-screen:#FFC2B4;
+  --mark-face:#194350;
   --cue:#9A3B35;
   --tint-1:#9DBEB8;
   --tint-2:#FFC2B4;
@@ -270,6 +286,9 @@
   --outline:1px;
 }
 [data-theme="turquoise"][data-mode="dark"] {
+  --mark:#9DBEB8;
+  --mark-screen:#F2F7F6;
+  --mark-face:#194350;
   --cue:#7A2520;
   --tint-1:#2C5A68;
   --tint-2:#5A3F3E;
@@ -331,6 +350,9 @@
 
 /* Riso: two inks, fluorescent pink and blue on paper. An alternate, not the everyday look. */
 [data-theme="riso"][data-mode="light"] {
+  --mark:#0078BF;
+  --mark-screen:#FFD3EA;
+  --mark-face:#1C3A70;
   --cue:#B0006A;
   --tint-1:#CDE6F6;
   --tint-2:#FFD3EA;
@@ -374,6 +396,9 @@
   --outline:1px;
 }
 [data-theme="riso"][data-mode="dark"] {
+  --mark:#3FA9F5;
+  --mark-screen:#F3EEF6;
+  --mark-face:#141418;
   --cue:#B0006A;
   --tint-1:#1E2A3D;
   --tint-2:#3A1530;
@@ -435,6 +460,9 @@
 
 /* Handheld: sea green, mint, hot pink and yellow, with chunky ink outlines like a toy console. */
 [data-theme="handheld"][data-mode="light"] {
+  --mark:#64BEA4;
+  --mark-screen:#DAFFE8;
+  --mark-face:#10282E;
   --cue:#C0044A;
   --tint-1:#64BEA4;
   --tint-2:#63AEB6;
@@ -479,6 +507,9 @@
   --outline:2px;
 }
 [data-theme="handheld"][data-mode="dark"] {
+  --mark:#64BEA4;
+  --mark-screen:#DAFFE8;
+  --mark-face:#10282E;
   --cue:#B3003E;
   --tint-1:#23434A;
   --tint-2:#2A3D52;
