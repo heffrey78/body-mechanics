@@ -28,6 +28,14 @@ const PAIRS: [string, string][] = [
   ["accent-ink", "accent"], ["accent-text", "bg"], ["accent-text", "surface"], ["accent-soft-ink", "accent-soft"],
   ["warn-ink", "warn-soft"], ["stop-ink", "stop"], ["timer", "surface"],
   ["k-ink", "pain"], ["k-ink", "stiff"], ["k-ink", "weak"], ["inj-ink", "inj"], ["k-ink", "cond"],
+  ["ink", "tint-1"], ["ink", "tint-2"],
+];
+/** Light modes: the cue sits on the card. Dark modes: on the dimmed exercise card, with everything else inside it (#73). */
+const LIGHT_PAIRS: [string, string][] = [["cue", "surface"]];
+const DARK_PAIRS: [string, string][] = [
+  ["cue", "f-surface"], ["f-ink", "f-surface"], ["f-ink", "f-surface-2"], ["f-muted", "f-surface"], ["f-muted", "f-surface-2"],
+  ["f-accent-ink", "f-accent"], ["f-accent-text", "f-surface"], ["f-accent-soft-ink", "f-accent-soft"], ["f-warn-ink", "f-warn-soft"],
+  ["f-stop-ink", "f-stop"], ["f-timer", "f-surface"],
 ];
 
 describe("theme contrast", () => {
@@ -39,7 +47,7 @@ describe("theme contrast", () => {
 
   for (const { name, vars } of blocks) {
     it(`${name}: every text pair is at least 4.5:1`, () => {
-      const failing = PAIRS.filter(([fg, bg]) => {
+      const failing = [...PAIRS, ...(name.endsWith("dark") ? DARK_PAIRS : LIGHT_PAIRS)].filter(([fg, bg]) => {
         expect(vars[fg], `--${fg} in ${name}`).toBeDefined();
         expect(vars[bg], `--${bg} in ${name}`).toBeDefined();
         return ratio(vars[fg]!, vars[bg]!) < 4.5;

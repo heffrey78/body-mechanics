@@ -42,7 +42,9 @@ button { font-family: inherit; }
 
 .tabs { display: flex; border-top: var(--outline) solid var(--line); background: var(--surface); padding-bottom: env(safe-area-inset-bottom); position: sticky; bottom: 0; }
 .tab { flex: 1; min-height: 56px; border: 0; background: transparent; font-size: 13px; color: var(--muted); cursor: pointer; }
-.tab[aria-current="page"] { color: var(--accent-text); font-weight: 700; box-shadow: inset 0 3px 0 var(--tabbar); }
+.tab[aria-current="page"] { color: var(--accent-text); font-weight: 700; position: relative; }
+/* The marker over the active tab (#73): a short bar in the theme's marker colour. */
+.tab[aria-current="page"]::before { content: ""; position: absolute; top: 6px; left: 50%; width: 22px; height: 3px; margin-left: -11px; border-radius: 2px; background: var(--tabbar); }
 
 .badge { flex-shrink: 0; width: 28px; height: 28px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--k-ink); }
 .k-pain { background: var(--pain); border: 2px solid var(--pain-bd); }
@@ -95,3 +97,38 @@ button { font-family: inherit; }
 .track .fill { display: block; height: 100%; border-radius: 4px; background: var(--accent); }
 .track .fill.sev-2 { background: var(--warn-ink); }
 .track .fill.sev-3 { background: var(--stop, var(--warn-ink)); }
+
+/* The session's current exercise (#73). In dark modes it is a dimmed light island: the usual token
+   names are pointed at the theme's --f-* values, so every component inside draws dark on light. */
+[data-mode="dark"] .card.focus {
+  --surface: var(--f-surface); --surface-2: var(--f-surface-2); --ink: var(--f-ink); --muted: var(--f-muted);
+  --line: var(--f-line); --line-strong: var(--f-line-strong); --accent: var(--f-accent); --accent-ink: var(--f-accent-ink);
+  --accent-text: var(--f-accent-text); --accent-soft: var(--f-accent-soft); --accent-soft-ink: var(--f-accent-soft-ink);
+  --warn-soft: var(--f-warn-soft); --warn-ink: var(--f-warn-ink); --timer: var(--f-timer); --stop: var(--f-stop); --stop-ink: var(--f-stop-ink);
+  color: var(--ink); border-color: transparent;
+}
+.cue { margin: 0; color: var(--cue); font-size: 15px; font-weight: 500; }
+
+/* Home (#73). */
+.kicker { margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; color: var(--muted); }
+.title.hello { font-size: 34px; line-height: 1.1; }
+.brand { font-family: var(--font-display); font-weight: 700; font-size: 18px; }
+.minding { gap: 4px; }
+.minding .label { display: flex; align-items: center; gap: 6px; }
+.minding .dot { width: 8px; height: 8px; border-radius: 4px; background: var(--tabbar); }
+.minding .place { font-family: var(--font-display); font-size: 22px; font-weight: 700; }
+.minding .btn.ghost { align-self: flex-start; padding: 0; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.rgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.rcard { min-height: 100px; border: var(--btn-border); border-radius: calc(var(--r-card) + 4px); padding: 14px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; text-align: left; color: var(--ink); background: var(--tint-1); cursor: pointer; font: inherit; }
+.rcard:nth-child(even) { background: var(--tint-2); }
+.rcard .name { font-family: var(--font-display); font-size: 18px; font-weight: 700; }
+.rcard .meta { font-size: 14px; }
+.rcard:disabled { opacity: 0.5; cursor: default; }
+.rcard:focus-visible { outline: 3px solid var(--accent-text); outline-offset: 2px; }
+.week { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 10px; }
+.week > .strong { white-space: nowrap; }
+.week .days { display: flex; gap: 6px; }
+.week .day { width: 26px; height: 26px; border-radius: 13px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; color: var(--muted); border: 1px solid var(--line-strong); }
+.week .day.done { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+.week .day.today { border: 2px solid var(--tabbar); color: var(--ink); font-weight: 600; }
+.week .day.done.today { border-color: var(--tabbar); }

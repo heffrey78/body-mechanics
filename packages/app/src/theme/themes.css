@@ -3,7 +3,10 @@
    and data-mode="light|dark" (the app resolves "system"). Components use only these variables, so a theme
    is just a set of values. Checked for contrast by test/contrast.test.ts.
    --accent fills primary buttons and selected chips; --tabbar is the marker colour (the bar over the
-   active tab), so a theme can keep its loud colour as a marker and give buttons a quieter one. */
+   active tab), so a theme can keep its loud colour as a marker and give buttons a quieter one.
+   --cue is the body's line on the session card; --tint-1/2 colour Home's routine cards (ink text).
+   Dark modes also set --f-*: the session's current-exercise card, a dimmed light island (#73) where
+   components.css maps the usual names onto these. */
 [data-theme] {
   --font-body:'Work Sans',system-ui,sans-serif;
   --font-display:'Zilla Slab',Georgia,serif;
@@ -16,6 +19,9 @@
 
 /* Field Notes: warm paper and navy ink; orange is only a marker. */
 [data-theme="fieldnotes"][data-mode="light"] {
+  --cue:#9A3412;
+  --tint-1:#E9E1D0;
+  --tint-2:#F3DCCB;
   --bg:#F6F2EA;
   --surface:#FFFDF8;
   --surface-2:#ECE5D8;
@@ -56,6 +62,25 @@
   --outline:1px;
 }
 [data-theme="fieldnotes"][data-mode="dark"] {
+  --cue:#8E3210;
+  --tint-1:#2E374D;
+  --tint-2:#3A2A22;
+  --f-surface:#DDD5C5;
+  --f-surface-2:#CFC6B4;
+  --f-ink:#1F2A44;
+  --f-muted:#4A5163;
+  --f-line:#C4BBA8;
+  --f-line-strong:#8E8676;
+  --f-accent:#1F2A44;
+  --f-accent-ink:#F6F2EA;
+  --f-accent-text:#1F2A44;
+  --f-accent-soft:#E9C9B3;
+  --f-accent-soft-ink:#7A2C0E;
+  --f-warn-soft:#F2E4B4;
+  --f-warn-ink:#614500;
+  --f-timer:#8E3210;
+  --f-stop:#1F2A44;
+  --f-stop-ink:#F6F2EA;
   --bg:#1B2233;
   --surface:#232C40;
   --surface-2:#2E374D;
@@ -98,6 +123,9 @@
 
 /* Slate: graphite and stone, a slate-blue button, signal red for the marker. */
 [data-theme="slate"][data-mode="light"] {
+  --cue:#A3322A;
+  --tint-1:#DDE3EA;
+  --tint-2:#F3DCD6;
   --bg:#F3F2EF;
   --surface:#FBFAF8;
   --surface-2:#E8E5DF;
@@ -138,6 +166,25 @@
   --outline:1px;
 }
 [data-theme="slate"][data-mode="dark"] {
+  --cue:#9E2F25;
+  --tint-1:#2E3A47;
+  --tint-2:#3D2420;
+  --f-surface:#E2DED6;
+  --f-surface-2:#D3CEC4;
+  --f-ink:#24282C;
+  --f-muted:#4E555C;
+  --f-line:#C9C4BA;
+  --f-line-strong:#8F8A80;
+  --f-accent:#33414F;
+  --f-accent-ink:#F3F2EF;
+  --f-accent-text:#24282C;
+  --f-accent-soft:#CBD3DC;
+  --f-accent-soft-ink:#24282C;
+  --f-warn-soft:#F0D5CE;
+  --f-warn-ink:#7A251E;
+  --f-timer:#33414F;
+  --f-stop:#24282C;
+  --f-stop-ink:#F3F2EF;
   --bg:#1D2125;
   --surface:#262B30;
   --surface-2:#31363C;
@@ -180,6 +227,9 @@
 
 /* Turquoise: the owner's palette, deep blue-teal with coral, peach and sage. */
 [data-theme="turquoise"][data-mode="light"] {
+  --cue:#9A3B35;
+  --tint-1:#9DBEB8;
+  --tint-2:#FFC2B4;
   --bg:#F4FAF9;
   --surface:#FFFFFF;
   --surface-2:#E3EFEC;
@@ -220,6 +270,25 @@
   --outline:1px;
 }
 [data-theme="turquoise"][data-mode="dark"] {
+  --cue:#7A2520;
+  --tint-1:#2C5A68;
+  --tint-2:#5A3F3E;
+  --f-surface:#9DBEB8;
+  --f-surface-2:#8FB2AC;
+  --f-ink:#102F3A;
+  --f-muted:#1F4450;
+  --f-line:#86A8A2;
+  --f-line-strong:#3F6470;
+  --f-accent:#194350;
+  --f-accent-ink:#FFC2B4;
+  --f-accent-text:#102F3A;
+  --f-accent-soft:#FFC2B4;
+  --f-accent-soft-ink:#194350;
+  --f-warn-soft:#FFE6C7;
+  --f-warn-ink:#7A3B00;
+  --f-timer:#102F3A;
+  --f-stop:#102F3A;
+  --f-stop-ink:#F2F7F6;
   --bg:#194350;
   --surface:#20505E;
   --surface-2:#2C5A68;
@@ -262,6 +331,9 @@
 
 /* Riso: two inks, fluorescent pink and blue on paper. An alternate, not the everyday look. */
 [data-theme="riso"][data-mode="light"] {
+  --cue:#B0006A;
+  --tint-1:#CDE6F6;
+  --tint-2:#FFD3EA;
   --bg:#F8F5EE;
   --surface:#FFFFFF;
   --surface-2:#EDE8DC;
@@ -302,6 +374,25 @@
   --outline:1px;
 }
 [data-theme="riso"][data-mode="dark"] {
+  --cue:#B0006A;
+  --tint-1:#1E2A3D;
+  --tint-2:#3A1530;
+  --f-surface:#E6E0D4;
+  --f-surface-2:#D8D1C3;
+  --f-ink:#1C3A70;
+  --f-muted:#44557A;
+  --f-line:#CFC8B9;
+  --f-line-strong:#8A93A8;
+  --f-accent:#0078BF;
+  --f-accent-ink:#FFFFFF;
+  --f-accent-text:#1C3A70;
+  --f-accent-soft:#FFD3EA;
+  --f-accent-soft-ink:#1C3A70;
+  --f-warn-soft:#FFE8B0;
+  --f-warn-ink:#6B4500;
+  --f-timer:#B0006A;
+  --f-stop:#1C3A70;
+  --f-stop-ink:#FFFFFF;
   --bg:#141418;
   --surface:#1E1E25;
   --surface-2:#2A2A33;
@@ -344,6 +435,9 @@
 
 /* Handheld: sea green, mint, hot pink and yellow, with chunky ink outlines like a toy console. */
 [data-theme="handheld"][data-mode="light"] {
+  --cue:#C0044A;
+  --tint-1:#64BEA4;
+  --tint-2:#63AEB6;
   --bg:#EEFFF4;
   --surface:#FFFFFF;
   --surface-2:#DAFFE8;
@@ -385,6 +479,25 @@
   --outline:2px;
 }
 [data-theme="handheld"][data-mode="dark"] {
+  --cue:#B3003E;
+  --tint-1:#23434A;
+  --tint-2:#2A3D52;
+  --f-surface:#DAFFE8;
+  --f-surface-2:#C2EDD4;
+  --f-ink:#10282E;
+  --f-muted:#1D4A50;
+  --f-line:#A8D9C2;
+  --f-line-strong:#10282E;
+  --f-accent:#D6004A;
+  --f-accent-ink:#FFFFFF;
+  --f-accent-text:#10282E;
+  --f-accent-soft:#64BEA4;
+  --f-accent-soft-ink:#10282E;
+  --f-warn-soft:#FFF4B0;
+  --f-warn-ink:#5C4A00;
+  --f-timer:#B3003E;
+  --f-stop:#10282E;
+  --f-stop-ink:#FFEA47;
   --bg:#13282D;
   --surface:#1B353B;
   --surface-2:#23434A;
