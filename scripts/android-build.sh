@@ -21,6 +21,11 @@ grep -q 'BM_ANDROID_DEBUG_KEYSTORE' "$gradle" || cat >> "$gradle" <<'GRADLE'
 
 android { signingConfigs { getByName("debug") { System.getenv("BM_ANDROID_DEBUG_KEYSTORE")?.let { storeFile = file(it) } } } }
 GRADLE
+# The app's own launcher icons (#74, from scripts/icons.sh): tauri android init lays down its template's
+# (Tauri's logo), so ours go over them, and the template's two launcher drawables go.
+res=gen/android/app/src/main/res
+rm -f "$res/drawable/ic_launcher_background.xml" "$res/drawable-v24/ic_launcher_foreground.xml"
+cp -r icons/android/. "$res/"
 # An APK of an earlier build would be taken for this one's.
 rm -rf gen/android/app/build/outputs/apk
 npx tauri android build --debug --apk --target "$target"

@@ -4,6 +4,7 @@ import {
   GitHub, Syncer, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, loadEquipment, loadDemos, type Demo, loadExerciseRecords, libraryFrom, type Exercise, type ExerciseOverride, standsInOf, type EquipmentItem, loadBody, newMark, newCondition, editBody, modifiersOf, applyModified, deletedSession, checkIn, resolveMark, reopenMark, isDue, isActive, type Body, type Mark, type Condition, type CheckInFields, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
   portsRoundTrip, routineFromSession, saveDraft,
   type Clock, type Location, type Suggestion, type SyncStatus, type TargetUpdate, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
+  minding, routineCard, weekStrip,
 } from "@bm/engine";
 import { isTauri } from "@tauri-apps/api/core";
 import { dataDir, hostPlatform, hostPorts, httpPort, smokeReport, smokeStorage } from "./host.ts";
@@ -84,6 +85,8 @@ export function App() {
   // The encrypted records (#25): "unknown" until checked, "setup" on first run, "ready" once open.
   const [records, setRecords] = useState<"unknown" | "setup" | "ready" | "browser">("unknown");
   const [vault, setVault] = useState<Vault | null>(null);
+  /** Why the records didn't open, when they didn't. */
+  const [openError, setOpenError] = useState<string | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [committer, setCommitter] = useState<Committer | null>(null);
 
@@ -350,7 +353,11 @@ export function App() {
           setRecords("ready");
         } catch (e) {
           if (e instanceof NotSetUp) setRecords("setup");
-          else throw e;
+          else {
+            // Records this version can't read (written by a newer one, say): say so, instead of an app that looks empty.
+            setOpenError(e instanceof Error ? e.message : String(e));
+            return;
+          }
         }
       } else {
         // In a plain browser (development, screenshots): records in memory, nothing kept.
@@ -382,6 +389,17 @@ export function App() {
   }, []);
 
   let body;
+  if (openError) {
+    return (
+      <div className="screen">
+        <div className="pad" role="alert">
+          <h1 className="title">Your records couldn't be opened</h1>
+          <p style={{ margin: 0, lineHeight: 1.5 }}>They are still on this device and nothing was changed. This usually means they were last saved by a newer version of the app: install that version, or a newer one, and they will be back.</p>
+          <p className="muted" style={{ margin: 0, overflowWrap: "anywhere" }}>{openError.slice(0, 400)}</p>
+        </div>
+      </div>
+    );
+  }
   if (records === "setup" && joining) {
     return (
       <div className="screen">
@@ -576,7 +594,7 @@ export function App() {
     body = (
       <SessionScreen
         suggestPanel={suggestPanel} onSuggest={() => setSuggesting(true)}
-        log={log} session={session} plan={plan} demos={demos} custom={equipment} library={library} recent={recent} index={index} units={profile?.units ?? "kg"}
+        log={log} session={session} plan={plan} demos={demos} custom={equipment} library={library} recent={recent} index={index} units={profile?.units ?? "kg"} body={bodyRecords}
         pending={pending}
         onPending={(p) => { setPending(p); changed(log.session ?? session, p); }}
         onChanged={(s) => changed(s)}
@@ -648,7 +666,8 @@ export function App() {
         {(() => {
           // Check-ins due (#48): on Home too, one tap to the mark.
           const now = new Date();
-          const due = [...bodyRecords.marks, ...bodyRecords.conditions].filter((x) => isActive(x, now) && isDue(x, now));
+          // Marks have their own Minding cards (#73); due conditions are asked about here.
+          const due = bodyRecords.conditions.filter((x) => isActive(x, now) && isDue(x, now));
           if (!due.length || session) return null;
           return (
             <div className="pad" style={{ paddingBottom: 0 }}>
@@ -670,6 +689,18 @@ export function App() {
           onStart={(x) => void startWith(x)}
           onNew={(name) => setHome({ screen: "new", name })}
           onResume={() => setHome({ screen: "session" })}
+          minding={minding(bodyRecords, library, [
+            // What the marks are judged against: your routines' exercises and your last sessions'.
+            ...routines.filter((r) => !r.deleted).flatMap((r) => r.items.filter((i) => !i.deleted).map((i) => i.exercise)),
+            ...(index?.sessions() ?? []).slice(0, 10).flatMap((x) => x.entries.map((e) => e.exercise)),
+          ])}
+          onCheckIn={(id) => { setBodyOpen(id); setTab("body"); }}
+          routines={routines.filter((r) => !r.deleted && r.items.some((i) => !i.deleted)).slice(0, 4).map((routine) => {
+            const c = routineCard(routine, index?.runs(routine.id) ?? []);
+            return { routine, meta: `${c.minutes ? `${c.minutes} min · ` : ""}${c.moves} ${c.moves === 1 ? "move" : "moves"}` };
+          })}
+          onRoutine={(r) => void startRoutine(r)}
+          week={weekStrip(index?.sessions() ?? [])}
         />
       </>
     );

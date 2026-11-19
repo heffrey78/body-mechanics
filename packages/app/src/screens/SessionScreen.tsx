@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { EFFORTS, describeSet, nextSet, nextStep, planStatus, progression, search, showLoad, toKg, FIELD, demoFor, type Demo, type EquipmentItem, type Effort, type Entry, type LibraryItem, type LoggedSet, type RecordIndex, type RoutineItem, type Session, type SessionLog } from "@bm/engine";
+import { EFFORTS, assess, concerns, sessionCue, type Body, describeSet, nextSet, nextStep, planStatus, progression, search, showLoad, toKg, FIELD, demoFor, type Demo, type EquipmentItem, type Effort, type Entry, type LibraryItem, type LoggedSet, type RecordIndex, type RoutineItem, type Session, type SessionLog } from "@bm/engine";
 import { elapsedSeconds, pageCue, startTimer, stopTimer, type RunningTimer } from "../timer.ts";
 import { Button, Chip, Segmented, Stepper, Tag, Timer } from "../ui/components.tsx";
 import { DemoPlayer } from "../demo/DemoPlayer.tsx";
@@ -24,7 +24,7 @@ export interface Pending {
  * exercise, every set tappable to correct or delete, and Type next / recent chips for what's next.
  * The card sits in the middle (#44): what's done above it, what's still to do below.
  */
-export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, demos, custom, library, recent, index, units, pending, onPending, onChanged, onFinished, onDiscard, onHome }: {
+export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, demos, custom, library, recent, index, units, body, pending, onPending, onChanged, onFinished, onDiscard, onHome }: {
   /** Suggest next (#43), shown in place when open. */
   suggestPanel: ReactNode;
   onSuggest: () => void;
@@ -39,6 +39,8 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, dem
   recent: LibraryItem[];
   index: RecordIndex | null;
   units: "kg" | "lb";
+  /** Marks and conditions: the card's cue says what they change about the current exercise (#73). */
+  body: Body;
   pending: Pending | null;
   onPending: (p: Pending | null) => void;
   onChanged: (s: Session) => void;
@@ -189,6 +191,8 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, dem
   const amountStep = measure === "reps" ? 1 : measure === "time" ? 5 : 10;
   const amountText = (n: number) => (measure === "reps" ? `${n}` : measure === "time" ? `${n} s` : `${n} m`);
   const minutes = Math.floor((now - Date.parse(session.startedAt)) / 60_000);
+  const cs = useMemo(() => concerns(body), [body]);
+  const cue = item ? sessionCue(assess(item, cs)) : null;
 
   // Done above the card, still to do below (#44). Planned exercises go by their plan status; anything
   // else is done once it has a set.
@@ -232,7 +236,7 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, dem
     <div className="pad">
       <div className="hrow">
         <Button variant="ghost" onClick={onHome}>‹ Home</Button>
-        <span className="muted num">{minutes} min</span>
+        <span className="muted num">{minutes} min in</span>
         <Button variant="secondary" disabled={busy || !!hold} onClick={() => void run(async () => { if (rest) { setRest(null); await stopTimer(); } onPending(null); onFinished(await log.finish()); })}>Finish</Button>
       </div>
 
@@ -251,11 +255,12 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, dem
       ) : null}
 
       {current && p ? (
-        <div className="card" aria-label="Current exercise">
+        <div className="card focus" aria-label="Current exercise">
           <div className="hrow" style={{ minHeight: 0, alignItems: "flex-start" }}>
             <h2 className="title" style={{ fontSize: 22 }}>{item?.name ?? current.exercise}</h2>
             {currentStep ? <span className="muted num" style={{ whiteSpace: "nowrap", paddingTop: 4 }}>Set {Math.min(currentStep.done + 1, currentStep.item.sets)} of {currentStep.item.sets}</span> : null}
           </div>
+          {cue ? <p className="cue">{cue}</p> : null}
           {(() => {
             // Show me (#76): the demonstration, where the exercise has one.
             const demo = demoFor(current.exercise, demos);

@@ -4,13 +4,16 @@ import { Chip } from "../ui/components.tsx";
 import type { PropModel } from "./models.ts";
 import type { Stage, StageColors } from "./stage.ts";
 
-/** The stage's colours, from the theme's tokens. */
-function stageColors(): StageColors {
-  const css = getComputedStyle(document.documentElement);
+/**
+ * The stage's colours, from the theme's tokens as they stand where the canvas sits: the session's
+ * current-exercise card is a light island in dark modes (#73), and the stage follows it.
+ */
+function stageColors(at: Element): StageColors {
+  const css = getComputedStyle(at);
   const v = (name: string, fallback: string) => css.getPropertyValue(name).trim() || fallback;
   return {
-    bg: v("--surface-2", "#E4EBEE"), floor: v("--surface-2", "#E4EBEE"), grid: v("--line-strong", "#B9C6CC"), body: v("--part-bd", "#97A7AF"),
-    joint: v("--accent", "#0B6B76"), gear: v("--line-strong", "#B9C6CC"), gearDark: v("--muted", "#4F5E68"), select: v("--pain-bd", "#B4430E"),
+    bg: v("--surface-2", "#E4EBEE"), floor: v("--surface-2", "#E4EBEE"), grid: v("--line-strong", "#B9C6CC"), body: v("--muted", "#4F5E68"),
+    joint: v("--accent", "#0B6B76"), gear: v("--line-strong", "#B9C6CC"), gearDark: v("--ink", "#12202A"), select: v("--warn-ink", "#B4430E"),
   };
 }
 
@@ -32,14 +35,14 @@ export function StageView({ height, full = false, onStage, onTap }: {
     void import("./stage.ts").then(({ Stage }) => {
       if (gone || !canvas.current) return;
       try {
-        stage.current = new Stage(canvas.current, stageColors());
+        stage.current = new Stage(canvas.current, stageColors(canvas.current));
         onStage(stage.current);
       } catch {
         setFailed(true);
       }
     }, () => setFailed(true));
     // The theme changed: the stage follows.
-    const seen = new MutationObserver(() => { stage.current?.setColors(stageColors()); stage.current?.render(); });
+    const seen = new MutationObserver(() => { if (canvas.current) stage.current?.setColors(stageColors(canvas.current)); stage.current?.render(); });
     seen.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-mode"] });
     const resized = new ResizeObserver(() => stage.current?.render());
     if (canvas.current) resized.observe(canvas.current);

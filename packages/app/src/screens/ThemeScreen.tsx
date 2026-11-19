@@ -11,7 +11,14 @@ export function ThemeScreen({ choice, onChange, onBack }: { choice: ThemeChoice;
       <h1 className="title">Theme</h1>
       <span className="label">Theme</span>
       <div className="chips">
-        {THEMES.map((t) => <Chip key={t.id} on={choice.name === t.id} onClick={() => onChange({ ...choice, name: t.id })}>{t.label}</Chip>)}
+        {THEMES.map((t) => (
+          <Chip key={t.id} on={choice.name === t.id} onClick={() => onChange({ ...choice, name: t.id })}>
+            <span aria-hidden="true" style={{ display: "inline-flex", marginRight: 8 }}>
+              {t.swatch.map((c) => <span key={c} style={{ width: 12, height: 12, borderRadius: 6, background: c, boxShadow: "0 0 0 1px rgba(0,0,0,0.25)", marginLeft: -3 }} />)}
+            </span>
+            {t.label}
+          </Chip>
+        ))}
       </div>
       <span className="muted">{THEMES.find((t) => t.id === choice.name)?.blurb}</span>
       <span className="label">Light or dark</span>

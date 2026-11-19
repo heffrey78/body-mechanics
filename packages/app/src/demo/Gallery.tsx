@@ -14,7 +14,7 @@ export function Gallery() {
     void import("./stage.ts").then(({ Stage }) => {
       const css = getComputedStyle(document.documentElement);
       const v = (n: string) => css.getPropertyValue(n).trim();
-      const stage = new Stage(canvas.current!, { bg: v("--surface-2"), floor: v("--surface-2"), grid: v("--line-strong"), body: v("--part-bd"), joint: v("--accent"), gear: v("--line-strong"), gearDark: v("--muted"), select: v("--pain-bd") });
+      const stage = new Stage(canvas.current!, { bg: v("--surface-2"), floor: v("--surface-2"), grid: v("--line-strong"), body: v("--muted"), joint: v("--accent"), gear: v("--line-strong"), gearDark: v("--ink"), select: v("--warn-ink") });
       const only = new URLSearchParams(location.search).get("only");
       const around = Number(new URLSearchParams(location.search).get("around") ?? 65);
       const out: typeof shots = [];

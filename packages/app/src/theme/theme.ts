@@ -1,26 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
+import { DEFAULT_THEME, normaliseTheme, type ThemeChoice } from "./choice.ts";
 
-export const THEMES = [
-  { id: "clinic", label: "Clinic", blurb: "Calm, cool and precise" },
-  { id: "studio", label: "Studio", blurb: "Warm, athletic and rounded" },
-  { id: "utility", label: "Utility", blurb: "High contrast, gym-floor legible" },
-] as const;
-export type ThemeName = (typeof THEMES)[number]["id"];
-export type ThemeMode = "system" | "light" | "dark";
-export interface ThemeChoice { name: ThemeName; mode: ThemeMode }
+export { THEMES, normaliseTheme, type ThemeChoice, type ThemeMode, type ThemeName } from "./choice.ts";
 
-const DEFAULT: ThemeChoice = { name: "clinic", mode: "system" };
 // Kept in the webview's storage until the profile record holds it (#27).
 const KEY = "bm.theme";
 
 function load(): ThemeChoice {
   try {
-    const v = JSON.parse(localStorage.getItem(KEY) ?? "null") as Partial<ThemeChoice> | null;
-    if (v && THEMES.some((t) => t.id === v.name) && ["system", "light", "dark"].includes(v.mode ?? "")) return v as ThemeChoice;
+    const v = JSON.parse(localStorage.getItem(KEY) ?? "null") as { name?: string; mode?: string } | null;
+    return normaliseTheme(v);
   } catch {
     /* storage unavailable: the default */
   }
-  return DEFAULT;
+  return DEFAULT_THEME;
 }
 
 const darkQuery = () => window.matchMedia("(prefers-color-scheme: dark)");

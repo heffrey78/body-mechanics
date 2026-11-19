@@ -10,7 +10,7 @@ const FAST = { scryptLogN: 10 };
 const ROOT = "/repo";
 const PASS = "correct horse battery";
 
-const profile: Profile = { type: "profile", v: 1, id: "pppppppppppppppp", units: "kg", theme: { name: "clinic", mode: "system" } };
+const profile: Profile = { type: "profile", v: 1, id: "pppppppppppppppp", units: "kg", theme: { name: "fieldnotes", mode: "system" } };
 const session: Session = {
   type: "session", v: 1, id: "ssssssssssssssss", startedAt: "2026-11-16T07:42:00.000Z", location: "garage",
   entries: [{

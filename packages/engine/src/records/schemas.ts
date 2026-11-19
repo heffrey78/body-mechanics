@@ -9,7 +9,7 @@ import { z } from "zod";
 import { HLC_PATTERN } from "./hlc.ts";
 import { ID_PATTERN } from "./ids.ts";
 import { JOINTS } from "../demo/skeleton.ts";
-import { BOTHERS, EFFORTS, EQUIPMENT, KINDS, MARK_KINDS, MEASURES, MODIFIER_KINDS, RED_FLAGS, REGIONS, SIDED_REGIONS, SIDES, THEMES, THEME_MODES, UNITS } from "./vocab.ts";
+import { BOTHERS, EFFORTS, EQUIPMENT, KINDS, MARK_KINDS, MEASURES, MODIFIER_KINDS, RED_FLAGS, REGIONS, RETIRED_THEMES, SIDED_REGIONS, SIDES, THEMES, THEME_MODES, UNITS } from "./vocab.ts";
 
 export const FORMAT_VERSION = 1;
 
@@ -32,7 +32,11 @@ export const Profile = z.strictObject({
   id,
   name: z.string().min(1).max(80).optional(),
   units: z.enum(UNITS),
-  theme: z.strictObject({ name: z.enum(THEMES), mode: z.enum(THEME_MODES) }),
+  theme: z.strictObject({
+    // A retired theme (#72) reads as the default, so profiles written before Build 4 still open.
+    name: z.preprocess((v) => ((RETIRED_THEMES as readonly unknown[]).includes(v) ? "fieldnotes" : v), z.enum(THEMES)),
+    mode: z.enum(THEME_MODES),
+  }),
   edits,
 });
 export type Profile = z.infer<typeof Profile>;

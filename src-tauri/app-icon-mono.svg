@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Ring face (#63, #74): a combination wrench whose ring end is a screen with a face; the dot is the joint you're minding. -->
+  
+  <g transform="translate(512 512) scale(6.2) translate(-51.5 -51.5)">
+    <defs><mask id="cut" maskUnits="userSpaceOnUse" x="-20" y="-20" width="140" height="140"><rect x="-20" y="-20" width="140" height="140" fill="#fff"/><rect x="72" y="80" width="12" height="22" rx="3" fill="#000" transform="rotate(-45 78 78)"/><circle cx="34" cy="34" r="16" fill="#000"/></mask></defs>
+    <g mask="url(#cut)"><path d="M46 46 L74 74" fill="none" stroke="#FFFFFF" stroke-width="15" stroke-linecap="round"/><circle cx="34" cy="34" r="24" fill="#FFFFFF"/><circle cx="78" cy="78" r="15" fill="#FFFFFF"/></g><circle cx="28" cy="32" r="2.8" fill="#FFFFFF"/><circle cx="40" cy="32" r="2.8" fill="#FFFFFF"/><path d="M28 38 Q34 43 40 38" fill="none" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round"/>
+  </g>
+</svg>
