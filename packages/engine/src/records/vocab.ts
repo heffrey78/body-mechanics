@@ -34,7 +34,9 @@ export type ModifierKind = (typeof MODIFIER_KINDS)[number];
 export const UNITS = ["kg", "lb"] as const;
 export type Units = (typeof UNITS)[number];
 
-export const THEMES = ["clinic", "studio", "utility"] as const;
+export const THEMES = ["fieldnotes", "slate", "turquoise", "riso", "handheld"] as const;
+/** Themes removed in #72. A profile that still names one reads as Field Notes; nothing is rewritten until the profile is next saved. */
+export const RETIRED_THEMES = ["clinic", "studio", "utility"] as const;
 export const THEME_MODES = ["system", "light", "dark"] as const;
 
 // ---------------------------------------------------------------- the body (#4, #5, D1)

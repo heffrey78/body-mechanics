@@ -1,14 +1,25 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { search, type LibraryItem, type Location } from "@bm/engine";
+import { search, type LibraryItem, type Location, type Minding, type Routine, type WeekStrip } from "@bm/engine";
 import { Button, Chip, Tag } from "../ui/components.tsx";
+import { RingFace } from "../ui/RingFace.tsx";
 import { REGION_LABEL } from "../ui/labels.ts";
 
 /**
- * Home (#2, #31): type what you're doing. Results come from the catalogue and your own movements;
- * Enter starts the top one only when every word matched, otherwise it opens the new-movement form.
- * Recent exercises sit below as chips.
+ * Home (#2, #31, #73): the day and a greeting; where you are and Start a session; a Minding card per
+ * active mark, saying what it changes; type what you're doing (results from the catalogue and your
+ * own movements; Enter starts the top one only when every word matched, otherwise it opens the
+ * new-movement form); your routines as cards; this week's sessions; recent exercises as chips.
  */
-export function HomeScreen({ onPlan, library, recent, sessionOpen, locations, location, onLocation, onStart, onNew, onResume }: {
+export function HomeScreen({ onPlan, library, recent, sessionOpen, locations, location, onLocation, onStart, onNew, onResume, minding, onCheckIn, routines, onRoutine, week, now = new Date() }: {
+  /** The active marks and what they change (#73). */
+  minding: Minding[];
+  /** Open a mark on the Body tab to check in on it. */
+  onCheckIn: (id: string) => void;
+  /** Routines as cards (#73): the routine and its "35 min · 7 moves". */
+  routines: { routine: Routine; meta: string }[];
+  onRoutine: (r: Routine) => void;
+  week: WeekStrip;
+  now?: Date;
   /** Start a session: the focus, then a plan around the body (#50, #52). */
   onPlan: () => void;
   library: LibraryItem[];
@@ -31,7 +42,11 @@ export function HomeScreen({ onPlan, library, recent, sessionOpen, locations, lo
   };
   return (
     <div className="pad">
-      <h1 className="title">Body Mechanics</h1>
+      <span className="brand"><RingFace size={30} />Body Mechanics</span>
+      <div>
+        <p className="kicker">{now.toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" })}</p>
+        <h1 className="title hello">{sessionOpen ? "Mid-session." : "Ready when you are."}</h1>
+      </div>
       {sessionOpen ? <Button variant="primary" xl onClick={onResume}>Back to your session</Button> : null}
       {!sessionOpen && locations.length ? (
         <div className="chips" role="group" aria-label="Where are you?">
@@ -60,6 +75,35 @@ export function HomeScreen({ onPlan, library, recent, sessionOpen, locations, lo
       ) : null}
       {/* One way to get started (#52): a plan around the body; Suggest next lives in the session. */}
       {!sessionOpen && !q.trim() ? <Button variant="primary" xl onClick={onPlan}>Start a session</Button> : null}
+      {!q.trim() ? minding.map((m) => (
+        <section key={m.id} className="card minding" aria-label={m.title}>
+          <span className="label"><span className="dot" aria-hidden="true" />Minding</span>
+          <span className="place">{m.title}</span>
+          <span>{m.line}</span>
+          <Button variant="ghost" onClick={() => onCheckIn(m.id)}>{m.due ? "Time to check in" : "Check in on it"}</Button>
+        </section>
+      )) : null}
+      {!q.trim() && routines.length ? (
+        <section aria-label="Routines" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <span className="label">Routines</span>
+          <div className="rgrid">
+            {routines.map(({ routine, meta }) => (
+              <button key={routine.id} type="button" className="rcard" disabled={sessionOpen} onClick={() => onRoutine(routine)}>
+                <span className="name">{routine.name}</span>
+                <span className="meta">{meta}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      ) : null}
+      {!q.trim() ? (
+        <section className="week" aria-label={`${week.count} ${week.count === 1 ? "session" : "sessions"} this week`}>
+          <div className="days" aria-hidden="true">
+            {week.days.map((d, i) => <span key={i} className={`day${d.done ? " done" : ""}${d.today ? " today" : ""}`}>{d.label}</span>)}
+          </div>
+          <span className="strong">{week.count} {week.count === 1 ? "session" : "sessions"} this week</span>
+        </section>
+      ) : null}
       {recent.length ? (
         <>
           <span className="label">Recent</span>

@@ -9,7 +9,7 @@ export async function loadProfile(vault: Vault, defaults: Partial<Pick<Profile, 
   const profile: Profile = {
     type: "profile", v: 1, id: newId(),
     units: defaults.units ?? "kg",
-    theme: defaults.theme ?? { name: "clinic", mode: "system" },
+    theme: defaults.theme ?? { name: "fieldnotes", mode: "system" },
   };
   await vault.write(profile);
   return { profile, created: true };

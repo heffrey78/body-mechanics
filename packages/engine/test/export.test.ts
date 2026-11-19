@@ -13,7 +13,7 @@ const session: Session = {
     ] },
   ],
 };
-const profile: Profile = { type: "profile", v: 1, id: "pppppppppppppppp", units: "kg", theme: { name: "clinic", mode: "system" } };
+const profile: Profile = { type: "profile", v: 1, id: "pppppppppppppppp", units: "kg", theme: { name: "fieldnotes", mode: "system" } };
 
 describe("export", () => {
   it("writes sets.csv: one row per set, one per side, deleted sets left out, loads in the person's units", () => {

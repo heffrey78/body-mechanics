@@ -9,7 +9,7 @@ const stamp = (iso: string, n = 0) => `${iso}~${String(n).padStart(4, "0")}~${DE
 
 const profile: Profile = {
   type: "profile", v: 1, id: "pppppppppppppppp", name: "Me", units: "kg",
-  theme: { name: "clinic", mode: "system" },
+  theme: { name: "fieldnotes", mode: "system" },
 };
 
 const couch: Exercise = {
@@ -136,12 +136,12 @@ sweat: 0
   });
 
   it("a newer format version", () => {
-    expect(problems("type: profile\nv: 2\nid: pppppppppppppppp\nunits: kg\ntheme: { name: clinic, mode: system }\n").join()).toMatch(/^v: /);
+    expect(problems("type: profile\nv: 2\nid: pppppppppppppppp\nunits: kg\ntheme: { name: fieldnotes, mode: system }\n").join()).toMatch(/^v: /);
   });
 });
 
 describe("the strict YAML subset", () => {
-  const ok = "type: profile\nv: 1\nid: pppppppppppppppp\nunits: kg\ntheme: { name: clinic, mode: system }\n";
+  const ok = "type: profile\nv: 1\nid: pppppppppppppppp\nunits: kg\ntheme: { name: fieldnotes, mode: system }\n";
 
   it("accepts a plain record", () => {
     expect(parseRecord(ok).type).toBe("profile");
@@ -152,11 +152,11 @@ describe("the strict YAML subset", () => {
   });
 
   it("refuses anchors and aliases", () => {
-    expect(() => parseRecord("type: profile\nv: 1\nid: pppppppppppppppp\nunits: kg\ntheme: &t { name: clinic, mode: system }\nx: *t\n")).toThrow(/alias|anchor/);
+    expect(() => parseRecord("type: profile\nv: 1\nid: pppppppppppppppp\nunits: kg\ntheme: &t { name: fieldnotes, mode: system }\nx: *t\n")).toThrow(/alias|anchor/);
   });
 
   it("refuses custom tags", () => {
-    expect(() => parseRecord("type: profile\nv: 1\nid: !secret pppppppppppppppp\nunits: kg\ntheme: { name: clinic, mode: system }\n")).toThrow(RecordError);
+    expect(() => parseRecord("type: profile\nv: 1\nid: !secret pppppppppppppppp\nunits: kg\ntheme: { name: fieldnotes, mode: system }\n")).toThrow(RecordError);
   });
 
   it("refuses a second document", () => {
@@ -194,5 +194,27 @@ describe("ids, stamps and paths", () => {
     expect(recordPath(session)).toBe("sessions/2026/11/ssssssssssssssss.yaml.age");
     expect(recordPath(couch)).toBe("exercises/eeeeeeeeeeeeeeee.yaml.age");
     expect(recordPath(profile)).toBe("profile.yaml.age");
+  });
+});
+
+describe("retired themes (#72)", () => {
+  for (const old of ["clinic", "studio", "utility"]) {
+    it(`a profile naming ${old} reads as fieldnotes, everything else unchanged`, () => {
+      const text = `type: profile\nv: 1\nid: pppppppppppppppp\nname: Me\nunits: lb\ntheme: { name: ${old}, mode: dark }\n`;
+      expect(parseRecord(text)).toEqual({
+        type: "profile", v: 1, id: "pppppppppppppppp", name: "Me", units: "lb", theme: { name: "fieldnotes", mode: "dark" },
+      });
+    });
+  }
+
+  it("an unknown theme that was never offered is still refused", () => {
+    expect(() => parseRecord("type: profile\nv: 1\nid: pppppppppppppppp\nunits: kg\ntheme: { name: neon, mode: system }\n")).toThrow(RecordError);
+  });
+
+  it("each of the five themes round-trips", () => {
+    for (const name of ["fieldnotes", "slate", "turquoise", "riso", "handheld"] as const) {
+      const p: Profile = { ...profile, theme: { name, mode: "light" } };
+      expect(parseRecord(serializeRecord(p))).toEqual(p);
+    }
   });
 });
