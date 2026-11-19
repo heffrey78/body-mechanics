@@ -1,8 +1,11 @@
 import { useMemo, useState } from "react";
 import {
-  EQUIPMENT, KINDS, REGIONS, catalogue, fromCatalogue, newId, search,
-  type EquipmentItem, type Exercise, type ExerciseOverride, type Kind, type LibraryItem, type Measure, type Region,
+  EQUIPMENT, KINDS, REGIONS, catalogue, demoFor, fromCatalogue, newId, search,
+  type Demo, type EquipmentItem, type Exercise, type ExerciseOverride, type Kind, type LibraryItem, type Measure, type Region,
 } from "@bm/engine";
+import { DemoBuilder } from "../demo/DemoBuilder.tsx";
+import { DemoPlayer } from "../demo/DemoPlayer.tsx";
+import { propModels } from "../demo/models.ts";
 import { Button, Chip, Segmented, Tag } from "../ui/components.tsx";
 import { KIND_LABEL, MEASURE_LABEL, REGION_LABEL, SWEAT_LABEL, equipmentLabel } from "../ui/labels.ts";
 
@@ -20,19 +23,22 @@ export function describeNeeds(item: Pick<LibraryItem, "needs" | "optional">, nam
   return [needs || "Nothing needed", opt].filter(Boolean).join(" · ");
 }
 
-type View = { v: "list" } | { v: "detail"; id: string } | { v: "edit"; id: string | null };
+type View = { v: "list" } | { v: "detail"; id: string } | { v: "edit"; id: string | null } | { v: "demo"; id: string };
 
 /**
  * More › Exercises (#61): the catalogue and your own, searchable and filterable. Your own can be added,
  * edited and deleted; a catalogue exercise can be adjusted for you (an override, D4) and reset.
  */
-export function ExercisesScreen({ library, custom, own, overrides, onSaveOwn, onSaveOverride, onBack }: {
+export function ExercisesScreen({ library, custom, own, overrides, demos, onSaveOwn, onSaveOverride, onSaveDemo, onBack }: {
   library: LibraryItem[];
   custom: EquipmentItem[];
   own: Exercise[];
   overrides: ExerciseOverride[];
   onSaveOwn: (e: Exercise) => void;
+  /** The demonstrations you built (#77). */
+  demos: Demo[];
   onSaveOverride: (o: ExerciseOverride) => void;
+  onSaveDemo: (d: Demo) => void;
   onBack: () => void;
 }) {
   const [view, setView] = useState<View>({ v: "list" });
@@ -41,6 +47,16 @@ export function ExercisesScreen({ library, custom, own, overrides, onSaveOwn, on
   const [mine, setMine] = useState(false);
   const names = useMemo(() => new Map(custom.map((c) => [c.id, c])), [custom]);
   const live = library.filter((x) => !x.deleted);
+  const modelOf = useMemo(() => propModels(custom), [custom]);
+
+  if (view.v === "demo") {
+    const item = library.find((x) => x.id === view.id);
+    if (item) {
+      const back = () => setView({ v: "detail", id: item.id });
+      return <DemoBuilder name={item.name} exercise={item.id} current={demoFor(item.id, demos)} custom={custom} needs={[...item.needs.flat(), ...item.optional]}
+        onCancel={back} onSave={(d) => { onSaveDemo(d); back(); }} />;
+    }
+  }
 
   if (view.v === "edit") {
     const item = view.id ? library.find((x) => x.id === view.id) : undefined;
@@ -53,7 +69,7 @@ export function ExercisesScreen({ library, custom, own, overrides, onSaveOwn, on
   if (view.v === "detail") {
     const item = library.find((x) => x.id === view.id);
     if (item) {
-      return <ExerciseDetail item={item} names={names} onBack={() => setView({ v: "list" })} onEdit={() => setView({ v: "edit", id: item.id })}
+      return <ExerciseDetail item={item} names={names} demo={demoFor(item.id, demos)} modelOf={modelOf} onDemo={() => setView({ v: "demo", id: item.id })} onBack={() => setView({ v: "list" })} onEdit={() => setView({ v: "edit", id: item.id })}
         onDelete={() => { const r = own.find((x) => x.id === item.id); if (r) onSaveOwn({ ...r, deleted: true }); setView({ v: "list" }); }}
         onReset={() => { const o = overrides.find((x) => x.of === item.id); if (o) onSaveOverride({ ...o, deleted: true }); }} />;
     }
@@ -87,8 +103,9 @@ export function ExercisesScreen({ library, custom, own, overrides, onSaveOwn, on
   );
 }
 
-function ExerciseDetail({ item, names, onBack, onEdit, onDelete, onReset }: {
-  item: LibraryItem; names: ReadonlyMap<string, { name: string }>; onBack: () => void; onEdit: () => void; onDelete: () => void; onReset: () => void;
+function ExerciseDetail({ item, names, demo, modelOf, onDemo, onBack, onEdit, onDelete, onReset }: {
+  item: LibraryItem; names: ReadonlyMap<string, { name: string }>;
+  demo: ReturnType<typeof demoFor>; modelOf: ReturnType<typeof propModels>; onDemo: () => void; onBack: () => void; onEdit: () => void; onDelete: () => void; onReset: () => void;
 }) {
   const [confirm, setConfirm] = useState(false);
   const entry = item.own ? undefined : catalogue().entries.find((e) => e.id === item.id);
@@ -98,6 +115,8 @@ function ExerciseDetail({ item, names, onBack, onEdit, onDelete, onReset }: {
       <div className="hrow"><Button variant="ghost" onClick={onBack}>‹ Exercises</Button>{item.deleted ? null : <Button variant="ghost" onClick={onEdit}>{item.own ? "Edit" : "Adjust for you"}</Button>}</div>
       <h1 className="title">{item.name}</h1>
       <div className="chips">{item.own ? <Tag>Yours</Tag> : null}{item.overridden ? <Tag>Adjusted for you</Tag> : null}{item.sided ? <Tag>Each side</Tag> : null}</div>
+      {demo ? <DemoPlayer clip={demo.clip} modelOf={modelOf} /> : null}
+      {item.deleted ? null : <Button variant="ghost" onClick={onDemo}>{demo?.own ? "Edit your demonstration" : demo ? "Make your own demonstration" : "Build a demonstration"}</Button>}
       <div className="card">
         <span><span className="label">Works</span><br />{regions(item.works)}</span>
         <span><span className="label">Puts load on</span><br />{regions(item.strains)}</span>

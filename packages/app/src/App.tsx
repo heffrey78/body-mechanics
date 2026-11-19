@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   COMMIT_EMAIL, COMMIT_NAME, Committer, ENGINE_VERSION, NotSetUp, RecordIndex, SessionLog, Vault, clearDraft, createExercise, deviceClock,
-  GitHub, Syncer, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, loadEquipment, loadExerciseRecords, libraryFrom, type Exercise, type ExerciseOverride, standsInOf, type EquipmentItem, loadBody, newMark, newCondition, editBody, modifiersOf, applyModified, deletedSession, checkIn, resolveMark, reopenMark, isDue, isActive, type Body, type Mark, type Condition, type CheckInFields, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
+  GitHub, Syncer, applyUpdates, editRoutine, sync, indexBenchmark, loadLocations, loadEquipment, loadDemos, type Demo, loadExerciseRecords, libraryFrom, type Exercise, type ExerciseOverride, standsInOf, type EquipmentItem, loadBody, newMark, newCondition, editBody, modifiersOf, applyModified, deletedSession, checkIn, resolveMark, reopenMark, isDue, isActive, type Body, type Mark, type Condition, type CheckInFields, stampChanges, starterLocations, targetUpdates, loadDraft, loadLibrary, loadProfile, loadRoutines, memoryFilesPort, memorySecretsPort, newRoutine,
   portsRoundTrip, routineFromSession, saveDraft,
   type Clock, type Location, type Suggestion, type SyncStatus, type TargetUpdate, type LibraryItem, type Profile, type Routine, type RoutineItem, type Session,
 } from "@bm/engine";
@@ -55,6 +55,8 @@ export function App() {
   const keepExercises = (r: { own: Exercise[]; overrides: ExerciseOverride[] }) => { setExerciseRecords(r); setLibrary(libraryFrom(r)); };
   /** Your own equipment (#60). */
   const [equipment, setEquipment] = useState<EquipmentItem[]>([]);
+  /** The demonstrations you built (#77): they replace the built-in ones. */
+  const [demos, setDemos] = useState<Demo[]>([]);
   /** Marks and conditions (#45): Suggest next and plans work around them (#47). */
   const [bodyRecords, setBodyRecords] = useState<Body>({ marks: [], conditions: [] });
   /** A mark or condition to open on the Body tab (from Home's check-in card). */
@@ -112,6 +114,7 @@ export function App() {
     setLocations(ls);
     setBodyRecords(bd);
     void loadEquipment(v).then(setEquipment);
+    void loadDemos(v).then(setDemos);
     // The last location used is where the next session starts (#41).
     const lastAt = built.index.sessions().find((x) => x.location)?.location;
     setLocation(lastAt && ls.some((l) => l.id === lastAt) ? lastAt : null);
@@ -155,6 +158,16 @@ export function App() {
     });
     if (stamped.deleted && location === stamped.id) setLocation(null);
     void vault.write(stamped).then(() => committer?.changed(`Location: ${stamped.name}`));
+  };
+
+  /** A demonstration built, changed or deleted (#82): stamped, written encrypted, committed once quiet. */
+  const saveDemo = (next: Demo) => {
+    if (!vault || !clock) return;
+    const before = demos.find((d) => d.id === next.id);
+    const stamped = stampChanges(before as Record<string, unknown> | undefined, next as unknown as Record<string, unknown>, clock.tick()) as unknown as Demo;
+    setDemos((ds) => [...ds.filter((d) => d.id !== next.id), ...(stamped.deleted ? [] : [stamped])]);
+    const name = library.find((x) => x.id === next.exercise)?.name ?? next.exercise;
+    void vault.write(stamped).then(() => committer?.changed(`${stamped.deleted ? "Deleted demonstration" : "Demonstration"}: ${name}`));
   };
 
   /** Save a mark or condition (#48): kept in state, written encrypted, committed. */
@@ -220,6 +233,7 @@ export function App() {
     setLocations(ls);
     setBodyRecords(bd);
     void loadEquipment(v).then(setEquipment);
+    void loadDemos(v).then(setDemos);
     setProfile(prof.profile);
     setTheme(prof.profile.theme);
   };
@@ -442,7 +456,7 @@ export function App() {
   } else if (tab === "more" && sub === "locations") {
     body = <LocationsScreen locations={locations} custom={equipment} onSave={saveLocation} onAddStarters={() => starterLocations().forEach((l) => saveLocation(l))} onBack={() => setSub(null)} />;
   } else if (tab === "more" && sub === "exercises") {
-    body = <ExercisesScreen library={library} custom={equipment} own={exerciseRecords.own} overrides={exerciseRecords.overrides} onBack={() => setSub(null)}
+    body = <ExercisesScreen library={library} custom={equipment} own={exerciseRecords.own} overrides={exerciseRecords.overrides} demos={demos} onSaveDemo={saveDemo} onBack={() => setSub(null)}
       onSaveOwn={(next) => {
         if (!vault || !clock) return;
         const before = exerciseRecords.own.find((x) => x.id === next.id);
@@ -562,7 +576,7 @@ export function App() {
     body = (
       <SessionScreen
         suggestPanel={suggestPanel} onSuggest={() => setSuggesting(true)}
-        log={log} session={session} plan={plan} library={library} recent={recent} index={index} units={profile?.units ?? "kg"}
+        log={log} session={session} plan={plan} demos={demos} custom={equipment} library={library} recent={recent} index={index} units={profile?.units ?? "kg"}
         pending={pending}
         onPending={(p) => { setPending(p); changed(log.session ?? session, p); }}
         onChanged={(s) => changed(s)}
