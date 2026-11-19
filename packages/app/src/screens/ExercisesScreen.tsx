@@ -108,6 +108,8 @@ function ExerciseDetail({ item, names, demo, modelOf, onDemo, onBack, onEdit, on
   demo: ReturnType<typeof demoFor>; modelOf: ReturnType<typeof propModels>; onDemo: () => void; onBack: () => void; onEdit: () => void; onDelete: () => void; onReset: () => void;
 }) {
   const [confirm, setConfirm] = useState(false);
+  /** The demonstration starts closed (the owner's preference): Show me how opens it. */
+  const [showing, setShowing] = useState(false);
   const entry = item.own ? undefined : catalogue().entries.find((e) => e.id === item.id);
   const regions = (rs: Region[]) => rs.map((r) => REGION_LABEL[r]).join(", ") || "None";
   return (
@@ -115,7 +117,8 @@ function ExerciseDetail({ item, names, demo, modelOf, onDemo, onBack, onEdit, on
       <div className="hrow"><Button variant="ghost" onClick={onBack}>‹ Exercises</Button>{item.deleted ? null : <Button variant="ghost" onClick={onEdit}>{item.own ? "Edit" : "Adjust for you"}</Button>}</div>
       <h1 className="title">{item.name}</h1>
       <div className="chips">{item.own ? <Tag>Yours</Tag> : null}{item.overridden ? <Tag>Adjusted for you</Tag> : null}{item.sided ? <Tag>Each side</Tag> : null}</div>
-      {demo ? <DemoPlayer clip={demo.clip} modelOf={modelOf} /> : null}
+      {demo && showing ? <DemoPlayer clip={demo.clip} modelOf={modelOf} /> : null}
+      {demo ? <Button variant="ghost" onClick={() => setShowing(!showing)}>{showing ? "Hide the demonstration" : "Show me how"}</Button> : null}
       {item.deleted ? null : <Button variant="ghost" onClick={onDemo}>{demo?.own ? "Edit your demonstration" : demo ? "Make your own demonstration" : "Build a demonstration"}</Button>}
       <div className="card">
         <span><span className="label">Works</span><br />{regions(item.works)}</span>
