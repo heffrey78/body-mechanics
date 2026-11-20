@@ -28,14 +28,13 @@ rm -f "$res/drawable/ic_launcher_background.xml" "$res/drawable-v24/ic_launcher_
 cp -r icons/android/. "$res/"
 # An APK of an earlier build would be taken for this one's.
 rm -rf gen/android/app/build/outputs/apk
-# Gradle sometimes fails to fetch the Kotlin plugin from its registry ("Could not parse POM", three of
-# eight CI runs), and remembers the miss: forget what it fetched, wait, and go again, twice at most.
+# Maven Central sometimes answers 429 Too Many Requests (it limits shared CI runners): wait it out and go
+# again, twice at most. What Gradle did fetch is kept, so each go asks for less.
 build() { npx tauri android build --debug --apk --target "$target"; }
-for attempt in 1 2 3; do
+for wait in 90 240 0; do
   build && break
-  [[ $attempt -lt 3 ]] || exit 1
-  echo "The build failed (attempt $attempt); clearing Gradle's fetched modules and trying again in 30 s."
-  rm -rf "${GRADLE_USER_HOME:-$HOME/.gradle}/caches/modules-2"
-  sleep 30
+  [[ $wait -gt 0 ]] || exit 1
+  echo "The build failed; trying again in $wait s."
+  sleep "$wait"
 done
 find gen/android/app/build/outputs/apk -name '*.apk'
