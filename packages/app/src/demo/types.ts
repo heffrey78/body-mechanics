@@ -5,6 +5,8 @@ import type { PropModel } from "./models.ts";
 export interface StageColors { bg: string; floor: string; grid: string; body: string; joint: string; gear: string; gearDark: string; select: string }
 
 export interface DemoStage {
+  /** Its own canvas, which the view puts on the page. */
+  readonly canvas: HTMLCanvasElement;
   setColors(c: StageColors): void;
   /** The equipment of a demonstration. `modelOf` turns a custom item into what it stands in for. */
   setProps(props: DemoClip["props"], modelOf: (kind: string) => PropModel): void;
@@ -14,6 +16,8 @@ export interface DemoStage {
   turnView(dAround: number, dAbove: number): void;
   zoomBy(k: number): void;
   readonly view: { around: number; above: number };
+  /** Back to the usual angle, with nothing picked: the stage is shared from one demonstration to the next. */
+  resetView(): void;
   select(joint: Joint | null): void;
   /** The joint under a point of the canvas, if any. */
   pick(clientX: number, clientY: number): Joint | null;

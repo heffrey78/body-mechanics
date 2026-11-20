@@ -41,7 +41,7 @@ export class Stage implements DemoStage {
     this.#renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
     this.#renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.#renderer.shadowMap.enabled = true;
-    this.#renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.#renderer.shadowMap.type = THREE.PCFShadowMap;
     const m = (roughness: number, metalness = 0) => new THREE.MeshStandardMaterial({ roughness, metalness });
     this.#mat = { body: m(0.65), joint: m(0.5), gear: m(0.6, 0.1), gearDark: m(0.45, 0.3), select: m(0.4), floor: m(1), glass: m(0.8) };
     Object.assign(this.#mat.glass, { transparent: true, opacity: 0.35, depthWrite: false, side: THREE.DoubleSide });
@@ -291,6 +291,7 @@ export class Stage implements DemoStage {
   turnView(dAround: number, dAbove: number): void { this.setView(this.#view.around + dAround, this.#view.above + dAbove); }
   zoomBy(k: number): void { this.#zoom = Math.max(0.4, Math.min(2.5, this.#zoom * k)); }
   get view() { return this.#view; }
+  resetView(): void { this.#view = { around: 35, above: 12 }; this.#zoom = 1; this.select(null); }
 
   select(joint: Joint | null): void {
     if (this.#selected) this.#knobs[this.#selected].material = this.#mat.joint;
@@ -357,4 +358,22 @@ export class Stage implements DemoStage {
     // Give the 3D context back now: a WebView allows only a few, and waiting for the collector runs out of them.
     if (!this.lost) this.#renderer.forceContextLoss();
   }
+}
+
+let shared: Stage | null = null;
+
+/**
+ * The app's one 3D stage, made on first use and kept: every demonstration is drawn on it, its canvas
+ * moved to wherever one is showing. Making and dropping a 3D context each time a demonstration was
+ * shown crashed the phone's WebView after enough of them. `fresh` replaces it (after its context was
+ * lost and didn't come back).
+ */
+export function sharedStage(colors: StageColors, fresh = false): Stage {
+  if (fresh && shared) {
+    shared.dispose();
+    shared = null;
+  }
+  if (!shared) shared = new Stage(document.createElement("canvas"), colors);
+  else shared.setColors(colors);
+  return shared;
 }

@@ -69,6 +69,7 @@ export class Sketch implements DemoStage {
   turnView(dAround: number, dAbove: number): void { this.setView(this.#view.around + dAround, this.#view.above + dAbove); }
   zoomBy(k: number): void { this.#zoom = Math.max(0.4, Math.min(2.5, this.#zoom * k)); }
   get view() { return this.#view; }
+  resetView(): void { this.#view = { around: 35, above: 12 }; this.#zoom = 1; this.#selected = null; }
   select(joint: Joint | null): void { this.#selected = joint; }
 
   pick(clientX: number, clientY: number): Joint | null {
