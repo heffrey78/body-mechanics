@@ -351,5 +351,7 @@ export class Stage {
     this.#scene.traverse((o) => { if (o instanceof THREE.Mesh) o.geometry.dispose(); });
     for (const m of Object.values(this.#mat)) m.dispose();
     this.#renderer.dispose();
+    // Give the 3D context back now: a WebView allows only a few, and waiting for the collector runs out of them.
+    this.#renderer.forceContextLoss();
   }
 }
