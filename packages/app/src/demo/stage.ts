@@ -347,6 +347,41 @@ export class Stage implements DemoStage {
     this.#renderer.render(this.#scene, this.#camera);
   }
 
+  /** Set while the app is in the background and the stage has handed its own context back. */
+  parked = false;
+
+  /**
+   * The app is going to the background: hand the 3D context back, leaving a picture of the last frame
+   * in its place. On this phone, coming back to the app resets the graphics driver; a live context is
+   * lost in that reset, the WebView blames the page and refuses it another until the app restarts. A
+   * context already given back isn't there to be reset.
+   */
+  park(): void {
+    if (this.parked || this.lost) return;
+    const holder = this.canvas.parentElement;
+    if (holder) {
+      this.render();
+      holder.style.backgroundImage = `url(${this.canvas.toDataURL("image/jpeg", 0.85)})`;
+      holder.style.backgroundSize = "100% 100%";
+    }
+    this.canvas.style.visibility = "hidden";
+    this.parked = true;
+    this.#renderer.forceContextLoss();
+  }
+
+  /** The app is back: ask for the context again. The picture stays until it has come. */
+  unpark(): void {
+    if (!this.parked) return;
+    this.canvas.addEventListener("webglcontextrestored", () => {
+      this.canvas.style.visibility = "";
+      const holder = this.canvas.parentElement;
+      if (holder) holder.style.backgroundImage = "";
+      this.render();
+    }, { once: true });
+    this.parked = false;
+    this.#renderer.forceContextRestore();
+  }
+
   /** The phone took the 3D context away (and hasn't given it back). */
   get lost(): boolean { return this.#renderer.getContext().isContextLost(); }
 
@@ -361,6 +396,7 @@ export class Stage implements DemoStage {
 }
 
 let shared: Stage | null = null;
+let watching = false;
 
 /**
  * The app's one 3D stage, made on first use and kept: every demonstration is drawn on it, its canvas
@@ -372,6 +408,15 @@ export function sharedStage(colors: StageColors, fresh = false): Stage {
   if (fresh && shared) {
     shared.dispose();
     shared = null;
+  }
+  if (!watching) {
+    watching = true;
+    // Out of the 3D context while the app is in the background; back in it a moment after returning,
+    // once the phone has finished whatever it does to the graphics on the way back.
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") shared?.park();
+      else setTimeout(() => { if (document.visibilityState === "visible") shared?.unpark(); }, 1500);
+    });
   }
   if (!shared) shared = new Stage(document.createElement("canvas"), colors);
   else shared.setColors(colors);

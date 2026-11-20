@@ -39,6 +39,7 @@ export function StageView({ height, full = false, onStage, onTap }: {
   const [life, setLife] = useState(0);
   const tries = useRef(0);
   const fresh = useRef(false);
+  const [blocked, setBlocked] = useState(false);
 
   useEffect(() => {
     let gone = false;
@@ -52,7 +53,12 @@ export function StageView({ height, full = false, onStage, onTap }: {
       document.addEventListener("visibilitychange", seen);
       timers.push(setTimeout(() => document.removeEventListener("visibilitychange", seen), 3_600_000));
     };
-    const giveUp = (why: string) => { console.warn(`3D view: ${why}; drawing the demonstration flat`); setFlat(true); };
+    const giveUp = (why: string) => {
+      console.warn(`3D view: ${why}; drawing the demonstration flat`);
+      // The WebView refuses a page another 3D context once it has blamed it for losing one, until the page loads afresh.
+      if (/could not be created|creating WebGL context/i.test(why)) setBlocked(true);
+      setFlat(true);
+    };
     let made: DemoStage | null = null;
     let isLost: () => boolean = () => false;
     /** The context is gone: once the app is in view again, give it a moment; then a new stage, and after two of those the flat drawing. */
@@ -64,7 +70,17 @@ export function StageView({ height, full = false, onStage, onTap }: {
       console.warn(`3D view: starting again with a new stage (try ${tries.current})`);
       setLife((n) => n + 1);
     }));
-    const lost = (e: Event) => { e.preventDefault(); console.warn("3D view: context lost"); recover(); };
+    let parked: () => boolean = () => false;
+    const lost = (e: Event) => {
+      e.preventDefault();
+      // Handed back by the stage itself as the app went to the background: it asks for it again on return.
+      if (parked()) return;
+      console.warn("3D view: context lost");
+      recover();
+    };
+    // Back in view and, after the stage has had its chance to get its context again, still without one.
+    const returned = () => { if (document.visibilityState === "visible") later(5000, () => { if (isLost() && !parked()) { console.warn("3D view: no context after returning to the app"); recover(); } }); };
+    document.addEventListener("visibilitychange", returned);
     const back = () => { console.warn("3D view: context restored"); made?.render(); };
     const show = (s: DemoStage) => {
       made = s;
@@ -84,11 +100,12 @@ export function StageView({ height, full = false, onStage, onTap }: {
           const s = sharedStage(stageColors(el), fresh.current);
           fresh.current = false;
           isLost = () => s.lost;
+          parked = () => s.parked;
           s.canvas.addEventListener("webglcontextlost", lost);
           s.canvas.addEventListener("webglcontextrestored", back);
           show(s);
           // Lost while it was off the page (the phone slept on another screen): the same recovery.
-          if (s.lost) recover();
+          if (s.lost && !s.parked) recover();
           // It has held for a while: the next loss starts counting afresh.
           later(30_000, () => { if (!s.lost) tries.current = 0; });
         } catch (e) {
@@ -104,6 +121,8 @@ export function StageView({ height, full = false, onStage, onTap }: {
     return () => {
       gone = true;
       timers.forEach(clearTimeout);
+      document.removeEventListener("visibilitychange", returned);
+      el.style.backgroundImage = "";
       seen.disconnect();
       resized.disconnect();
       made?.canvas.removeEventListener("webglcontextlost", lost);
@@ -157,8 +176,8 @@ export function StageView({ height, full = false, onStage, onTap }: {
         onWheel={full ? (e) => { stage.current?.zoomBy(e.deltaY > 0 ? 1.08 : 0.93); stage.current?.render(); } : undefined} />
       {flat ? (
         <div className="hrow" style={{ minHeight: 0 }}>
-          <span className="muted" style={{ fontSize: 13 }}>Simple view: this device isn't giving the app 3D right now. Restarting the app brings it back.</span>
-          <button type="button" className="btn ghost" style={{ flexShrink: 0 }} onClick={() => { tries.current = 2; fresh.current = true; setFlat(false); setLife((n) => n + 1); }}>Try 3D</button>
+          <span className="muted" style={{ fontSize: 13 }}>{blocked ? "Simple view: this phone has stopped giving the app 3D. Close the app and open it again to get it back." : "Simple view: this device isn't giving the app 3D right now."}</span>
+          {blocked ? null : <button type="button" className="btn ghost" style={{ flexShrink: 0 }} onClick={() => { tries.current = 2; fresh.current = true; setFlat(false); setLife((n) => n + 1); }}>Try 3D</button>}
         </div>
       ) : null}
     </>
