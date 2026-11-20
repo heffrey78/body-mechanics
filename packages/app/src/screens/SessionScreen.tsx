@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { EFFORTS, assess, concerns, sessionCue, type Body, describeSet, nextSet, nextStep, planStatus, progression, search, showLoad, toKg, FIELD, type Effort, type Entry, type LibraryItem, type LoggedSet, type RecordIndex, type RoutineItem, type Session, type SessionLog } from "@bm/engine";
+import { EFFORTS, assess, concerns, sessionCue, type Body, describeSet, nextSet, nextStep, planStatus, progression, search, showLoad, toKg, FIELD, demoFor, type Demo, type EquipmentItem, type Effort, type Entry, type LibraryItem, type LoggedSet, type RecordIndex, type RoutineItem, type Session, type SessionLog } from "@bm/engine";
 import { elapsedSeconds, pageCue, startTimer, stopTimer, type RunningTimer } from "../timer.ts";
 import { Button, Chip, Segmented, Stepper, Tag, Timer } from "../ui/components.tsx";
+import { DemoPlayer } from "../demo/DemoPlayer.tsx";
+import { propModels } from "../demo/models.ts";
 import { ModifierPicker, modifierText } from "../ui/ModifierPicker.tsx";
 
 const REST_SECONDS = 60;
@@ -22,7 +24,7 @@ export interface Pending {
  * exercise, every set tappable to correct or delete, and Type next / recent chips for what's next.
  * The card sits in the middle (#44): what's done above it, what's still to do below.
  */
-export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, library, recent, index, units, body, pending, onPending, onChanged, onFinished, onDiscard, onHome }: {
+export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, demos, custom, library, recent, index, units, body, pending, onPending, onChanged, onFinished, onDiscard, onHome }: {
   /** Suggest next (#43), shown in place when open. */
   suggestPanel: ReactNode;
   onSuggest: () => void;
@@ -30,6 +32,9 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, lib
   session: Session;
   /** A routine run or a repeat (#36): the planned exercises and their targets. */
   plan: RoutineItem[] | null;
+  /** The person's demonstrations (#77) and equipment, for Show me (#76). */
+  demos: Demo[];
+  custom: EquipmentItem[];
   library: LibraryItem[];
   recent: LibraryItem[];
   index: RecordIndex | null;
@@ -67,7 +72,9 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, lib
   const [modifying, setModifying] = useState(false);
   const [removing, setRemoving] = useState(false);
   const [discarding, setDiscarding] = useState(false);
-  useEffect(() => { setModifying(false); setRemoving(false); }, [currentId]);
+  const [showing, setShowing] = useState(false);
+  const modelOf = useMemo(() => propModels(custom), [custom]);
+  useEffect(() => { setModifying(false); setRemoving(false); setShowing(false); }, [currentId]);
   // The current exercise in the middle of the screen whenever it changes (#44).
   const middle = useRef<HTMLDivElement>(null);
   useEffect(() => { middle.current?.scrollIntoView({ block: "center", behavior: "smooth" }); }, [current?.id]);
@@ -254,6 +261,14 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, lib
             {currentStep ? <span className="muted num" style={{ whiteSpace: "nowrap", paddingTop: 4 }}>Set {Math.min(currentStep.done + 1, currentStep.item.sets)} of {currentStep.item.sets}</span> : null}
           </div>
           {cue ? <p className="cue">{cue}</p> : null}
+          {(() => {
+            // Show me (#76): the demonstration, where the exercise has one.
+            const demo = demoFor(current.exercise, demos);
+            if (!demo) return null;
+            return showing
+              ? <><DemoPlayer clip={demo.clip} modelOf={modelOf} height={240} /><Button variant="ghost" onClick={() => setShowing(false)}>Hide the demonstration</Button></>
+              : <Button variant="ghost" onClick={() => setShowing(true)}>Show me how</Button>;
+          })()}
           {(() => {
             const target = stepOf(current)?.item;
             const prog = target ? progression(target, measure, index?.lastTime(current.exercise, session.startedAt)?.entry, units) : undefined;

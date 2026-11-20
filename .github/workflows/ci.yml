@@ -88,6 +88,16 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri
+      # Gradle's downloads, kept between runs: Maven Central answers shared runners with 429 Too Many
+      # Requests often enough to fail the build (four of ten runs), and a build with these already
+      # fetched asks it for nothing.
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches/modules-2
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('package-lock.json', 'src-tauri/Cargo.lock') }}
+          restore-keys: gradle-${{ runner.os }}-
       - name: The NDK
         run: |
           ndk="$ANDROID_HOME/ndk/$NDK_VERSION"
