@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } f
 import type { DemoClip } from "@bm/engine";
 import { Chip } from "../ui/components.tsx";
 import type { PropModel } from "./models.ts";
+import { use3d } from "./prefs.ts";
 import type { DemoStage, StageColors } from "./types.ts";
 
 /**
@@ -35,7 +36,9 @@ export function StageView({ height, full = false, onStage, onTap }: {
   const drag = useRef<{ x: number; y: number; moved: number; pinch?: number } | null>(null);
   const touches = useRef(new Map<number, { x: number; y: number }>());
   /** 3D, or the flat sketch; `life` moves on for each new try at 3D. */
-  const [flat, setFlat] = useState(false);
+  const [flat, setFlat] = useState(() => !use3d());
+  /** Flat because 3D failed here, not because this device is set to the drawing. */
+  const [fellBack, setFellBack] = useState(false);
   const [life, setLife] = useState(0);
   const tries = useRef(0);
   const fresh = useRef(false);
@@ -57,6 +60,7 @@ export function StageView({ height, full = false, onStage, onTap }: {
       console.warn(`3D view: ${why}; drawing the demonstration flat`);
       // The WebView refuses a page another 3D context once it has blamed it for losing one, until the page loads afresh.
       if (/could not be created|creating WebGL context/i.test(why)) setBlocked(true);
+      setFellBack(true);
       setFlat(true);
     };
     let made: DemoStage | null = null;
@@ -174,7 +178,7 @@ export function StageView({ height, full = false, onStage, onTap }: {
         style={{ width: "100%", height, borderRadius: "var(--r-btn)", background: "var(--surface-2)", touchAction: full ? "none" : "pan-y", cursor: "grab" }}
         onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}
         onWheel={full ? (e) => { stage.current?.zoomBy(e.deltaY > 0 ? 1.08 : 0.93); stage.current?.render(); } : undefined} />
-      {flat ? (
+      {flat && fellBack ? (
         <div className="hrow" style={{ minHeight: 0 }}>
           <span className="muted" style={{ fontSize: 13 }}>{blocked ? "Simple view: this phone has stopped giving the app 3D. Close the app and open it again to get it back." : "Simple view: this device isn't giving the app 3D right now."}</span>
           {blocked ? null : <button type="button" className="btn ghost" style={{ flexShrink: 0 }} onClick={() => { tries.current = 2; fresh.current = true; setFlat(false); setLife((n) => n + 1); }}>Try 3D</button>}

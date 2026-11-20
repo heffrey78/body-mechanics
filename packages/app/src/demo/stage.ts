@@ -9,6 +9,7 @@ import {
   type DemoClip, type DemoPose, type Joint, type Solved, type Vec3,
 } from "@bm/engine";
 import { HOLDABLE, type PropModel } from "./models.ts";
+import { ON_ANDROID } from "./prefs.ts";
 import type { DemoStage, StageColors } from "./types.ts";
 
 
@@ -413,7 +414,7 @@ export function sharedStage(colors: StageColors, fresh = false): Stage {
     watching = true;
     // Out of the 3D context while the app is in the background; back in it a moment after returning,
     // once the phone has finished whatever it does to the graphics on the way back.
-    document.addEventListener("visibilitychange", () => {
+    if (ON_ANDROID) document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "hidden") shared?.park();
       else setTimeout(() => { if (document.visibilityState === "visible") shared?.unpark(); }, 1500);
     });

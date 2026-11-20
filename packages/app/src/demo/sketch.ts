@@ -135,9 +135,36 @@ export class Sketch implements DemoStage {
     const s = this.#last;
     if (!s) return;
     const strokes: Stroke[] = [];
+    // A soft shadow on the floor under every part of the body: it shows what is touching down and what is in the air.
+    ctx.fillStyle = c.gearDark;
+    for (const j of JOINTS) {
+      const parent = BONES[j].parent;
+      for (const k of parent ? [0.5, 1] : [1]) {
+        const a0 = parent ? s[parent].pos : s[j].pos, b0 = s[j].pos;
+        const p: Vec3 = [a0[0] + (b0[0] - a0[0]) * k, 0, a0[2] + (b0[2] - a0[2]) * k];
+        const height = a0[1] + (b0[1] - a0[1]) * k;
+        const [x, y] = at(p);
+        // Fainter and wider the higher the part is off the floor.
+        ctx.globalAlpha = Math.max(0.02, 0.1 - height * 0.045);
+        const r = (0.09 + height * 0.05) * scale;
+        ctx.beginPath();
+        ctx.ellipse(x, y, r, Math.max(1, r * Math.abs(Math.sin(e))), 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    ctx.globalAlpha = 1;
     // A segment with an edge in the background colour, so limbs in front of the body read as separate.
+    // Farther parts are drawn fainter, which is most of what tells near from far here.
+    const fade = (depth: number) => Math.max(0, Math.min(0.38, 0.19 - (depth / this.#radius) * 0.3));
     const limb = (p: Vec3, q: Vec3, width: number, colour = c.body) => {
-      strokes.push({ depth: (at(p)[2] + at(q)[2]) / 2, draw: () => { line(p, q, width + 0.025, c.bg); line(p, q, width, colour); } });
+      const depth = (at(p)[2] + at(q)[2]) / 2;
+      strokes.push({ depth, draw: () => {
+        line(p, q, width + 0.025, c.bg);
+        line(p, q, width, colour);
+        ctx.globalAlpha = fade(depth);
+        line(p, q, width, c.bg);
+        ctx.globalAlpha = 1;
+      } });
     };
 
     // Equipment: boxes where it's placed, and what the hands hold.
@@ -189,7 +216,13 @@ export class Sketch implements DemoStage {
     }
     const head = add(s.head.pos, rot(s.head.rot, HEAD_CENTRE));
     const nose = add(s.head.pos, rot(s.head.rot, [0, HEAD_CENTRE[1] - 0.01, HEAD_CENTRE[2] + HEAD_RADIUS]));
-    strokes.push({ depth: at(head)[2], draw: () => { disc(head, HEAD_RADIUS + 0.02, c.bg); disc(head, HEAD_RADIUS + 0.008, c.body); } });
+    strokes.push({ depth: at(head)[2], draw: () => {
+      disc(head, HEAD_RADIUS + 0.02, c.bg);
+      disc(head, HEAD_RADIUS + 0.008, c.body);
+      ctx.globalAlpha = fade(at(head)[2]);
+      disc(head, HEAD_RADIUS + 0.008, c.bg);
+      ctx.globalAlpha = 1;
+    } });
     strokes.push({ depth: at(nose)[2] + (at(nose)[2] > at(head)[2] ? 0.2 : -0.2), draw: () => disc(nose, 0.024, c.joint) });
     // A dot at every joint: it shows the joint, and it's what a tap picks (#83).
     this.#where.clear();

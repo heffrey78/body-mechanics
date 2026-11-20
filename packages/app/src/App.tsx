@@ -13,6 +13,7 @@ import { JoinScreen } from "./screens/JoinScreen.tsx";
 import { useTheme } from "./theme/theme.ts";
 import { ThemeScreen } from "./screens/ThemeScreen.tsx";
 import { TimerCheck } from "./screens/TimerCheck.tsx";
+import { GraphicsCheck } from "./demo/GraphicsCheck.tsx";
 import { SetupScreen } from "./screens/SetupScreen.tsx";
 import { StorageCheck } from "./screens/StorageCheck.tsx";
 import { MoreScreen } from "./screens/MoreScreen.tsx";
@@ -519,6 +520,7 @@ export function App() {
           <dt className="muted">Records</dt><dd style={{ margin: 0 }} className="strong">{records === "ready" ? "encrypted, ready" : records}</dd>
         </dl>
         <TimerCheck />
+        <GraphicsCheck />
         {platform !== "browser" ? <StorageCheck /> : null}
       </div>
     );
