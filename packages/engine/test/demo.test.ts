@@ -106,6 +106,34 @@ describe("demonstrations as records (#81, #82)", () => {
     }
   });
 
+  it("the floor poses rest on what they should: hands and knees, forearms and toes", () => {
+    // How far above the floor each part's underside is, in metres.
+    const up = (c: DemoClip, phase: number) => {
+      const s = solve(c, phase);
+      const side = (x: "L" | "R") => ({ palm: palm(s, x)[1] - 0.035, knee: s[`knee${x}`].pos[1] - 0.055, elbow: s[`elbow${x}`].pos[1] - 0.04, foot: ball(s, x)[1] - 0.035 });
+      return { L: side("L"), R: side("R") };
+    };
+    const down = (v: number) => expect(Math.abs(v)).toBeLessThan(0.025);
+    for (const id of ["bm:bird-dog", "bm:cat-cow"]) for (const phase of id === "bm:cat-cow" ? [0, 0.25, 0.5] : [0]) {
+      const u = up(BUILT_IN_DEMOS[id]!, phase);
+      for (const x of ["L", "R"] as const) { down(u[x].palm); down(u[x].knee); }
+    }
+    // Bird dog reached out: the left hand and the right knee carry it; the other arm and leg are well up.
+    const reach = up(BUILT_IN_DEMOS["bm:bird-dog"]!, 0.5);
+    down(reach.L.palm); down(reach.R.knee);
+    expect(reach.R.palm).toBeGreaterThan(0.3);
+    expect(reach.L.knee).toBeGreaterThan(0.3);
+    const plank = up(BUILT_IN_DEMOS["bm:plank"]!, 0);
+    for (const x of ["L", "R"] as const) { down(plank[x].elbow); down(plank[x].foot); }
+    for (const phase of [0, 0.5]) {
+      const push = up(BUILT_IN_DEMOS["bm:push-up"]!, phase);
+      for (const x of ["L", "R"] as const) { down(push[x].palm); down(push[x].foot); }
+    }
+    const allFours = solvePose(clip({ anchor: "floor" }), PRESETS[4].pose);
+    expect(Math.abs(palm(allFours, "L")[1] - 0.035)).toBeLessThan(0.025);
+    expect(Math.abs(allFours.kneeL.pos[1] - 0.055)).toBeLessThan(0.025);
+  });
+
   it("the person's own replaces the built-in one; deleting it brings the built-in back", async () => {
     const files = memoryFilesPort();
     const { vault } = await Vault.create({ files, secrets: memorySecretsPort() }, "/r", "correct horse battery", { scryptLogN: 10 });

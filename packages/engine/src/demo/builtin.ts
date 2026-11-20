@@ -23,7 +23,12 @@ const stand = (...joints: J[]) => pose([0, STANDING, 0], [0, 0, 0], ...joints);
 const seated = (lean: number, ...joints: J[]) => pose([0, 0.53, 0], [lean, 0, 0], both("hip", [90 + lean, 6, 0]), both("knee", [-90, 0, 0]), ...joints);
 /** Lying on the back, knees up, feet flat. */
 const hook = (...joints: J[]) => pose([0, 0.11, 0], [-90, 0, 0], both("hip", [50, 0, 0]), both("knee", [-100, 0, 0]), both("ankle", [-40, 0, 0]), both("shoulder", [0, 12, 0]), ...joints);
-const allFours = (...joints: J[]) => pose([0, 0.5, 0], [90, 0, 0], both("hip", [90, 0, 0]), both("knee", [-90, 0, 0]), both("ankle", [-70, 0, 0]), both("shoulder", [90, 0, 0]), { head: [-25, 0, 0] }, ...joints);
+/** On hands and knees, both on the floor: the arms are longer than the thighs, so the back slopes up to the shoulders. `bend` rounds (+) or arches (-) the back. */
+const allFours = (bend: number, ...joints: J[]) => {
+  const pitch = bend > 0 ? 55 : bend < 0 ? 83 : 68;
+  return pose([0, 0.5, 0], [pitch, 0, 0], both("hip", [pitch, 0, 0]), both("knee", [-90, 0, 0]), both("ankle", [-60, 0, 0]), both("shoulder", [pitch + 2 * bend, 0, 0]),
+    bend ? { spine: [bend, 0, 0], chest: [bend, 0, 0] } : {}, { head: [-25, 0, 0] }, ...joints);
+};
 const prone = (...joints: J[]) => pose([0, 0.12, 0], [90, 0, 0], both("ankle", [-70, 0, 0]), both("shoulder", [180, 0, 0]), ...joints);
 const hang = (...joints: J[]) => pose([0, 1.17, 0], [0, 0, 0], both("shoulder", [180, 0, 0]), ...joints);
 /** A hip hinge: flat back tipped forward, hips back, knees soft, arms hanging. */
@@ -96,15 +101,9 @@ export const BUILT_IN: Record<string, DemoClip> = {
     poses: [stand(both("shoulder", [90, 8, 0])), stand(both("shoulder", [90, 78, 0]))],
   }),
   // Core and floor work
-  "bm:plank": back({ seconds: 4, anchor: "floor", props: [mat], poses: [pose([0, 0.3, 0], [80, 0, 0], both("shoulder", [80, 0, 0]), both("elbow", [90, 0, 0]), both("ankle", [15, 0, 0]), { head: [-15, 0, 0] })] }),
-  "bm:bird-dog": back({ seconds: 3.6, anchor: "floor", props: [mat], poses: [allFours(), allFours({ shoulderR: [180, 0, 0], hipL: [0, 0, 0], kneeL: [0, 0, 0], ankleL: [-40, 0, 0] })] }),
-  "bm:cat-cow": back({
-    seconds: 4, anchor: "floor", props: [mat],
-    poses: [
-      { ...allFours({ spine: [-14, 0, 0], chest: [-14, 0, 0], head: [-45, 0, 0] }, both("shoulder", [76, 0, 0]), both("hip", [104, 0, 0])), turn: [104, 0, 0] },
-      { ...allFours({ spine: [18, 0, 0], chest: [18, 0, 0], neck: [20, 0, 0], head: [25, 0, 0] }, both("shoulder", [108, 0, 0]), both("hip", [72, 0, 0])), turn: [72, 0, 0] },
-    ],
-  }),
+  "bm:plank": back({ seconds: 4, anchor: "floor", props: [mat], poses: [pose([0, 0.3, 0], [84, 0, 0], both("shoulder", [84, 0, 0]), both("elbow", [90, 0, 0]), both("ankle", [15, 0, 0]), { head: [-15, 0, 0] })] }),
+  "bm:bird-dog": back({ seconds: 3.6, anchor: "floor", props: [{ ...mat, at: [0, 0, 0.3] }], poses: [allFours(0), allFours(0, { shoulderR: [158, 0, 0], hipL: [-22, 0, 0], kneeL: [0, 0, 0], ankleL: [-40, 0, 0] })] }),
+  "bm:cat-cow": back({ seconds: 4, anchor: "floor", props: [{ ...mat, at: [0, 0, 0.3] }], poses: [allFours(-14, { head: [-40, 0, 0] }), allFours(12, { neck: [20, 0, 0], head: [25, 0, 0] })] }),
   "bm:dead-bug": back({
     seconds: 3.6, anchor: "floor", props: [mat],
     poses: [

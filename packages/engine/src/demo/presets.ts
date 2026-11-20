@@ -19,7 +19,7 @@ export const PRESETS = [
   { id: "seated", name: "Seated", anchor: "floor", pose: pose([0, 0.53, 0], [0, 0, 0], both("hip", [90, 0, 0]), both("knee", [-90, 0, 0])) },
   { id: "on-back", name: "On your back", anchor: "floor", pose: pose([0, 0.11, 0], [-90, 0, 0], both("ankle", [-30, 0, 0])) },
   { id: "face-down", name: "Face down", anchor: "floor", pose: pose([0, 0.12, 0], [90, 0, 0], both("ankle", [-70, 0, 0])) },
-  { id: "all-fours", name: "All fours", anchor: "floor", pose: pose([0, 0.5, 0], [90, 0, 0], both("hip", [90, 0, 0]), both("knee", [-90, 0, 0]), both("ankle", [-70, 0, 0]), both("shoulder", [90, 0, 0]), { head: [-25, 0, 0] }) },
+  { id: "all-fours", name: "All fours", anchor: "floor", pose: pose([0, 0.5, 0], [68, 0, 0], both("hip", [68, 0, 0]), both("knee", [-90, 0, 0]), both("ankle", [-60, 0, 0]), both("shoulder", [68, 0, 0]), { head: [-25, 0, 0] }) },
   { id: "plank", name: "Plank", anchor: "floor", pose: pose([0, 0.45, 0], [68, 0, 0], both("shoulder", [68, 0, 0]), both("ankle", [20, 0, 0]), { head: [-20, 0, 0] }) },
   { id: "hanging", name: "Hanging", anchor: "hands", pose: pose([0, 1.17, 0], [0, 0, 0], both("shoulder", [180, 0, 0])) },
 ] as const satisfies readonly { id: string; name: string; anchor: DemoAnchor; pose: DemoPose }[];
