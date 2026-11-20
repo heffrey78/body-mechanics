@@ -9,14 +9,14 @@ import {
   type DemoClip, type DemoPose, type Joint, type Solved, type Vec3,
 } from "@bm/engine";
 import { HOLDABLE, type PropModel } from "./models.ts";
+import type { DemoStage, StageColors } from "./types.ts";
 
-export interface StageColors { bg: string; floor: string; grid: string; body: string; joint: string; gear: string; gearDark: string; select: string }
 
 const v3 = (a: Vec3) => new THREE.Vector3(a[0], a[1], a[2]);
 const Y = new THREE.Vector3(0, 1, 0);
 
 
-export class Stage {
+export class Stage implements DemoStage {
   readonly #renderer: THREE.WebGLRenderer;
   readonly #scene = new THREE.Scene();
   readonly #camera = new THREE.PerspectiveCamera(32, 1, 0.1, 50);
@@ -346,12 +346,15 @@ export class Stage {
     this.#renderer.render(this.#scene, this.#camera);
   }
 
+  /** The phone took the 3D context away (and hasn't given it back). */
+  get lost(): boolean { return this.#renderer.getContext().isContextLost(); }
+
   dispose(): void {
     this.#clearProps();
     this.#scene.traverse((o) => { if (o instanceof THREE.Mesh) o.geometry.dispose(); });
     for (const m of Object.values(this.#mat)) m.dispose();
     this.#renderer.dispose();
     // Give the 3D context back now: a WebView allows only a few, and waiting for the collector runs out of them.
-    this.#renderer.forceContextLoss();
+    if (!this.lost) this.#renderer.forceContextLoss();
   }
 }

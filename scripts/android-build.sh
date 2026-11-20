@@ -28,5 +28,7 @@ rm -f "$res/drawable/ic_launcher_background.xml" "$res/drawable-v24/ic_launcher_
 cp -r icons/android/. "$res/"
 # An APK of an earlier build would be taken for this one's.
 rm -rf gen/android/app/build/outputs/apk
-npx tauri android build --debug --apk --target "$target"
+# Gradle sometimes fails to fetch a plugin from its registry (twice in six CI runs): one more go after a pause.
+build() { npx tauri android build --debug --apk --target "$target"; }
+build || { echo "The build failed; trying once more in 20 s."; sleep 20; build; }
 find gen/android/app/build/outputs/apk -name '*.apk'

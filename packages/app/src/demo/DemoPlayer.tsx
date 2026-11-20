@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } f
 import type { DemoClip } from "@bm/engine";
 import { Chip } from "../ui/components.tsx";
 import type { PropModel } from "./models.ts";
-import type { Stage, StageColors } from "./stage.ts";
+import type { DemoStage, StageColors } from "./types.ts";
 
 /**
  * The stage's colours, from the theme's tokens as they stand where the canvas sits: the session's
@@ -20,59 +20,94 @@ function stageColors(at: Element): StageColors {
 /**
  * The canvas a demonstration is drawn on (#80). The 3D code loads when this first appears. Dragging
  * turns the view; `full` lets a drag tilt it too (the builder), otherwise up-and-down drags scroll the page.
+ *
+ * A phone takes the 3D context away when the app sleeps, and its WebView can then refuse a new one until
+ * the app restarts. So: wait for the WebView to hand the same context back; failing that, try a fresh
+ * canvas twice, slowly (asking again and again is what gets an app refused); failing that, draw the
+ * demonstration flat, which needs no 3D at all.
  */
 export function StageView({ height, full = false, onStage, onTap }: {
-  height: number; full?: boolean; onStage: (s: Stage | null) => void; onTap?: (x: number, y: number) => void;
+  height: number; full?: boolean; onStage: (s: DemoStage | null) => void; onTap?: (x: number, y: number) => void;
 }) {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const stage = useRef<Stage | null>(null);
-  const [failed, setFailed] = useState(false);
+  const stage = useRef<DemoStage | null>(null);
   const drag = useRef<{ x: number; y: number; moved: number; pinch?: number } | null>(null);
   const touches = useRef(new Map<number, { x: number; y: number }>());
-  /** A fresh canvas each time the 3D context is lost: the phone takes it away in the background, or the graphics driver resets. */
+  /** 3D, or the flat sketch; and a fresh canvas for each new try (a canvas keeps the kind of context it first gave). */
+  const [flat, setFlat] = useState(false);
   const [life, setLife] = useState(0);
-  const losses = useRef<number[]>([]);
+  const tries = useRef(0);
 
   useEffect(() => {
     let gone = false;
     const el = canvas.current;
-    const lost = (e: Event) => {
-      e.preventDefault();
-      console.warn("3D context lost; starting the stage again");
-      const now = Date.now();
-      losses.current = [...losses.current.filter((t) => now - t < 20_000), now];
-      // Lost again and again: stop trying, and say so.
-      if (losses.current.length > 3) { setFailed(true); return; }
-      const again = () => { if (!gone) setLife((n) => n + 1); };
-      if (document.visibilityState === "visible") setTimeout(again, 250);
-      else document.addEventListener("visibilitychange", again, { once: true });
+    if (!el) return;
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const later = (ms: number, fn: () => void) => { timers.push(setTimeout(() => { if (!gone) fn(); }, ms)); };
+    const whenVisible = (fn: () => void) => {
+      if (document.visibilityState === "visible") return fn();
+      const seen = () => { if (document.visibilityState !== "visible") return; document.removeEventListener("visibilitychange", seen); if (!gone) fn(); };
+      document.addEventListener("visibilitychange", seen);
+      timers.push(setTimeout(() => document.removeEventListener("visibilitychange", seen), 3_600_000));
     };
-    void import("./stage.ts").then(({ Stage }) => {
-      if (gone || !el) return;
-      try {
-        stage.current = new Stage(el, stageColors(el));
-        el.addEventListener("webglcontextlost", lost);
+    const giveUp = (why: string) => { console.warn(`3D view: ${why}; drawing the demonstration flat`); setFlat(true); };
+    let restored = true;
+    const lost = (e: Event) => {
+      // Asking the WebView to keep the canvas: it may hand the context back by itself.
+      e.preventDefault();
+      restored = false;
+      console.warn("3D view: context lost");
+      // Once the app is in view again, give it a moment; then a fresh canvas, and after two of those the flat drawing.
+      whenVisible(() => later(2500 + tries.current * 4000, () => {
+        if (restored) return;
+        if (tries.current >= 2) return giveUp("the context didn't come back");
+        tries.current += 1;
+        console.warn(`3D view: starting again on a fresh canvas (try ${tries.current})`);
+        setLife((n) => n + 1);
+      }));
+    };
+    const back = () => { restored = true; console.warn("3D view: context restored"); stage.current?.render(); };
+
+    if (flat) {
+      void import("./sketch.ts").then(({ Sketch }) => {
+        if (gone) return;
+        stage.current = new Sketch(el, stageColors(el));
         onStage(stage.current);
-      } catch {
-        setFailed(true);
-      }
-    }, () => setFailed(true));
+      });
+    } else {
+      void import("./stage.ts").then(({ Stage }) => {
+        if (gone) return;
+        try {
+          const made = new Stage(el, stageColors(el));
+          stage.current = made;
+          el.addEventListener("webglcontextlost", lost);
+          el.addEventListener("webglcontextrestored", back);
+          onStage(made);
+          // It has held for a while: the next loss starts counting afresh.
+          later(30_000, () => { if (!made.lost) tries.current = 0; });
+        } catch (e) {
+          giveUp(`no 3D context (${e instanceof Error ? e.message : String(e)})`);
+        }
+      }, () => giveUp("the 3D code didn't load"));
+    }
     // The theme changed: the stage follows.
-    const seen = new MutationObserver(() => { if (canvas.current) stage.current?.setColors(stageColors(canvas.current)); stage.current?.render(); });
+    const seen = new MutationObserver(() => { stage.current?.setColors(stageColors(el)); stage.current?.render(); });
     seen.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-mode"] });
     const resized = new ResizeObserver(() => stage.current?.render());
-    if (el) resized.observe(el);
+    resized.observe(el);
     return () => {
       gone = true;
+      timers.forEach(clearTimeout);
       seen.disconnect();
       resized.disconnect();
       // Our own clean-up gives the context back, which is not a loss to recover from.
-      el?.removeEventListener("webglcontextlost", lost);
+      el.removeEventListener("webglcontextlost", lost);
+      el.removeEventListener("webglcontextrestored", back);
       onStage(null);
       stage.current?.dispose();
       stage.current = null;
     };
-  }, [life]);
+  }, [life, flat]);
 
   const down = (e: ReactPointerEvent) => {
     touches.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -107,19 +142,19 @@ export function StageView({ height, full = false, onStage, onTap }: {
     else if (d) delete d.pinch;
   };
 
-  if (failed) {
-    return (
-      <div className="muted" style={{ padding: 16, textAlign: "center", display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
-        <span>The 3D view isn't working on this device right now.</span>
-        <button type="button" className="btn ghost" onClick={() => { losses.current = []; setFailed(false); setLife((n) => n + 1); }}>Try again</button>
-      </div>
-    );
-  }
   return (
-    <canvas key={life} ref={canvas} role="img" aria-label="3D demonstration. Drag to turn the view."
-      style={{ width: "100%", height, display: "block", borderRadius: "var(--r-btn)", touchAction: full ? "none" : "pan-y", cursor: "grab" }}
-      onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}
-      onWheel={full ? (e) => { stage.current?.zoomBy(e.deltaY > 0 ? 1.08 : 0.93); stage.current?.render(); } : undefined} />
+    <>
+      <canvas key={`${flat ? "flat" : "3d"}-${life}`} ref={canvas} role="img" aria-label="Demonstration. Drag to turn the view."
+        style={{ width: "100%", height, display: "block", borderRadius: "var(--r-btn)", touchAction: full ? "none" : "pan-y", cursor: "grab" }}
+        onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}
+        onWheel={full ? (e) => { stage.current?.zoomBy(e.deltaY > 0 ? 1.08 : 0.93); stage.current?.render(); } : undefined} />
+      {flat ? (
+        <div className="hrow" style={{ minHeight: 0 }}>
+          <span className="muted" style={{ fontSize: 13 }}>Simple view: this device isn't giving the app 3D right now. Restarting the app brings it back.</span>
+          <button type="button" className="btn ghost" style={{ flexShrink: 0 }} onClick={() => { tries.current = 2; setFlat(false); setLife((n) => n + 1); }}>Try 3D</button>
+        </div>
+      ) : null}
+    </>
   );
 }
 
@@ -127,7 +162,7 @@ const VIEWS = [{ label: "Front", around: 0 }, { label: "Side", around: 90 }, { l
 
 /** A demonstration playing in a loop (#76): drag to turn it, pause it, slow it down. */
 export function DemoPlayer({ clip, modelOf, height = 280 }: { clip: DemoClip; modelOf: (kind: string) => PropModel; height?: number }) {
-  const [stage, setStage] = useState<Stage | null>(null);
+  const [stage, setStage] = useState<DemoStage | null>(null);
   const [playing, setPlaying] = useState(() => !window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   const [slow, setSlow] = useState(false);
   const phase = useRef(0);

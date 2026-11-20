@@ -7,7 +7,7 @@ import { Button, Chip, Segmented, Stepper } from "../ui/components.tsx";
 import { equipmentLabel } from "../ui/labels.ts";
 import { StageView } from "./DemoPlayer.tsx";
 import { HOLDABLE, propModels } from "./models.ts";
-import type { Stage } from "./stage.ts";
+import type { DemoStage } from "./types.ts";
 
 const JOINT_LABEL: Record<Joint, string> = {
   pelvis: "Whole body", spine: "Waist", chest: "Chest", neck: "Neck", head: "Head",
@@ -87,7 +87,7 @@ export function DemoBuilder({ name, exercise, current, custom, needs, onSave, on
   const [bothSides, setBothSides] = useState(true);
   const [playing, setPlaying] = useState(false);
   const [confirm, setConfirm] = useState(false);
-  const [stage, setStage] = useState<Stage | null>(null);
+  const [stage, setStage] = useState<DemoStage | null>(null);
   const modelOf = useMemo(() => propModels(custom), [custom]);
   const names = useMemo(() => new Map(custom.map((c) => [c.id, c])), [custom]);
 
