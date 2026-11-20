@@ -33,7 +33,11 @@ const squat = (arms: J = both("shoulder", [110, 0, 0])) =>
   pose([0, 0.5, 0], [35, 0, 0], both("hip", [120, 8, 0]), both("knee", [-110, 0, 0]), both("ankle", [25, 0, 0]), arms, { head: [-25, 0, 0] });
 
 const back = (c: Omit<Clip, "loop">) => clip({ loop: "there-and-back", ...c });
-const chair: Prop = { kind: "chair", hold: "none", at: [0, 0, -0.45], turn: 0 };
+/**
+ * A chair to sit on. Feet stay where the first key pose puts them, so where the chair goes depends on
+ * which pose comes first: under the hips when it starts seated, a thigh's length behind when it starts standing.
+ */
+const chair = (startsSeated: boolean): Prop => ({ kind: "chair", hold: "none", at: [0, 0, startsSeated ? -0.03 : -0.46], turn: 0 });
 const mat: Prop = { kind: "mat", hold: "none", at: [0, 0, 0.05], turn: 0 };
 const bar: Prop = { kind: "pullup-bar", hold: "none", at: [0, 2.25, 0], turn: 0 };
 const dumbbells: Prop = { kind: "dumbbells", hold: "both", at: [0, 0, 0], turn: 0 };
@@ -51,8 +55,8 @@ const curl = (twist: number) => [stand(both("elbow", [5, 0, twist])), stand(both
 export const BUILT_IN: Record<string, DemoClip> = {
   // Legs
   "bm:bodyweight-squat": back({ seconds: 3.2, anchor: "feet", poses: [stand(both("hip", [0, 8, 0])), squat()] }),
-  "bm:sit-to-stand": back({ seconds: 4, anchor: "feet", props: [chair], poses: sitToStand }),
-  "bm:box-squat": back({ seconds: 4, anchor: "feet", props: [chair], poses: [...sitToStand].reverse() }),
+  "bm:sit-to-stand": back({ seconds: 4, anchor: "feet", props: [chair(true)], poses: sitToStand }),
+  "bm:box-squat": back({ seconds: 4, anchor: "feet", props: [chair(false)], poses: [...sitToStand].reverse() }),
   "bm:wall-sit": back({ seconds: 4, anchor: "floor", props: [{ kind: "wall", hold: "none", at: [0, 0, -0.17], turn: 0 }], poses: [seated(0)] }),
   "bm:calf-raise": back({ seconds: 2.4, anchor: "feet", poses: [stand(), stand(both("ankle", [-38, 0, 0]))] }),
   "bm:reverse-lunge": back({
@@ -111,7 +115,7 @@ export const BUILT_IN: Record<string, DemoClip> = {
   "bm:crunch": back({ seconds: 2.8, anchor: "floor", props: [mat], poses: [hook(both("shoulder", [40, 0, 0]), both("elbow", [120, 0, 0])), hook(both("shoulder", [40, 0, 0]), both("elbow", [120, 0, 0]), { spine: [30, 0, 0], chest: [28, 0, 0], neck: [10, 0, 0] })] }),
   "bm:lying-leg-raise": back({ seconds: 3.6, anchor: "floor", props: [mat], poses: [pose([0, 0.11, 0], [-90, 0, 0], both("shoulder", [0, 12, 0]), both("hip", [8, 0, 0])), pose([0, 0.11, 0], [-90, 0, 0], both("shoulder", [0, 12, 0]), both("hip", [88, 0, 0]))] }),
   "bm:superman": back({
-    seconds: 3.2, anchor: "floor", props: [mat],
+    seconds: 3.2, anchor: "floor", props: [{ ...mat, at: [0, 0, -0.1] }],
     poses: [prone(), prone(both("shoulder", [205, 0, 0]), both("hip", [-18, 0, 0]), { spine: [-12, 0, 0], chest: [-14, 0, 0], head: [-20, 0, 0] })],
   }),
   // Whole body
