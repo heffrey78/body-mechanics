@@ -98,6 +98,14 @@ button { font-family: inherit; }
 .track .fill.sev-2 { background: var(--warn-ink); }
 .track .fill.sev-3 { background: var(--stop, var(--warn-ink)); }
 
+/* Sliders for the demonstration builder (#83). */
+.slider { display: flex; flex-direction: column; gap: 4px; }
+.slider-head { display: flex; justify-content: space-between; font-size: 14px; color: var(--muted); }
+.slider-head .strong { color: var(--ink); }
+.slider-row { display: flex; align-items: center; gap: 10px; }
+.slider-row .mini { width: 44px; height: 44px; flex-shrink: 0; }
+.slider-row input[type="range"] { flex: 1; min-width: 0; height: 44px; accent-color: var(--accent); background: transparent; }
+
 /* The session's current exercise (#73). In dark modes it is a dimmed light island: the usual token
    names are pointed at the theme's --f-* values, so every component inside draws dark on light. */
 [data-mode="dark"] .card.focus {

@@ -12,3 +12,4 @@ export * from "./search/index.ts";
 export * from "./suggest/index.ts";
 export * from "./body/index.ts";
 export * from "./sync/index.ts";
+export * from "./demo/index.ts";

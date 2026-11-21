@@ -28,5 +28,13 @@ rm -f "$res/drawable/ic_launcher_background.xml" "$res/drawable-v24/ic_launcher_
 cp -r icons/android/. "$res/"
 # An APK of an earlier build would be taken for this one's.
 rm -rf gen/android/app/build/outputs/apk
-npx tauri android build --debug --apk --target "$target"
+# Maven Central sometimes answers 429 Too Many Requests (it limits shared CI runners): wait it out and go
+# again, twice at most. What Gradle did fetch is kept, so each go asks for less.
+build() { npx tauri android build --debug --apk --target "$target"; }
+for wait in 90 240 0; do
+  build && break
+  [[ $wait -gt 0 ]] || exit 1
+  echo "The build failed; trying again in $wait s."
+  sleep "$wait"
+done
 find gen/android/app/build/outputs/apk -name '*.apk'

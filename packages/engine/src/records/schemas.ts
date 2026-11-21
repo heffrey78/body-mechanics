@@ -8,6 +8,7 @@
 import { z } from "zod";
 import { HLC_PATTERN } from "./hlc.ts";
 import { ID_PATTERN } from "./ids.ts";
+import { JOINTS } from "../demo/skeleton.ts";
 import { BOTHERS, EFFORTS, EQUIPMENT, KINDS, MARK_KINDS, MEASURES, MODIFIER_KINDS, RED_FLAGS, REGIONS, RETIRED_THEMES, SIDED_REGIONS, SIDES, THEMES, THEME_MODES, UNITS } from "./vocab.ts";
 
 export const FORMAT_VERSION = 1;
@@ -332,6 +333,65 @@ export const EquipmentItem = z.strictObject({
 });
 export type EquipmentItem = z.infer<typeof EquipmentItem>;
 
+// ---------------------------------------------------------------- demonstration (#76, #77, D5)
+
+const vec3 = z.tuple([z.number(), z.number(), z.number()]);
+
+/** What stays put through the movement: the body is moved so it does. */
+export const DEMO_ANCHORS = ["floor", "feet", "left-foot", "right-foot", "hands", "free"] as const;
+export type DemoAnchor = (typeof DEMO_ANCHORS)[number];
+export const DEMO_LOOPS = ["there-and-back", "round"] as const;
+export const DEMO_HOLDS = ["none", "left", "right", "both"] as const;
+export type DemoHold = (typeof DEMO_HOLDS)[number];
+
+/**
+ * A pose of the body model. `at` is the pelvis in metres (y up, the body faces +z standing), `turn` the
+ * whole body's angles, and each joint's angles are degrees as [forward, to the side, twist]: for an arm
+ * or leg, forward of the body, away from the midline, turned outward; for the trunk and head, bent
+ * forward, leaned to the left, turned to the left. A joint left out is straight.
+ */
+export const DemoPose = z.strictObject({
+  at: vec3,
+  turn: vec3,
+  joints: z.partialRecord(z.enum(JOINTS), vec3),
+});
+export type DemoPose = z.infer<typeof DemoPose>;
+
+/** A key pose: where in the loop (0 to 1) the body is in this pose. */
+export const DemoFrame = z.strictObject({ id: z.string().min(1).max(16), t: z.number().min(0).max(1), pose: DemoPose, edits });
+export type DemoFrame = z.infer<typeof DemoFrame>;
+
+/** A piece of equipment in the scene: placed at `at` and turned, or held in one or both hands. */
+export const DemoProp = z.strictObject({
+  id: z.string().min(1).max(16),
+  kind: equipmentRef,
+  hold: z.enum(DEMO_HOLDS),
+  at: vec3,
+  turn: z.number(),
+  edits,
+});
+export type DemoProp = z.infer<typeof DemoProp>;
+
+/** A demonstration of the person's own for an exercise (#77): it replaces the built-in one, if any. */
+export const Demo = z.strictObject({
+  type: z.literal("demo"),
+  v: z.literal(FORMAT_VERSION),
+  id,
+  exercise: exerciseRef,
+  /** How long one loop takes. */
+  seconds: z.number().min(0.5).max(60),
+  loop: z.enum(DEMO_LOOPS),
+  anchor: z.enum(DEMO_ANCHORS),
+  frames: z.array(DemoFrame).min(1).max(24),
+  props: z.array(DemoProp).max(12).default([]),
+  deleted: z.literal(true).optional(),
+  edits,
+});
+export type Demo = z.infer<typeof Demo>;
+
+/** What the player needs: a record of the person's, or a built-in demonstration. */
+export type DemoClip = Pick<Demo, "seconds" | "loop" | "anchor" | "frames" | "props">;
+
 // ---------------------------------------------------------------- format.yaml (plain, not encrypted)
 
 export const Format = z.strictObject({
@@ -341,6 +401,6 @@ export const Format = z.strictObject({
 });
 export type Format = z.infer<typeof Format>;
 
-export const RECORD_SCHEMAS = { profile: Profile, exercise: Exercise, session: Session, routine: Routine, location: Location, mark: Mark, condition: Condition, equipment: EquipmentItem, override: ExerciseOverride } as const;
+export const RECORD_SCHEMAS = { profile: Profile, exercise: Exercise, session: Session, routine: Routine, location: Location, mark: Mark, condition: Condition, equipment: EquipmentItem, override: ExerciseOverride, demo: Demo } as const;
 export type RecordType = keyof typeof RECORD_SCHEMAS;
-export type AnyRecord = Profile | Exercise | Session | Routine | Location | Mark | Condition | EquipmentItem | ExerciseOverride;
+export type AnyRecord = Profile | Exercise | Session | Routine | Location | Mark | Condition | EquipmentItem | ExerciseOverride | Demo;
