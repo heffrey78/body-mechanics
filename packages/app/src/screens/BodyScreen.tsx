@@ -8,6 +8,7 @@ import { Button, Chip, MarkBadge } from "../ui/components.tsx";
 import { REGION_LABEL } from "../ui/labels.ts";
 import { REGIONS } from "@bm/engine";
 import { ConditionEditor } from "./ConditionsScreen.tsx";
+import { BodyFigure, type AreaState } from "../body/BodyFigure.tsx";
 
 export const KIND_WORD: Record<MarkKind, string> = { pain: "Pain", stiffness: "Stiffness", weakness: "Weakness", injury: "Injury" };
 const SEVERITY_WORD: Record<Severity, string> = { 1: "Mild", 2: "Moderate", 3: "Severe" };
@@ -33,22 +34,7 @@ export const markTitle = (m: Mark) => `${placeLabel(m.region, m.side)} · ${KIND
 const day = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short" });
 const daysAgo = (n: number) => new Date(Date.now() - n * 86_400_000).toISOString().slice(0, 10);
 
-/**
- * The figure's blocks (#48, as the #9 mockup): slot, region, and the person's own side. The front view
- * is a mirror: the block on screen left is their right.
- */
-type Slot = readonly [string, Region, Side];
-const FRONT: readonly Slot[] = [
-  ["neck", "neck", "none"], ["shL", "shoulder", "right"], ["shR", "shoulder", "left"], ["torso", "chest", "none"], ["uaL", "upperarm", "right"], ["uaR", "upperarm", "left"],
-  ["faL", "forearm", "right"], ["faR", "forearm", "left"], ["mid", "core", "none"], ["pelvis", "hips", "none"], ["thL", "quads", "right"], ["thR", "quads", "left"],
-  ["knL", "knee", "right"], ["knR", "knee", "left"], ["lgL", "shin", "right"], ["lgR", "shin", "left"], ["ftL", "ankle", "right"], ["ftR", "ankle", "left"],
-];
-const BACK: readonly Slot[] = [
-  ["neck", "neck", "none"], ["shL", "shoulder", "left"], ["shR", "shoulder", "right"], ["torso", "upperback", "none"], ["uaL", "upperarm", "left"], ["uaR", "upperarm", "right"],
-  ["faL", "forearm", "left"], ["faR", "forearm", "right"], ["mid", "lowerback", "none"], ["pelvis", "glutes", "none"], ["thL", "hamstrings", "left"], ["thR", "hamstrings", "right"],
-  ["knL", "knee", "left"], ["knR", "knee", "right"], ["lgL", "calf", "left"], ["lgR", "calf", "right"], ["ftL", "ankle", "left"], ["ftR", "ankle", "right"],
-];
-/** Hips and glutes appear on both sides of the figure as one block, so they're not sided here. */
+/** Whether a region has a left and a right. */
 const sidedHere = (r: Region) => (SIDED_REGIONS as readonly Region[]).includes(r);
 const covers = (side: Side, slotSide: Side) => side === slotSide || side === "both" || slotSide === "none";
 
@@ -86,7 +72,6 @@ export function BodyScreen({ body, library, routines, open, onNewMark, onCheckIn
 }) {
   const [view, setView] = useState<View>(() =>
     !open ? { v: "map" } : body.conditions.some((c) => c.id === open) ? { v: "condition", id: open } : { v: "mark", id: open });
-  const [face, setFace] = useState<"front" | "back">("front");
   const now = new Date();
   const active = body.marks.filter((m) => isActive(m, now));
   const resolved = body.marks.filter((m) => !isActive(m, now)).reverse();
@@ -129,44 +114,38 @@ export function BodyScreen({ body, library, routines, open, onNewMark, onCheckIn
     </ConditionDetail>;
   }
 
-  const slots = face === "front" ? FRONT : BACK;
   const marksAt = (region: Region, side: Side) => active.filter((m) => m.region === region && covers(m.side, side))
     .sort((a, b) => (currentState(b)?.severity ?? 0) - (currentState(a)?.severity ?? 0));
   const conditionAt = (region: Region, side: Side) => conditions.find((c) => c.regions.some((r) => r.region === region && covers(r.side, side)));
   const due = [...active, ...conditions].filter((x) => isDue(x, now));
+  const stateAt = (region: Region, side: Side): AreaState => {
+    const top = marksAt(region, side)[0];
+    const cond = top ? undefined : conditionAt(region, side);
+    const what = top ? `${KIND_WORD[top.kind].toLowerCase()}, ${SEVERITY_WORD[currentState(top)?.severity ?? 1].toLowerCase()}` : cond ? cond.name : "nothing marked";
+    return { kind: top ? `k-${top.kind}` : cond ? "k-condition" : "", letter: top ? top.kind[0]!.toUpperCase() : cond ? "C" : "", label: `${placeLabel(region, side)}: ${what}` };
+  };
+  const pick = (region: Region, side: Side) => {
+    const top = marksAt(region, side)[0];
+    const cond = conditionAt(region, side);
+    if (top) setView({ v: "mark", id: top.id });
+    else if (cond) setView({ v: "condition", id: cond.id });
+    else setView({ v: "new", region, side });
+  };
 
   return (
     <div className="pad">
-      <div className="hrow">
-        <h1 className="title">Body</h1>
-        <div className="chips" role="group" aria-label="View">
-          <Chip on={face === "front"} onClick={() => setFace("front")}>Front</Chip>
-          <Chip on={face === "back"} onClick={() => setFace("back")}>Back</Chip>
-        </div>
-      </div>
+      <h1 className="title">Body</h1>
       <span className="muted">Tap where it hurts, feels stiff or weak. Suggestions work around what you mark.</span>
-      <div className="fig" aria-label={`Body, ${face}`}>
-        <div className="fig-head" aria-hidden="true" />
-        {slots.map(([slot, region, side]) => {
-          const ms = marksAt(region, side);
-          const cond = conditionAt(region, side);
-          const top = ms[0];
-          const cls = top ? `k-${top.kind}` : cond ? "k-condition" : "";
-          const where = placeLabel(region, sidedHere(region) ? side : "none");
-          const what = top ? `${KIND_WORD[top.kind].toLowerCase()}, ${SEVERITY_WORD[currentState(top)?.severity ?? 1].toLowerCase()}` : cond ? cond.name : "nothing marked";
-          return (
-            <button key={slot} type="button" className={`part s-${slot} ${cls}`} aria-label={`${where}: ${what}`}
-              onClick={() => {
-                if (top) setView({ v: "mark", id: top.id });
-                else if (cond) setView({ v: "condition", id: cond.id });
-                else setView({ v: "new", region, side: sidedHere(region) ? side : "none" });
-              }}>
-              {top ? top.kind[0]!.toUpperCase() : cond ? "C" : ""}
-            </button>
-          );
-        })}
+      <div className="figures">
+        <figure>
+          <BodyFigure face="front" stateAt={stateAt} onPick={pick} />
+          <figcaption><span>Right</span><span className="strong">Front</span><span>Left</span></figcaption>
+        </figure>
+        <figure>
+          <BodyFigure face="back" stateAt={stateAt} onPick={pick} />
+          <figcaption><span>Left</span><span className="strong">Back</span><span>Right</span></figcaption>
+        </figure>
       </div>
-      <span className="muted" style={{ textAlign: "center", fontSize: 13 }}>{face === "front" ? "Front: your right is on the left." : "Back: as you'd see yourself from behind."}</span>
       <div className="chips" aria-label="Key" style={{ fontSize: 13 }}>
         {[...MARK_KINDS, "condition" as const].map((k) => (
           <span key={k} className="muted" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><MarkBadge kind={k} />{k === "condition" ? "Condition" : KIND_WORD[k]}</span>
