@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { EFFORTS, assess, concerns, sessionCue, type Body, describeSet, nextSet, nextStep, planStatus, progression, search, showLoad, toKg, FIELD, demoFor, type Demo, type EquipmentItem, type Effort, type Entry, type LibraryItem, type LoggedSet, type RecordIndex, type RoutineItem, type Session, type SessionLog } from "@bm/engine";
+import { EFFORTS, assess, concerns, sessionCue, type Body, describeSet, nextSet, nextStep, planStatus, progression, search, showLoad, toKg, FIELD, demoFor, type BodyLink, type Demo, type EquipmentItem, type Effort, type Entry, type LibraryItem, type LoggedSet, type RecordIndex, type RoutineItem, type Session, type SessionLog } from "@bm/engine";
 import { elapsedSeconds, pageCue, startTimer, stopTimer, type RunningTimer } from "../timer.ts";
 import { Button, Chip, Segmented, Stepper, Tag, Timer } from "../ui/components.tsx";
 import { DemoPlayer } from "../demo/DemoPlayer.tsx";
 import { propModels } from "../demo/models.ts";
 import { ModifierPicker, modifierText } from "../ui/ModifierPicker.tsx";
+import { BodyLinks, bodyLinkName } from "../body/BodyLinks.tsx";
+import type { NewMarkFields } from "./BodyScreen.tsx";
 
 const REST_SECONDS = 60;
 const EFFORT_LABEL: Record<Effort, string> = { easy: "Easy", right: "About right", hard: "Hard", pain: "Painful" };
@@ -24,7 +26,9 @@ export interface Pending {
  * exercise, every set tappable to correct or delete, and Type next / recent chips for what's next.
  * The card sits in the middle (#44): what's done above it, what's still to do below.
  */
-export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, demos, custom, library, recent, index, units, body, pending, onPending, onChanged, onFinished, onDiscard, onHome }: {
+export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, demos, custom, library, recent, index, units, body, pending, onPending, onChanged, onFinished, onDiscard, onHome, onNewMark }: {
+  /** Make and save a mark from the session (#99); returns its id. */
+  onNewMark: (f: NewMarkFields) => string;
   /** Suggest next (#43), shown in place when open. */
   suggestPanel: ReactNode;
   onSuggest: () => void;
@@ -73,8 +77,12 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, dem
   const [removing, setRemoving] = useState(false);
   const [discarding, setDiscarding] = useState(false);
   const [showing, setShowing] = useState(false);
+  /** The written instructions (#97): once opened they stay open from one exercise to the next. */
+  const [how, setHow] = useState(false);
+  /** Asking what the exercise bothered (#99). */
+  const [asking, setAsking] = useState(false);
   const modelOf = useMemo(() => propModels(custom), [custom]);
-  useEffect(() => { setModifying(false); setRemoving(false); setShowing(false); }, [currentId]);
+  useEffect(() => { setModifying(false); setRemoving(false); setShowing(false); setAsking(false); }, [currentId]);
   // The current exercise in the middle of the screen whenever it changes (#44).
   const middle = useRef<HTMLDivElement>(null);
   useEffect(() => { middle.current?.scrollIntoView({ block: "center", behavior: "smooth" }); }, [current?.id]);
@@ -269,6 +277,9 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, dem
               ? <><DemoPlayer clip={demo.clip} modelOf={modelOf} height={240} /><Button variant="ghost" onClick={() => setShowing(false)}>Hide the demonstration</Button></>
               : <Button variant="ghost" onClick={() => setShowing(true)}>Show me how</Button>;
           })()}
+          {item?.instructions ? (how
+            ? <><p style={{ whiteSpace: "pre-line", margin: 0, lineHeight: 1.5 }}>{item.instructions}</p><Button variant="ghost" onClick={() => setHow(false)}>Hide the instructions</Button></>
+            : <Button variant="ghost" onClick={() => setHow(true)}>How to do it</Button>) : null}
           {(() => {
             const target = stepOf(current)?.item;
             const prog = target ? progression(target, measure, index?.lastTime(current.exercise, session.startedAt)?.entry, units) : undefined;
@@ -319,8 +330,18 @@ export function SessionScreen({ suggestPanel, onSuggest, log, session, plan, dem
             </>
           ) : !hold ? <Button variant="ghost" onClick={() => setModifying(true)}>{current.modifiers.length ? "Change how you're doing it" : "Doing it differently? Add a modifier"}</Button> : null}
           <span className="label">Effort</span>
-          <Segmented label="Effort" value={current.effort ?? ("" as Effort)} onChange={(e) => void run(() => log.setEffort(current.id, e))}
+          <Segmented label="Effort" value={current.effort ?? ("" as Effort)} onChange={(e) => { setAsking(e === "hard" || e === "pain"); void run(() => log.setEffort(current.id, e)); }}
             options={EFFORTS.map((id) => ({ id, label: EFFORT_LABEL[id] }))} />
+          {asking ? (
+            <BodyLinks title={current.effort === "pain" ? "What hurt?" : "Did it bother anything?"} body={body} links={current.links ?? []}
+              onChange={(links: BodyLink[]) => void run(() => log.setLinks(current.id, links))} onNewMark={onNewMark} onDone={() => setAsking(false)} />
+          ) : current.links?.length ? (
+            <>
+              <span className="label">Bothered</span>
+              <div className="chips">{current.links.map((l) => <Tag key={l.id} warn>{bodyLinkName(l, body)}</Tag>)}</div>
+              <Button variant="ghost" onClick={() => setAsking(true)}>Change what it bothered</Button>
+            </>
+          ) : null}
           {skipCurrent && !hold ? <Button variant="ghost" onClick={skipCurrent}>Skip this exercise</Button> : null}
           {hold ? null : removing ? (
             <div className="card">
@@ -398,6 +419,7 @@ function SetLine({ n, set, text, open, measure, units, onOpen, onSave, onDelete 
   const [r, setR] = useState(set.right?.[f] ?? 0);
   const [a, setA] = useState(set[f] ?? 0);
   const [kg, setKg] = useState(set.loadKg ?? 0);
+  const [note, setNote] = useState(set.note ?? "");
   const step = measure === "reps" ? 1 : measure === "time" ? 5 : 10;
   const loadStep = units === "kg" ? 1 : toKg(2.5, "lb");
   return (
@@ -405,6 +427,7 @@ function SetLine({ n, set, text, open, measure, units, onOpen, onSave, onDelete 
       <button type="button" className="result" style={{ padding: "8px 0" }} aria-expanded={open} onClick={onOpen}>
         <span className="muted">Set {n}</span><span className="strong num">{text}</span>
       </button>
+      {set.note && !open ? <span className="muted" style={{ fontSize: 14, marginTop: -6 }}>{set.note}</span> : null}
       {open ? (
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {sided ? (
@@ -416,8 +439,10 @@ function SetLine({ n, set, text, open, measure, units, onOpen, onSave, onDelete 
             <Stepper label={f === "reps" ? "Reps" : f === "seconds" ? "Seconds" : "Metres"} value={String(a)} onLess={() => setA(Math.max(0, a - step))} onMore={() => setA(a + step)} />
           )}
           <Stepper label="Load" value={kg ? showLoad(kg, units) : "None"} onLess={() => setKg(Math.max(0, Math.round((kg - loadStep) * 1000) / 1000))} onMore={() => setKg(Math.round((kg + loadStep) * 1000) / 1000)} />
+          <label className="label" htmlFor={`note-${set.id}`}>Note</label>
+          <input id={`note-${set.id}`} className="field" maxLength={200} placeholder="Pinched at the bottom" autoComplete="off" value={note} onChange={(e) => setNote(e.target.value)} />
           <div className="pair">
-            <Button variant="primary" onClick={() => onSave({ ...(sided ? { left: { [f]: l }, right: { [f]: r } } : { [f]: a }), loadKg: kg > 0 ? kg : undefined })}>Save</Button>
+            <Button variant="primary" onClick={() => onSave({ ...(sided ? { left: { [f]: l }, right: { [f]: r } } : { [f]: a }), loadKg: kg > 0 ? kg : undefined, note: note.trim() || undefined })}>Save</Button>
             <Button variant="stop" onClick={onDelete}>Delete set</Button>
           </div>
         </div>

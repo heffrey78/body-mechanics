@@ -5,10 +5,10 @@
  */
 import * as THREE from "three";
 import {
-  BONES, HEAD_CENTRE, HEAD_RADIUS, JOINTS, palm, solve, solvePose,
+  BONES, HEAD_CENTRE, HEAD_RADIUS, JOINTS, grip, palm, solve, solvePose,
   type DemoClip, type DemoPose, type Joint, type Solved, type Vec3,
 } from "@bm/engine";
-import { HOLDABLE, type PropModel } from "./models.ts";
+import { carry, type PropModel } from "./models.ts";
 import { ON_ANDROID } from "./prefs.ts";
 import type { DemoStage, StageColors } from "./types.ts";
 
@@ -156,7 +156,14 @@ export class Stage implements DemoStage {
       case "step": g.add(this.#box(0.7, 0.2, 0.36, [0, 0.1, 0])); break;
       case "bench": g.add(this.#box(0.3, 0.07, 1.25, [0, 0.385, 0]), ...this.#legs(0.3, 1.1, 0.35, 0.045)); break;
       case "mat": g.add(this.#box(0.65, 0.012, 1.85, [0, 0.006, 0])); break;
-      case "foam-roller": g.add(this.#rod(0.075, 0.45, [0, 0.075, 0])); break;
+      case "foam-roller": g.add(this.#rod(0.075, 0.45, [0, held ? 0 : 0.075, 0])); break;
+      case "wheel": {
+        // An ab roller: a wheel on an axle, with a handle either side.
+        const y = held ? 0 : 0.09;
+        g.add(this.#rod(0.09, 0.045, [0, y, 0]), this.#rod(0.015, 0.4, [0, y, 0], true));
+        break;
+      }
+      case "ball": g.add(this.#gear(new THREE.SphereGeometry(0.15, 24, 16), [0, held ? 0 : 0.15, 0])); break;
       case "pullup-bar": g.add(this.#rod(0.016, 1.3, [0, 0, 0], true), this.#box(0.05, 2.3, 0.05, [0.65, -1.125, 0], true), this.#box(0.05, 2.3, 0.05, [-0.65, -1.125, 0], true)); break;
       case "cable": g.add(this.#box(0.12, 2.1, 0.12, [0, 1.05, 0], true), this.#box(0.3, 0.6, 0.2, [0, 0.3, -0.16]), this.#box(0.5, 0.05, 0.5, [0, 0.025, -0.05], true)); break;
       case "machine": g.add(this.#box(0.5, 0.08, 0.5, [0, 0.45, 0]), this.#box(0.5, 0.6, 0.08, [0, 0.8, -0.25]), this.#box(0.12, 1.7, 0.12, [0, 0.85, -0.36], true), this.#box(0.7, 0.05, 0.9, [0, 0.025, -0.1], true), this.#box(0.1, 0.42, 0.1, [0, 0.21, 0], true)); break;
@@ -217,10 +224,10 @@ export class Stage implements DemoStage {
     this.#clearProps();
     for (const p of props) {
       const kind = modelOf(p.kind);
-      const sides = p.hold === "both" ? (["L", "R"] as const) : p.hold === "left" ? (["L"] as const) : p.hold === "right" ? (["R"] as const) : [];
+      const { how, sides } = carry(kind, p.hold);
       const place = (o: THREE.Object3D) => { o.position.set(...p.at); o.rotation.y = (p.turn * Math.PI) / 180; this.#props.add(o); };
-      if (!sides.length || !HOLDABLE.includes(kind)) { place(this.#model(kind, false)); continue; }
-      if (kind === "band" || kind === "cable") {
+      if (how === "placed") { place(this.#model(kind, false)); continue; }
+      if (how === "strand") {
         // A cable runs from its column to each hand; a band between the hands, or from where it's tied to one hand.
         const from = v3(p.at);
         if (kind === "cable") { place(this.#model("cable", false)); from.y = Math.max(from.y, 0.15); }
@@ -230,13 +237,23 @@ export class Stage implements DemoStage {
           if (kind === "band" && sides.length === 2) strands[0]!.set(v3(palm(s, "L")), v3(palm(s, "R")));
           else sides.forEach((side, i) => strands[i]!.set(from, v3(palm(s, side))));
         });
-      } else if (kind === "barbell" && sides.length === 2) {
-        const bar = this.#model("barbell", true);
+      } else if (how === "across") {
+        // A bar, an ab roller: its length runs from one palm to the other.
+        const bar = this.#model(kind, true);
         this.#props.add(bar);
         this.#drawProps.push((s) => {
           const l = v3(palm(s, "L")), r = v3(palm(s, "R"));
           bar.position.copy(l).add(r).multiplyScalar(0.5);
           bar.quaternion.setFromUnitVectors(new THREE.Vector3(1, 0, 0), l.sub(r).normalize());
+        });
+      } else if (how === "one") {
+        // Both hands on one item (#95): between the palms, turned with the hands.
+        const o = this.#model(kind, true);
+        this.#props.add(o);
+        this.#drawProps.push((s) => {
+          const g = grip(s);
+          o.position.set(...g.pos);
+          o.quaternion.set(...g.rot);
         });
       } else {
         for (const side of sides) {

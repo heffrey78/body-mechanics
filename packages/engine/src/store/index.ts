@@ -23,6 +23,8 @@ export interface EntrySummary {
   exercise: string;
   effort?: string;
   modified: boolean;
+  /** Ids of the marks and conditions it was linked to (#99). */
+  links?: string[];
   sets: SetSummary[];
 }
 
@@ -52,7 +54,7 @@ export interface SessionSummary {
 }
 
 const CACHE = "index.json.age";
-const CACHE_VERSION = 3;
+const CACHE_VERSION = 4;
 
 interface CacheFile {
   v: number;
@@ -70,6 +72,7 @@ export function summarize(path: string, s: Session): SessionSummary {
       exercise: e.exercise,
       ...(e.effort ? { effort: e.effort } : {}),
       modified: e.modifiers.length > 0,
+      ...(e.links?.length ? { links: e.links.map((l) => l.id) } : {}),
       sets: e.sets.filter((x) => !x.deleted).map((x) => {
         const out: SetSummary = { at: x.at };
         for (const k of ["reps", "seconds", "metres", "left", "right", "loadKg"] as const) if (x[k] !== undefined) (out as unknown as Record<string, unknown>)[k] = x[k];
@@ -165,6 +168,11 @@ export class RecordIndex {
 
   /** Sessions by ISO week (Monday first), newest week first, for History (#33). */
   /** Sessions run from a routine (#36), newest first. */
+  /** The exercises linked to a mark or condition (#99), newest first. */
+  linkedTo(id: string): { session: SessionSummary; entry: EntrySummary }[] {
+    return this.sessions().flatMap((session) => session.entries.filter((e) => e.links?.includes(id)).map((entry) => ({ session, entry })));
+  }
+
   runs(routine: string): SessionSummary[] {
     return this.sessions().filter((s) => s.routine === routine);
   }

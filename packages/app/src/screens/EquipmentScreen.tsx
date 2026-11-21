@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { EQUIPMENT, newId, type EquipmentItem } from "@bm/engine";
+import { EQUIPMENT, newId, type EquipmentItem, type Shape } from "@bm/engine";
 import { Button, Chip } from "../ui/components.tsx";
 import { EQUIPMENT_LABEL } from "../ui/labels.ts";
 
@@ -43,6 +43,13 @@ export function EquipmentScreen({ items, onSave, onBack }: { items: EquipmentIte
   );
 }
 
+/** What one of your own can be drawn as in a demonstration (#96). */
+const LOOKS: { id: Shape; label: string }[] = [
+  { id: "wheel", label: "Wheel with handles" }, { id: "ball", label: "Ball" }, { id: "foam-roller", label: "Roller" }, { id: "kettlebell", label: "Kettlebell" },
+  { id: "dumbbells", label: "Dumbbells" }, { id: "barbell", label: "Bar" }, { id: "band", label: "Band or strap" }, { id: "step", label: "Low box" }, { id: "bench", label: "Bench" },
+  { id: "mat", label: "Mat" }, { id: "box", label: "Plain box" },
+];
+
 function EquipmentEditor({ item, onSave, onBack }: { item: EquipmentItem; onSave: (e: EquipmentItem) => void; onBack: () => void }) {
   const [name, setName] = useState(item.name);
   const [confirm, setConfirm] = useState(false);
@@ -56,6 +63,9 @@ function EquipmentEditor({ item, onSave, onBack }: { item: EquipmentItem; onSave
       <span className="label">Can stand in for</span>
       <span className="muted">Exercises that need any of these can use it instead.</span>
       <div className="chips">{EQUIPMENT.map((e) => <Chip key={e} on={item.standsIn.includes(e)} onClick={() => toggle(e)}>{EQUIPMENT_LABEL[e]}</Chip>)}</div>
+      <span className="label">Looks like</span>
+      <span className="muted">How it's drawn in a demonstration. With nothing chosen it's drawn as what it stands in for, or guessed from its name.</span>
+      <div className="chips">{LOOKS.map((l) => <Chip key={l.id} on={item.looks === l.id} onClick={() => { const { looks: _l, ...rest } = item; onSave(item.looks === l.id ? rest : { ...rest, looks: l.id }); }}>{l.label}</Chip>)}</div>
       {confirm ? (
         <div className="card">
           <span>Delete “{item.name}”? Locations and exercises that list it stop counting it.</span>

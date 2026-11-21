@@ -26,6 +26,7 @@ import { ExercisesScreen } from "./screens/ExercisesScreen.tsx";
 import { PlanScreen } from "./screens/PlanScreen.tsx";
 import { NewMovement } from "./screens/NewMovement.tsx";
 import { SessionScreen, type Pending } from "./screens/SessionScreen.tsx";
+import { bodyLinkName } from "./body/BodyLinks.tsx";
 import { HistoryScreen } from "./screens/HistoryScreen.tsx";
 import { RoutinesScreen, describeItem } from "./screens/RoutinesScreen.tsx";
 import { LocationsScreen } from "./screens/LocationsScreen.tsx";
@@ -547,7 +548,7 @@ export function App() {
     body = (
       <HistoryScreen
         vault={vault} index={index} library={library} units={profile?.units ?? "kg"} canEdit={!session}
-        places={new Map(locations.map((l) => [l.id, l.name]))}
+        places={new Map(locations.map((l) => [l.id, l.name]))} bodyName={(l) => bodyLinkName(l, bodyRecords)}
         onRepeat={(s) => {
           const byId = new Map(library.map((x) => [x.id, x]));
           void startPlan(routineFromSession(s, "Repeat", (x) => byId.get(x)?.measure ?? "reps").items);
@@ -598,6 +599,7 @@ export function App() {
         suggestPanel={suggestPanel} onSuggest={() => setSuggesting(true)}
         log={log} session={session} plan={plan} demos={demos} custom={equipment} library={library} recent={recent} index={index} units={profile?.units ?? "kg"} body={bodyRecords}
         pending={pending}
+        onNewMark={(f) => { const m = newMark(f); saveBody(m, `Mark: ${markTitle(m)}`); return m.id; }}
         onPending={(p) => { setPending(p); changed(log.session ?? session, p); }}
         onChanged={(s) => changed(s)}
         onDiscard={() => void (async () => {
@@ -709,6 +711,7 @@ export function App() {
   } else if (tab === "body") {
     body = (
       <BodyScreen key={bodyOpen ?? "map"} body={bodyRecords} open={bodyOpen} library={library} routines={routines}
+        linked={(id) => (index?.linkedTo(id) ?? []).map((x) => ({ startedAt: x.session.startedAt, exercise: x.entry.exercise, effort: x.entry.effort }))}
         onSaveMark={(m) => {
           if (!clock) return;
           const before = bodyRecords.marks.find((x) => x.id === m.id);

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
-  BUILT_IN_DEMOS, Demo, PRESETS, STANDING, Vault, ball, catalogue, copySide, demoFor, demoPose, floorHeight, loadDemos, memoryFilesPort, memorySecretsPort,
-  mergeRecords, mirrorPose, newDemo, palm, recordPath, solve, solvePose, stampChanges, type DemoClip, type Vec3,
+  BUILT_IN_DEMOS, Demo, MAX_POSES, PRESETS, STANDING, Vault, ball, catalogue, cloneInto, copyPose, copySide, demoFor, demoPose, floorHeight, grip, loadDemos, memoryFilesPort, memorySecretsPort,
+  mergeRecords, mirrorPose, movePose, newDemo, orderedPoses, palm, poseTimeLimits, spacePoses, recordPath, solve, solvePose, stampChanges, type DemoClip, type Vec3,
 } from "../src/index.ts";
 
 const near = (a: Vec3, b: Vec3, eps = 1e-6) => a.every((v, i) => Math.abs(v - b[i]!) < eps);
@@ -170,5 +170,56 @@ describe("demonstrations as records (#81, #82)", () => {
       expect((mergeRecords(base, a, b).record as typeof base).frames.find((f) => f.id === f1.id)!.pose.joints.hipL).toEqual([90, 0, 0]);
     }
     expect(Demo.safeParse(m).success).toBe(true);
+  });
+});
+
+describe("key poses in order, copies and clones (#93, #94, #95)", () => {
+  const f = (id: string, t: number) => ({ id, t, pose: standing });
+  const order = (fs: { id: string; t: number }[]) => orderedPoses(fs as never).map((x) => `${x.id}@${x.t}`).join(" ");
+
+  it("moving a pose swaps it with its neighbour and leaves the times where they were", () => {
+    const fs = [f("a", 0), f("b", 0.4), f("c", 0.7), f("d", 1)];
+    expect(order(movePose(fs, "d", -1))).toBe("a@0 b@0.4 d@0.7 c@1");
+    expect(order(movePose(fs, "a", 1))).toBe("b@0 a@0.4 c@0.7 d@1");
+    // Nothing before the first or after the last.
+    expect(order(movePose(fs, "a", -1))).toBe(order(fs));
+    expect(order(movePose(fs, "d", 1))).toBe(order(fs));
+  });
+
+  it("copies a pose after itself, or to the end, making room when the end is taken", () => {
+    const fs = [f("a", 0), f("b", 0.5), f("c", 1)];
+    expect(order(copyPose(fs, "a", "after", "n"))).toBe("a@0 n@0.25 b@0.5 c@1");
+    expect(order(copyPose(fs, "a", "end", "n"))).toBe("a@0 b@0.5 c@0.75 n@1");
+    expect(order(copyPose(fs, "c", "after", "n"))).toBe("a@0 b@0.5 c@0.75 n@1");
+    expect(order(copyPose([f("a", 0), f("b", 0.6)], "a", "end", "n"))).toBe("a@0 b@0.6 n@1");
+    const full = Array.from({ length: MAX_POSES }, (_, i) => f(`p${i}`, i / 23));
+    expect(copyPose(full, "p0", "end", "n")).toHaveLength(MAX_POSES);
+  });
+
+  it("keeps a pose's time between its neighbours, and spaces poses evenly", () => {
+    const fs = [f("a", 0), f("b", 0.4), f("c", 1)];
+    expect(poseTimeLimits(fs, "b")).toEqual([0.01, 0.99]);
+    expect(poseTimeLimits(fs, "a")).toEqual([0, 0.39]);
+    expect(poseTimeLimits(fs, "c")).toEqual([0.41, 1]);
+    expect(order(spacePoses([f("a", 0), f("b", 0.1), f("c", 0.2)]))).toBe("a@0 b@0.5 c@1");
+  });
+
+  it("clones another demonstration into this one, keeping this one's id and exercise", () => {
+    const mine = newDemo("bm:goblet-squat");
+    const from = BUILT_IN_DEMOS[Object.keys(BUILT_IN_DEMOS)[0]!]!;
+    const out = cloneInto(mine, from);
+    expect(out.id).toBe(mine.id);
+    expect(out.exercise).toBe("bm:goblet-squat");
+    expect(out.frames).toHaveLength(from.frames.length);
+    expect(out.frames.map((x) => x.id)).not.toEqual(from.frames.map((x) => x.id));
+    expect(Demo.safeParse(out).success).toBe(true);
+  });
+
+  it("holds one item between the palms", () => {
+    const s = solve(clip({}), 0);
+    const g = grip(s), l = palm(s, "L"), r = palm(s, "R");
+    expect(near(g.pos, [(l[0] + r[0]) / 2, (l[1] + r[1]) / 2, (l[2] + r[2]) / 2])).toBe(true);
+    const held = { ...newDemo("bm:goblet-squat"), props: [{ id: "k", kind: "kettlebell" as const, hold: "together" as const, at: [0, 0, 0] as Vec3, turn: 0 }] };
+    expect(Demo.safeParse(held).success).toBe(true);
   });
 });

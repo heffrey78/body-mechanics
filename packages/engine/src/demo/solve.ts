@@ -47,6 +47,8 @@ function walk(q: QPose): Solved {
 const point = (s: Solved, joint: Joint, at: Vec3): Vec3 => add(s[joint].pos, qrot(s[joint].rot, at));
 /** The middle of a palm: where held equipment sits. */
 export const palm = (s: Solved, side: "L" | "R"): Vec3 => point(s, `wrist${side}`, PALM);
+/** Where one item held in both hands sits (#95): midway between the palms, turned halfway between the hands. */
+export const grip = (s: Solved): Placed => ({ pos: mid(palm(s, "L"), palm(s, "R")), rot: slerp(s.wristL.rot, s.wristR.rot, 0.5) });
 /** The ball of a foot. */
 export const ball = (s: Solved, side: "L" | "R"): Vec3 => point(s, `ankle${side}`, BALL);
 

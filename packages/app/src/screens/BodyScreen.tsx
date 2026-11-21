@@ -51,7 +51,7 @@ type View =
  * The Body tab (#48): a front and back figure to mark how a region feels, a list of what's marked with
  * check-ins due, each mark's history, check-ins and resolving. Conditions show here too (#49).
  */
-export function BodyScreen({ body, library, routines, open, onNewMark, onCheckIn, onResolve, onReopen, onBecomeCondition, onUseModified, onSaveMark, onSaveCondition }: {
+export function BodyScreen({ body, library, routines, open, linked, onNewMark, onCheckIn, onResolve, onReopen, onBecomeCondition, onUseModified, onSaveMark, onSaveCondition }: {
   body: Body;
   library: LibraryItem[];
   routines: Routine[];
@@ -62,6 +62,8 @@ export function BodyScreen({ body, library, routines, open, onNewMark, onCheckIn
   onUseModified: (r: Routine, f: RoutineFlag) => void;
   /** Open this mark or condition straight away (from Home's check-in card). */
   open?: string | null;
+  /** The exercises in sessions that were linked to a mark or condition (#99), newest first. */
+  linked: (id: string) => LinkedExercise[];
   /** Make and save a mark; returns its id. */
   onNewMark: (f: NewMarkFields) => string;
   onCheckIn: (s: Mark | Condition, f: CheckInFields) => void;
@@ -104,12 +106,14 @@ export function BodyScreen({ body, library, routines, open, onNewMark, onCheckIn
     return <MarkDetail mark={mark} onBack={() => setView({ v: "map" })} onCheckIn={() => setView({ v: "checkin", id: mark.id })}
       onResolve={() => onResolve(mark)} onReopen={() => onReopen(mark)}
       onBecomeCondition={() => setView({ v: "condition", id: onBecomeCondition(mark) })} onEdit={() => setView({ v: "editmark", id: mark.id })}>
+      <Linked items={linked(mark.id)} library={library} />
       <Advice subject={mark} body={body} library={library} routines={routines} onUseModified={onUseModified} />
     </MarkDetail>;
   }
   const condition = view.v === "condition" ? body.conditions.find((c) => c.id === view.id) : undefined;
   if (condition) {
     return <ConditionDetail condition={condition} onBack={() => setView({ v: "map" })} onCheckIn={(f) => onCheckIn(condition, f)} onEdit={() => setView({ v: "editcondition", id: condition.id })}>
+      <Linked items={linked(condition.id)} library={library} />
       <Advice subject={condition} body={body} library={library} routines={routines} onUseModified={onUseModified} />
     </ConditionDetail>;
   }
@@ -193,6 +197,26 @@ export function BodyScreen({ body, library, routines, open, onNewMark, onCheckIn
         </details>
       ) : null}
     </div>
+  );
+}
+
+export interface LinkedExercise { startedAt: string; exercise: string; effort?: string | undefined }
+const EFFORT_WORD: Record<string, string> = { easy: "easy", right: "about right", hard: "hard", pain: "painful" };
+
+/** The exercises that bothered this (#99): linked from a session when the effort was hard or painful. */
+function Linked({ items, library }: { items: LinkedExercise[]; library: LibraryItem[] }) {
+  if (!items.length) return null;
+  const name = (id: string) => library.find((x) => x.id === id)?.name ?? id;
+  return (
+    <>
+      <span className="label">Bothered by</span>
+      <div className="card" style={{ gap: 6 }}>
+        {items.slice(0, 12).map((x, i) => (
+          <div key={i} className="set-row"><span>{name(x.exercise)}{x.effort ? ` · ${EFFORT_WORD[x.effort] ?? x.effort}` : ""}</span><span className="muted num">{day(x.startedAt)}</span></div>
+        ))}
+        {items.length > 12 ? <span className="muted">and {items.length - 12} more</span> : null}
+      </div>
+    </>
   );
 }
 

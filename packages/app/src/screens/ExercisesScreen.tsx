@@ -54,7 +54,7 @@ export function ExercisesScreen({ library, custom, own, overrides, demos, onSave
     if (item) {
       const back = () => setView({ v: "detail", id: item.id });
       return <DemoBuilder name={item.name} exercise={item.id} current={demoFor(item.id, demos)} custom={custom} needs={[...item.needs.flat(), ...item.optional]}
-        onCancel={back} onSave={(d) => { onSaveDemo(d); back(); }} />;
+        library={live} demos={demos} onCancel={back} onSave={(d) => { onSaveDemo(d); back(); }} />;
     }
   }
 

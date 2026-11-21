@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  BONES, DEMO_ANCHORS, DEMO_HOLDS, EQUIPMENT, PRESETS, copySide, demoFor, floorHeight, mirrorPose, newDemo, newId, otherSide, phaseOf,
-  type Demo, type DemoAnchor, type DemoFrame, type DemoHold, type DemoPose, type DemoProp, type EquipmentItem, type Joint, type Vec3,
+  BONES, BUILT_IN_DEMOS, DEMO_ANCHORS, EQUIPMENT, MAX_POSES, PRESETS, cloneInto, copyPose, copySide, demoFor, floorHeight, mirrorPose, movePose, newDemo, newId,
+  orderedPoses, otherSide, phaseOf, poseTimeLimits, search, spacePoses,
+  type Demo, type DemoAnchor, type DemoFrame, type DemoHold, type DemoPose, type DemoProp, type EquipmentItem, type Joint, type LibraryItem, type Vec3,
 } from "@bm/engine";
 import { Button, Chip, Segmented, Stepper } from "../ui/components.tsx";
 import { equipmentLabel } from "../ui/labels.ts";
 import { StageView } from "./DemoPlayer.tsx";
-import { HOLDABLE, propModels } from "./models.ts";
+import { HOLDABLE, PAIRED, propModels, type PropModel } from "./models.ts";
 import type { DemoStage } from "./types.ts";
 
 const JOINT_LABEL: Record<Joint, string> = {
@@ -47,7 +48,12 @@ const ANCHOR_HELP: Record<DemoAnchor, string> = {
   hands: "The hands stay where the first key pose puts them (on a bar, a bench, the floor).",
   free: "Nothing is held in place: every key pose's position is used as it is.",
 };
-const HOLD_LABEL: Record<DemoHold, string> = { none: "Placed", left: "Left", right: "Right", both: "Both" };
+/** The ways each kind of equipment can be held (#95): a pair can be one in each hand or both hands on one. */
+function holds(model: PropModel): { id: DemoHold; label: string }[] {
+  if (PAIRED.includes(model)) return [{ id: "none", label: "Placed" }, { id: "left", label: "Left" }, { id: "right", label: "Right" }, { id: "both", label: "One each" }, { id: "together", label: "Both on one" }];
+  if (model === "wheel" || model === "ball" || model === "foam-roller") return [{ id: "none", label: "Placed" }, { id: "together", label: "In the hands" }];
+  return [{ id: "none", label: "Placed" }, { id: "left", label: "Left" }, { id: "right", label: "Right" }, { id: "both", label: "Both" }];
+}
 
 /** A labelled slider with nudge buttons, for angles and distances. */
 function Slider({ label, value, min, max, step = 1, unit = "°", onChange }: { label: string; value: number; min: number; max: number; step?: number; unit?: string; onChange: (v: number) => void }) {
@@ -72,18 +78,21 @@ const DEFAULT_AT: Partial<Record<string, Vec3>> = { wall: [0, 0, -0.5], "pullup-
  * The demonstration builder (#83): key poses on a timeline, each posed joint by joint with sliders,
  * with equipment placed or held, and the loop's timing. Nothing is saved until Save.
  */
-export function DemoBuilder({ name, exercise, current, custom, needs, onSave, onCancel }: {
+export function DemoBuilder({ name, exercise, current, custom, needs, library, demos, onSave, onCancel }: {
   name: string; exercise: string; current: ReturnType<typeof demoFor>; custom: EquipmentItem[];
+  /** Every exercise and the person's demonstrations: another exercise's can be copied in (#94). */
+  library: LibraryItem[]; demos: Demo[];
   /** The equipment the exercise mentions: offered first. */
   needs: string[];
   onSave: (d: Demo) => void; onCancel: () => void;
 }) {
   const [demo, setDemo] = useState<Demo>(() => current?.own ?? newDemo(exercise, current?.clip));
-  const frames = useMemo(() => [...demo.frames].sort((a, b) => a.t - b.t), [demo.frames]);
+  const frames = useMemo(() => orderedPoses(demo.frames), [demo.frames]);
   const [frameId, setFrameId] = useState(frames[0]!.id);
   const frame = frames.find((f) => f.id === frameId) ?? frames[0]!;
   const [joint, setJoint] = useState<Joint | null>(null);
-  const [tab, setTab] = useState<"pose" | "body" | "gear" | "timing">("body");
+  const [tab, setTab] = useState<"pose" | "body" | "gear" | "poses">("body");
+  const [copyFrom, setCopyFrom] = useState<{ query: string; picked?: LibraryItem } | null>(null);
   const [bothSides, setBothSides] = useState(true);
   const [playing, setPlaying] = useState(false);
   const [confirm, setConfirm] = useState(false);
@@ -130,29 +139,41 @@ export function DemoBuilder({ name, exercise, current, custom, needs, onSave, on
   const angle = (j: Joint, a: Axis) => { const v = (j === "pelvis" ? frame.pose.turn : frame.pose.joints[j] ?? [0, 0, 0])[a.i]; return a.flip ? -v : v; };
   const setAt = (i: 0 | 1 | 2, v: number) => { const at = [...frame.pose.at] as Vec3; at[i] = v; setPose({ ...frame.pose, at }); };
 
-  const addFrame = () => {
-    const i = frames.indexOf(frame), after = frames[i + 1];
+  const full = frames.length >= MAX_POSES;
+  /** A copy of a pose as a new one, right after it or at the end; the copy becomes the one being edited. */
+  const copyFrame = (from: DemoFrame, where: "after" | "end") => {
+    if (full) return;
     const id = newId();
-    const copy = (t: number): DemoFrame => ({ id, t, pose: JSON.parse(JSON.stringify(frame.pose)) as DemoPose });
-    setDemo((d) => {
-      if (after) return { ...d, frames: [...d.frames, copy(Math.round(((frame.t + after.t) / 2) * 100) / 100)] };
-      // After the last one: the new pose ends the loop, and the old last moves back to make room.
-      const before = frames[i - 1];
-      const moved = frame.t >= 0.99 ? Math.round((((before?.t ?? 0) + 1) / 2) * 100) / 100 : frame.t;
-      return { ...d, frames: [...d.frames.map((f) => (f.id === frame.id ? { ...f, t: moved } : f)), copy(1)] };
-    });
+    setDemo((d) => ({ ...d, frames: copyPose(d.frames, from.id, where, id) }));
+    setPlaying(false);
     setFrameId(id);
   };
-  const removeFrame = () => {
-    const i = frames.indexOf(frame);
-    setDemo((d) => ({ ...d, frames: d.frames.filter((f) => f.id !== frame.id) }));
-    setFrameId((frames[i - 1] ?? frames[i + 1])!.id);
+  const moveFrame = (f: DemoFrame, by: -1 | 1) => setDemo((d) => ({ ...d, frames: movePose(d.frames, f.id, by) }));
+  const removeFrame = (f: DemoFrame) => {
+    const i = frames.indexOf(f);
+    setDemo((d) => ({ ...d, frames: d.frames.filter((x) => x.id !== f.id) }));
+    if (f.id === frame.id) setFrameId((frames[i - 1] ?? frames[i + 1])!.id);
+  };
+  const [early, late] = poseTimeLimits(demo.frames, frame.id);
+
+  // Another exercise's demonstration, copied into this one (#94).
+  const sources = useMemo(() => library.filter((x) => x.id !== exercise && demoFor(x.id, demos)), [library, demos, exercise]);
+  const sourceHits = copyFrom ? (copyFrom.query.trim() ? search(copyFrom.query, sources, 8).map((h) => h.item) : sources.slice(0, 8)) : [];
+  const takeFrom = (x: LibraryItem) => {
+    const from = demoFor(x.id, demos);
+    if (!from) return;
+    const next = cloneInto(demo, from.clip);
+    setDemo(next);
+    setFrameId(orderedPoses(next.frames)[0]!.id);
+    setCopyFrom(null);
+    setPlaying(false);
+    framed.current = false;
   };
 
   const setProp = (id: string, patch: Partial<DemoProp>) => setDemo((d) => ({ ...d, props: d.props.map((p) => (p.id === id ? { ...p, ...patch } : p)) }));
   const addProp = (kind: string) => {
     const model = modelOf(kind);
-    const hold: DemoHold = model === "dumbbells" || model === "barbell" || model === "band" ? "both" : "none";
+    const hold: DemoHold = model === "dumbbells" || model === "barbell" || model === "band" ? "both" : model === "wheel" ? "together" : "none";
     setDemo((d) => ({ ...d, props: [...d.props, { id: newId(), kind: kind as DemoProp["kind"], hold, at: DEFAULT_AT[model] ?? [0, 0, 0], turn: 0 }] }));
   };
   const gear = [...new Set([...needs, ...EQUIPMENT.filter((e) => e !== "floor"), ...custom.map((c) => c.id)])].filter((e) => e !== "floor");
@@ -178,13 +199,13 @@ export function DemoBuilder({ name, exercise, current, custom, needs, onSave, on
 
       <div className="chips" role="group" aria-label="Key poses">
         {frames.map((f, i) => <Chip key={f.id} on={!playing && f.id === frame.id} onClick={() => { setPlaying(false); setFrameId(f.id); }}>Pose {i + 1}</Chip>)}
-        <Chip onClick={addFrame}>+ Add</Chip>
+        {full ? null : <Chip onClick={() => copyFrame(frame, "after")}>+ Add</Chip>}
         <Chip on={playing} onClick={() => setPlaying(!playing)}>{playing ? "Stop" : "Play"}</Chip>
         <Chip onClick={recentre}>Recentre</Chip>
       </div>
 
       <Segmented label="What to change" value={tab} onChange={(t) => { setPlaying(false); setTab(t); }}
-        options={[{ id: "body", label: "Body" }, { id: "pose", label: "Joints" }, { id: "gear", label: "Equipment" }, { id: "timing", label: "Timing" }]} />
+        options={[{ id: "body", label: "Body" }, { id: "pose", label: "Joints" }, { id: "gear", label: "Equipment" }, { id: "poses", label: "Poses" }]} />
 
       {tab === "body" ? (
         <>
@@ -233,14 +254,14 @@ export function DemoBuilder({ name, exercise, current, custom, needs, onSave, on
         <>
           {demo.props.map((p) => {
             const model = modelOf(p.kind), canHold = HOLDABLE.includes(model);
-            const placed = p.hold === "none" || model === "cable" || (model === "band" && p.hold !== "both");
+            const placed = p.hold === "none" || model === "cable" || (model === "band" && p.hold !== "both" && p.hold !== "together");
             return (
               <div key={p.id} className="card" aria-label={equipmentLabel(p.kind, names)}>
                 <div className="hrow" style={{ minHeight: 0 }}>
                   <span className="strong">{equipmentLabel(p.kind, names)}</span>
                   <button type="button" className="btn ghost" style={{ minHeight: 36 }} onClick={() => setDemo((d) => ({ ...d, props: d.props.filter((x) => x.id !== p.id) }))}>Remove</button>
                 </div>
-                {canHold ? <Segmented label="Placed, or in which hand" value={p.hold} onChange={(hold) => setProp(p.id, { hold })} options={DEMO_HOLDS.map((id) => ({ id, label: HOLD_LABEL[id] }))} /> : null}
+                {canHold ? <Segmented label="Placed, or in which hand" value={holds(model).some((h) => h.id === p.hold) ? p.hold : "together"} onChange={(hold) => setProp(p.id, { hold })} options={holds(model)} /> : null}
                 {placed ? (
                   <>
                     {model === "band" && p.hold !== "none" ? <span className="muted" style={{ fontSize: 13 }}>Where the other end is tied:</span> : null}
@@ -258,17 +279,63 @@ export function DemoBuilder({ name, exercise, current, custom, needs, onSave, on
         </>
       ) : null}
 
-      {tab === "timing" ? (
+      {tab === "poses" ? (
         <>
+          <span className="label">Key poses, in order</span>
+          <div className="card" style={{ padding: 0, gap: 0 }} aria-label="Key poses, in order">
+            {frames.map((f, i) => (
+              <div key={f.id} className="pose-row" aria-current={f.id === frame.id ? "true" : undefined}>
+                <button type="button" className="result" style={{ borderBottom: 0, flexGrow: 1 }} onClick={() => { setPlaying(false); setFrameId(f.id); }}>
+                  <span className={f.id === frame.id ? "strong" : ""}>Pose {i + 1}</span>
+                  <span className="muted num">{Math.round(f.t * 100)}%</span>
+                </button>
+                <button type="button" className="mini" aria-label={`Move pose ${i + 1} earlier`} disabled={i === 0} onClick={() => moveFrame(f, -1)}>↑</button>
+                <button type="button" className="mini" aria-label={`Move pose ${i + 1} later`} disabled={i === frames.length - 1} onClick={() => moveFrame(f, 1)}>↓</button>
+              </div>
+            ))}
+          </div>
+          <span className="muted" style={{ fontSize: 13 }}>The arrows swap a pose with the one before or after it. The times stay where they are.</span>
+
+          <span className="label">Pose {frames.indexOf(frame) + 1} of {frames.length}</span>
+          {early < late
+            ? <Slider label="When in the movement" unit="%" min={Math.round(early * 100)} max={Math.round(late * 100)} value={Math.round(frame.t * 100)} onChange={(v) => setFrame({ t: v / 100 })} />
+            : <span className="muted" style={{ fontSize: 13 }}>No room to move this pose in time: the poses either side are right against it.</span>}
+          <span className="muted" style={{ fontSize: 13 }}>It can move as far as the poses either side of it. To change the order, use the arrows.</span>
+          <div className="pair">
+            <Button disabled={full} onClick={() => copyFrame(frame, "after")}>Copy as the next pose</Button>
+            <Button disabled={full} onClick={() => copyFrame(frame, "end")}>Copy to the end</Button>
+          </div>
+          <div className="pair">
+            <Button disabled={frames.length < 3} onClick={() => setDemo((d) => ({ ...d, frames: spacePoses(d.frames) }))}>Space evenly</Button>
+            <Button variant="stop" disabled={frames.length < 2} onClick={() => removeFrame(frame)}>Delete this pose</Button>
+          </div>
+
+          <span className="label">The loop</span>
           <Stepper label="Loop" value={`${demo.seconds.toFixed(1)} s`} onLess={() => setDemo((d) => ({ ...d, seconds: Math.max(0.5, Math.round((d.seconds - 0.5) * 10) / 10) }))} onMore={() => setDemo((d) => ({ ...d, seconds: Math.min(60, Math.round((d.seconds + 0.5) * 10) / 10) }))} />
           <Segmented label="How it loops" value={demo.loop} onChange={(loop) => setDemo((d) => ({ ...d, loop }))} options={[{ id: "there-and-back", label: "There and back" }, { id: "round", label: "Round again" }]} />
           <span className="muted" style={{ fontSize: 13 }}>{demo.loop === "there-and-back" ? "Plays through the key poses, then back through them to the start." : "Plays through the key poses, then moves from the last straight to the first."}</span>
-          <span className="label">Pose {frames.indexOf(frame) + 1} of {frames.length}</span>
-          <Slider label="When in the movement" unit="%" min={0} max={100} value={Math.round(frame.t * 100)} onChange={(v) => setFrame({ t: v / 100 })} />
-          <div className="pair">
-            <Button onClick={addFrame}>Copy this pose</Button>
-            <Button variant="stop" disabled={frames.length < 2} onClick={removeFrame}>Delete this pose</Button>
-          </div>
+
+          <span className="label">Start from another exercise</span>
+          {copyFrom?.picked ? (
+            <div className="card">
+              <span>Replace these poses, equipment and timing with the demonstration of {copyFrom.picked.name}? Nothing is saved until Save.</span>
+              <div className="pair"><Button variant="primary" onClick={() => takeFrom(copyFrom.picked!)}>Replace</Button><Button onClick={() => setCopyFrom(null)}>Keep these</Button></div>
+            </div>
+          ) : copyFrom ? (
+            <>
+              <input className="field" type="search" aria-label="Exercise to copy from" placeholder="Kettlebell swing" autoComplete="off" value={copyFrom.query} onChange={(e) => setCopyFrom({ query: e.target.value })} />
+              <div className="card" style={{ padding: 0, gap: 0 }}>
+                {sourceHits.map((x) => (
+                  <button key={x.id} type="button" className="result" onClick={() => setCopyFrom({ query: copyFrom.query, picked: x })}>
+                    <span>{x.name}</span><span className="muted" style={{ fontSize: 13 }}>{demos.some((d) => d.exercise === x.id) ? "Yours" : BUILT_IN_DEMOS[x.id] ? "Built in" : ""}</span>
+                  </button>
+                ))}
+                {sourceHits.length === 0 ? <span className="muted" style={{ padding: 16 }}>No exercise with a demonstration matches.</span> : null}
+              </div>
+              <Button variant="ghost" onClick={() => setCopyFrom(null)}>Cancel</Button>
+            </>
+          ) : <Button onClick={() => setCopyFrom({ query: "" })}>Copy another exercise's demonstration</Button>}
+
           {current?.own ? (confirm ? (
             <div className="card">
               <span>Delete your demonstration of {name}?{demoFor(exercise, []) ? " The built-in one comes back." : ""}</span>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { describeSet, showLoad, type LibraryItem, type LoggedSet, type ProgressPoint, type RecordIndex, type Session, type Vault } from "@bm/engine";
+import { describeSet, showLoad, type BodyLink, type LibraryItem, type LoggedSet, type ProgressPoint, type RecordIndex, type Session, type Vault } from "@bm/engine";
 import { modifierText } from "../ui/ModifierPicker.tsx";
 import { Button, Tag } from "../ui/components.tsx";
 
@@ -19,12 +19,14 @@ type View = { screen: "weeks" } | { screen: "session"; path: string } | { screen
  * History (#33): sessions by week with totals, a session's detail (reopen it to edit), and an
  * exercise's progress: the best set per session, modified sessions marked, left/right for one-sided.
  */
-export function HistoryScreen({ vault, index, library, places, units, canEdit, onEdit, onRepeat, onSaveAsRoutine, onDelete }: {
+export function HistoryScreen({ vault, index, library, places, bodyName, units, canEdit, onEdit, onRepeat, onSaveAsRoutine, onDelete }: {
   vault: Vault | null;
   index: RecordIndex | null;
   library: LibraryItem[];
   /** Location names by id (#41). */
   places: Map<string, string>;
+  /** What a mark or condition linked to an exercise is called (#99). */
+  bodyName: (l: BodyLink) => string;
   units: "kg" | "lb";
   canEdit: boolean;
   onEdit: (s: Session) => void;
@@ -39,7 +41,7 @@ export function HistoryScreen({ vault, index, library, places, units, canEdit, o
   const name = (id: string) => byId.get(id)?.name ?? id;
 
   if (view.screen === "session") {
-    return <SessionDetail places={places} vault={vault} path={view.path} name={name} byId={byId} units={units} canEdit={canEdit} onEdit={onEdit} onRepeat={onRepeat} onSaveAsRoutine={onSaveAsRoutine}
+    return <SessionDetail places={places} bodyName={bodyName} vault={vault} path={view.path} name={name} byId={byId} units={units} canEdit={canEdit} onEdit={onEdit} onRepeat={onRepeat} onSaveAsRoutine={onSaveAsRoutine}
       onDelete={(s) => { onDelete(s); setView({ screen: "weeks" }); }}
       onBack={() => setView({ screen: "weeks" })} onProgress={(exercise) => setView({ screen: "progress", exercise, from: view.path })} />;
   }
@@ -79,8 +81,8 @@ export function HistoryScreen({ vault, index, library, places, units, canEdit, o
   );
 }
 
-function SessionDetail({ places, vault, path, name, byId, units, canEdit, onEdit, onRepeat, onSaveAsRoutine, onDelete, onBack, onProgress }: {
-  places: Map<string, string>; vault: Vault | null; path: string; name: (id: string) => string; byId: Map<string, LibraryItem>; units: "kg" | "lb"; canEdit: boolean;
+function SessionDetail({ places, bodyName, vault, path, name, byId, units, canEdit, onEdit, onRepeat, onSaveAsRoutine, onDelete, onBack, onProgress }: {
+  places: Map<string, string>; bodyName: (l: BodyLink) => string; vault: Vault | null; path: string; name: (id: string) => string; byId: Map<string, LibraryItem>; units: "kg" | "lb"; canEdit: boolean;
   onEdit: (s: Session) => void; onRepeat: (s: Session) => void; onSaveAsRoutine: (s: Session, name: string) => string; onDelete: (s: Session) => void;
   onBack: () => void; onProgress: (exercise: string) => void;
 }) {
@@ -107,9 +109,13 @@ function SessionDetail({ places, vault, path, name, byId, units, canEdit, onEdit
               <div className="chips" style={{ gap: 6 }}>
                 {e.effort ? <Tag>{EFFORT_LABEL[e.effort]}</Tag> : null}
                 {e.modifiers.length ? <Tag warn>{modifierText(e.modifiers)}</Tag> : null}
+                {(e.links ?? []).map((l) => <Tag key={l.id} warn>{bodyName(l)}</Tag>)}
               </div>
               {e.sets.filter((x) => !x.deleted).map((x: LoggedSet, i) => (
-                <div key={x.id} className="set-row"><span className="muted">Set {i + 1}</span><span className="strong num">{describeSet(x, byId.get(e.exercise)?.measure ?? "reps", load)}</span></div>
+                <div key={x.id}>
+                  <div className="set-row"><span className="muted">Set {i + 1}</span><span className="strong num">{describeSet(x, byId.get(e.exercise)?.measure ?? "reps", load)}</span></div>
+                  {x.note ? <span className="muted" style={{ fontSize: 14 }}>{x.note}</span> : null}
+                </div>
               ))}
             </div>
           ))}
