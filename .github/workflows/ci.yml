@@ -65,6 +65,48 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+  # The Arch Linux package (#86): packaging/arch/PKGBUILD built in an Arch container (GitHub has no Arch
+  # runner), installed with pacman, and started under a virtual display like the .deb build above.
+  arch:
+    runs-on: ubuntu-24.04
+    container: archlinux:base-devel
+    timeout-minutes: 45
+    steps:
+      - name: Build tools, WebKitGTK and a virtual display
+        run: pacman -Syu --noconfirm --needed git nodejs npm rust webkit2gtk-4.1 gtk3 libsoup3 librsvg mesa xorg-server-xvfb xorg-xauth > /dev/null
+      - uses: actions/checkout@v5
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.npm
+            src-tauri/target
+          key: arch-${{ hashFiles('src-tauri/Cargo.lock', 'package-lock.json') }}
+      - name: A build user (makepkg won't run as root)
+        run: |
+          useradd -m builder
+          mkdir -p "$HOME/.cargo" "$HOME/.npm"
+          chown -R builder: "$GITHUB_WORKSPACE" "$HOME"
+      - name: Build the package
+        working-directory: packaging/arch
+        run: sudo -u builder env HOME="$HOME" makepkg -f --noconfirm
+      - name: Install it and smoke test
+        run: |
+          pacman -U --noconfirm packaging/arch/*.pkg.tar.zst
+          pacman -Qi body-mechanics | grep -E '^(Name|Version)'
+          test -f /usr/share/applications/body-mechanics.desktop
+          out=$(sudo -u builder env HOME="$HOME" BM_SMOKE=1 timeout 60 xvfb-run -a body-mechanics)
+          echo "$out"
+          # As in the desktop job, the secrets check is only logged: the container has no keychain.
+          echo "$out" | grep -q '^BM_SMOKE platform=linux engine=.* ports=git+files_ok '
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-arch
+          path: packaging/arch/*.pkg.tar.zst
+          if-no-files-found: error
+          retention-days: 14
+
   # The Android APK (#20), built as writer's CI builds its own: the runner's SDK, an NDK from sdkmanager,
   # Java 17 and Rust with the aarch64 Android target.
   android:

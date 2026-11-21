@@ -32,6 +32,19 @@ packages it with the desktop entry and icons:
 cd packaging/arch && makepkg -si
 ```
 
+CI builds the same package for every commit (the `arch` job) and uploads it as the `desktop-arch`
+artifact. Its version names the commit, e.g. `0.1.0.r202611211438.g85f7ca2` (app version, commit time
+in UTC, short hash). Take it from the run for the branch push: a pull request's run builds GitHub's
+temporary merge commit. Install it with:
+
+```sh
+sudo pacman -U body-mechanics-*.pkg.tar.zst
+```
+
+The package installs `/usr/bin/body-mechanics`. A copy in `~/.local/bin` comes first on the PATH and
+has its own menu entry, so remove that copy and
+`~/.local/share/applications/io.github.heffrey78.bodymechanics.desktop` when moving to the package.
+
 ### Android, locally
 
 The same script CI runs, given the SDK in `~/Android/Sdk` (cmdline-tools, `ndk;28.2.13676358`,
