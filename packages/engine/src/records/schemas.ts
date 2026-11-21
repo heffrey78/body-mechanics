@@ -9,7 +9,7 @@ import { z } from "zod";
 import { HLC_PATTERN } from "./hlc.ts";
 import { ID_PATTERN } from "./ids.ts";
 import { JOINTS } from "../demo/skeleton.ts";
-import { BOTHERS, EFFORTS, EQUIPMENT, KINDS, MARK_KINDS, MEASURES, MODIFIER_KINDS, RED_FLAGS, REGIONS, RETIRED_THEMES, SIDED_REGIONS, SIDES, THEMES, THEME_MODES, UNITS } from "./vocab.ts";
+import { BOTHERS, EFFORTS, EQUIPMENT, KINDS, MARK_KINDS, MEASURES, MODIFIER_KINDS, RED_FLAGS, REGIONS, RETIRED_THEMES, SHAPES, SIDED_REGIONS, SIDES, THEMES, THEME_MODES, UNITS } from "./vocab.ts";
 
 export const FORMAT_VERSION = 1;
 
@@ -155,11 +155,17 @@ export const LoggedSet = z
   });
 export type LoggedSet = z.infer<typeof LoggedSet>;
 
+/** A mark or condition on the body that an exercise in a session bothered (#99). */
+export const BodyLink = z.strictObject({ type: z.enum(["mark", "condition"]), id });
+export type BodyLink = z.infer<typeof BodyLink>;
+
 export const Entry = z.strictObject({
   id,
   exercise: exerciseRef,
   effort: z.enum(EFFORTS).optional(),
   modifiers: z.array(Modifier).default([]),
+  /** What on the body this exercise bothered (#99), asked when the effort was hard or painful. */
+  links: z.array(BodyLink).max(12).optional(),
   note: z.string().max(500).optional(),
   deleted: z.literal(true).optional(),
   sets: z.array(LoggedSet),
@@ -328,6 +334,8 @@ export const EquipmentItem = z.strictObject({
   name: z.string().min(1).max(60),
   /** Built-in items it can stand in for. */
   standsIn: z.array(z.enum(EQUIPMENT)).default([]),
+  /** What it's drawn as in a demonstration (#96). Left out: guessed from what it stands in for, then its name. */
+  looks: z.enum(SHAPES).optional(),
   deleted: z.literal(true).optional(),
   edits,
 });
@@ -341,7 +349,8 @@ const vec3 = z.tuple([z.number(), z.number(), z.number()]);
 export const DEMO_ANCHORS = ["floor", "feet", "left-foot", "right-foot", "hands", "free"] as const;
 export type DemoAnchor = (typeof DEMO_ANCHORS)[number];
 export const DEMO_LOOPS = ["there-and-back", "round"] as const;
-export const DEMO_HOLDS = ["none", "left", "right", "both"] as const;
+/** `both` is one in each hand; `together` is both hands on one item (#95): a kettlebell swing. */
+export const DEMO_HOLDS = ["none", "left", "right", "both", "together"] as const;
 export type DemoHold = (typeof DEMO_HOLDS)[number];
 
 /**
@@ -361,7 +370,7 @@ export type DemoPose = z.infer<typeof DemoPose>;
 export const DemoFrame = z.strictObject({ id: z.string().min(1).max(16), t: z.number().min(0).max(1), pose: DemoPose, edits });
 export type DemoFrame = z.infer<typeof DemoFrame>;
 
-/** A piece of equipment in the scene: placed at `at` and turned, or held in one or both hands. */
+/** A piece of equipment in the scene: placed at `at` and turned, or held in one hand, one in each, or both on one. */
 export const DemoProp = z.strictObject({
   id: z.string().min(1).max(16),
   kind: equipmentRef,

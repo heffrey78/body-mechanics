@@ -7,7 +7,7 @@
 import { Clock } from "../records/hlc.ts";
 import { newId } from "../records/ids.ts";
 import type { Effort, Equipment, Kind, Measure, Region } from "../records/vocab.ts";
-import type { Entry, Exercise, ExerciseOverride, LoggedSet, Modifier, Session } from "../records/schemas.ts";
+import type { BodyLink, Entry, Exercise, ExerciseOverride, LoggedSet, Modifier, Session } from "../records/schemas.ts";
 import { catalogue, type CatalogueEntry } from "../catalogue/index.ts";
 import { mentioned, needsFromLegacy } from "../records/equipment.ts";
 import type { Vault } from "../vault/vault.ts";
@@ -144,6 +144,15 @@ export class SessionLog {
     const e = this.#entry(entryId);
     e.effort = effort;
     e.edits = { ...(e.edits ?? {}), effort: this.#clock.tick() };
+    await this.#save();
+  }
+
+  /** What on the body this exercise bothered (#99). None: the field is dropped. */
+  async setLinks(entryId: string, links: BodyLink[]): Promise<void> {
+    const e = this.#entry(entryId);
+    if (links.length) e.links = links;
+    else delete e.links;
+    e.edits = { ...(e.edits ?? {}), links: this.#clock.tick() };
     await this.#save();
   }
 

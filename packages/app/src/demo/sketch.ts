@@ -4,10 +4,10 @@
  * won't give the app a 3D one (after sleep, the WebView can refuse until the app restarts).
  */
 import {
-  BONES, HEAD_CENTRE, HEAD_RADIUS, JOINTS, PALM, palm, solve, solvePose,
+  BONES, HEAD_CENTRE, HEAD_RADIUS, JOINTS, PALM, grip, palm, solve, solvePose,
   type DemoClip, type DemoPose, type Joint, type Quat, type Solved, type Vec3,
 } from "@bm/engine";
-import { HOLDABLE, type PropModel } from "./models.ts";
+import { carry, type PropModel } from "./models.ts";
 import type { DemoStage, StageColors } from "./types.ts";
 
 const rot = (q: Quat, v: Vec3): Vec3 => {
@@ -19,12 +19,17 @@ const add = (a: Vec3, b: Vec3): Vec3 => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
 
 /** How thick each joint's segment (from its parent to it) is drawn, in metres. */
 const WIDTH: Record<string, number> = { spine: 0.27, chest: 0.3, neck: 0.1, head: 0.1, shoulder: 0.12, elbow: 0.095, wrist: 0.075, hip: 0.17, knee: 0.15, ankle: 0.1 };
-/** Placed equipment as a box: width, height, depth, and how high its middle sits. */
+/**
+ * Furniture and fixtures as a wire box: width, height, depth, and how high its middle sits. What is
+ * picked up and moved (a kettlebell, a roller) is drawn as its own shape instead (#96).
+ */
 const BOX: Partial<Record<PropModel, [number, number, number, number]>> = {
-  chair: [0.44, 0.42, 0.44, 0.21], desk: [1.3, 0.76, 0.65, 0.38], step: [0.7, 0.2, 0.36, 0.1], bench: [0.3, 0.42, 1.25, 0.21], mat: [0.65, 0.012, 1.85, 0.006],
-  wall: [2.6, 2.4, 0.08, 1.2], "foam-roller": [0.45, 0.15, 0.15, 0.075], cable: [0.12, 2.1, 0.12, 1.05], machine: [0.7, 1.7, 0.9, 0.85], box: [0.4, 0.4, 0.4, 0.2],
-  "pullup-bar": [1.3, 0.03, 0.03, 0], kettlebell: [0.2, 0.25, 0.2, 0.12], dumbbells: [0.4, 0.1, 0.2, 0.05], barbell: [2, 0.45, 0.45, 0.225], band: [0.32, 0.02, 0.32, 0.01],
+  chair: [0.44, 0.42, 0.44, 0.21], desk: [1.3, 0.76, 0.65, 0.38], step: [0.7, 0.2, 0.36, 0.1], bench: [0.3, 0.42, 1.25, 0.21],
+  wall: [2.6, 2.4, 0.08, 1.2], cable: [0.12, 2.1, 0.12, 1.05], machine: [0.7, 1.7, 0.9, 0.85], box: [0.4, 0.4, 0.4, 0.2],
+  "pullup-bar": [1.3, 0.03, 0.03, 0],
 };
+const cross = (a: Vec3, b: Vec3): Vec3 => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+const unit = (a: Vec3): Vec3 => { const n = Math.hypot(...a) || 1; return [a[0] / n, a[1] / n, a[2] / n]; };
 
 interface Stroke { depth: number; draw: () => void }
 
@@ -167,15 +172,60 @@ export class Sketch implements DemoStage {
       } });
     };
 
-    // Equipment: boxes where it's placed, and what the hands hold.
+    // Equipment (#96): each thing as its own shape, placed in the scene or in the hands.
+    const poly = (pts: Vec3[], fill: string | null, stroke: string | null, width = 0.012) => {
+      ctx.beginPath();
+      pts.forEach((q, i) => { const [x, y] = at(q); if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); });
+      ctx.closePath();
+      if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+      if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = Math.max(1, width * scale); ctx.stroke(); }
+    };
+    /** A circle of radius `r` round `centre`, facing along `n`. */
+    const circle = (centre: Vec3, n: Vec3, r: number): Vec3[] => {
+      const u = unit(cross(n, Math.abs(n[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0])), v = cross(n, u);
+      return Array.from({ length: 24 }, (_, i) => {
+        const th = (i / 24) * Math.PI * 2, cs = Math.cos(th) * r, sn = Math.sin(th) * r;
+        return [centre[0] + u[0] * cs + v[0] * sn, centre[1] + u[1] * cs + v[1] * sn, centre[2] + u[2] * cs + v[2] * sn] as Vec3;
+      });
+    };
+    const gear = (where: Vec3, draw: () => void, nearer = 0) => strokes.push({ depth: at(where)[2] + nearer, draw });
+    /** A solid cylinder from `p` to `q`: a roller, a wheel, a weight plate. */
+    const cylinder = (p: Vec3, q: Vec3, r: number, colour = c.gear) => {
+      const n = unit([q[0] - p[0], q[1] - p[1], q[2] - p[2]]);
+      const [far, near] = at(p)[2] < at(q)[2] ? [p, q] : [q, p];
+      gear([(p[0] + q[0]) / 2, (p[1] + q[1]) / 2, (p[2] + q[2]) / 2], () => {
+        poly(circle(far, n, r), colour, c.gearDark);
+        ctx.lineCap = "butt";
+        line(p, q, 2 * r + 0.014, c.gearDark);
+        line(p, q, 2 * r, colour);
+        ctx.lineCap = "round";
+        poly(circle(near, n, r), colour, c.gearDark);
+      });
+    };
+    const rod = (p: Vec3, q: Vec3, width: number) => gear([(p[0] + q[0]) / 2, (p[1] + q[1]) / 2, (p[2] + q[2]) / 2], () => line(p, q, width, c.gearDark));
+    const sphere = (centre: Vec3, r: number) => gear(centre, () => { disc(centre, r + 0.008, c.gearDark); disc(centre, r, c.gear); });
+    type Local = (x: number, y: number, z: number) => Vec3;
+    /** A kettlebell with its grip at the local origin's height `y` above the bell: the bell, then the handle over it. */
+    const kettlebell = (w: Local, y: number) => {
+      sphere(w(0, y, 0), 0.1);
+      const handle = Array.from({ length: 16 }, (_, i) => { const th = (i / 16) * Math.PI * 2; return w(0, y + 0.115 + Math.cos(th) * 0.055, Math.sin(th) * 0.055); });
+      gear(w(0, y + 0.115, 0), () => poly(handle, null, c.gearDark, 0.026), 0.02);
+    };
+    /** A dumbbell with the middle of its handle at the local origin, the handle running front to back. */
+    const dumbbell = (w: Local) => {
+      rod(w(0, 0, -0.1), w(0, 0, 0.1), 0.028);
+      cylinder(w(0, 0, 0.055), w(0, 0, 0.125), 0.05);
+      cylinder(w(0, 0, -0.125), w(0, 0, -0.055), 0.05);
+    };
     for (const p of this.#props) {
-      const sides = p.hold === "both" ? (["L", "R"] as const) : p.hold === "left" ? (["L"] as const) : p.hold === "right" ? (["R"] as const) : [];
-      const held = sides.length > 0 && HOLDABLE.includes(p.kind);
-      if (!held || p.kind === "cable") {
+      const { how, sides } = carry(p.kind, p.hold);
+      const t = (p.turn * Math.PI) / 180;
+      const loc: Local = (x, y, z) => [p.at[0] + x * Math.cos(t) + z * Math.sin(t), p.at[1] + y, p.at[2] - x * Math.sin(t) + z * Math.cos(t)];
+      if (how === "placed" || p.kind === "cable") {
         const box = BOX[p.kind];
         if (box) {
-          const [bw, bh, bd, cy] = box, t = (p.turn * Math.PI) / 180;
-          const corner = (x: number, y: number, z: number): Vec3 => [p.at[0] + x * Math.cos(t) + z * Math.sin(t), p.at[1] + cy + y, p.at[2] - x * Math.sin(t) + z * Math.cos(t)];
+          const [bw, bh, bd, cy] = box;
+          const corner: Local = (x, y, z) => loc(x, cy + y, z);
           const k = [-1, 1];
           const edges: [Vec3, Vec3][] = [];
           for (const i of k) for (const j of k) {
@@ -187,21 +237,50 @@ export class Sketch implements DemoStage {
           strokes.push({ depth: mid - 10, draw: () => { for (const [x, y] of edges) line(x, y, 0.012, c.gearDark); } });
           // A pull-up bar's posts down to the floor.
           if (p.kind === "pullup-bar") for (const i of k) limb(corner((i * bw) / 2, 0, 0), [corner((i * bw) / 2, 0, 0)[0], 0, corner((i * bw) / 2, 0, 0)[2]], 0.04, c.gearDark);
+        } else if (p.kind === "kettlebell") kettlebell(loc, 0.1);
+        else if (p.kind === "foam-roller") cylinder(loc(-0.225, 0.075, 0), loc(0.225, 0.075, 0), 0.075);
+        else if (p.kind === "wheel") { rod(loc(-0.2, 0.09, 0), loc(0.2, 0.09, 0), 0.03); cylinder(loc(-0.0225, 0.09, 0), loc(0.0225, 0.09, 0), 0.09); }
+        else if (p.kind === "ball") sphere(loc(0, 0.15, 0), 0.15);
+        else if (p.kind === "dumbbells") for (const x of [-0.12, 0.12]) dumbbell((dx, y, z) => loc(x + dx, 0.05 + y, z));
+        else if (p.kind === "barbell") {
+          rod(loc(-1, 0.225, 0), loc(1, 0.225, 0), 0.03);
+          for (const x of [-0.8, 0.8]) cylinder(loc(x - 0.025, 0.225, 0), loc(x + 0.025, 0.225, 0), 0.225);
+        } else if (p.kind === "band") {
+          const loop = circle(loc(0, 0.012, 0), [0, 1, 0], 0.16);
+          gear(loc(0, 0.012, 0), () => poly(loop, null, c.gearDark, 0.024), -10);
+        } else if (p.kind === "mat") {
+          // Flat on the floor, under whatever is on it.
+          const quad = [loc(-0.325, 0.006, -0.925), loc(0.325, 0.006, -0.925), loc(0.325, 0.006, 0.925), loc(-0.325, 0.006, 0.925)];
+          strokes.push({ depth: -100, draw: () => { ctx.globalAlpha = 0.45; poly(quad, c.gear, null); ctx.globalAlpha = 1; poly(quad, null, c.gearDark); } });
         }
       }
-      if (!held) continue;
+      if (how === "placed") continue;
       const hands = sides.map((side) => ({ at: palm(s, side), rot: s[`wrist${side}`].rot }));
-      if (p.kind === "barbell" && hands.length === 2) {
+      const inHand = (h: { at: Vec3; rot: Quat }): Local => (x, y, z) => add(h.at, rot(h.rot, [x, y, z]));
+      const between = grip(s);
+      if (how === "across") {
         const [l, r] = [hands[0]!.at, hands[1]!.at];
-        const d: Vec3 = [l[0] - r[0], l[1] - r[1], l[2] - r[2]];
-        const n = Math.hypot(...d) || 1, m: Vec3 = [(l[0] + r[0]) / 2, (l[1] + r[1]) / 2, (l[2] + r[2]) / 2];
-        const along = (k: number): Vec3 => [m[0] + (d[0] / n) * k, m[1] + (d[1] / n) * k, m[2] + (d[2] / n) * k];
-        limb(along(-1), along(1), 0.03, c.gearDark);
-        for (const side of [-1, 1]) limb(along(side * 0.78), along(side * 0.84), 0.42, c.gear);
-      } else if (p.kind === "band" && hands.length === 2) limb(hands[0]!.at, hands[1]!.at, 0.02, c.gearDark);
-      else if (p.kind === "band" || p.kind === "cable") for (const hnd of hands) limb([p.at[0], Math.max(p.at[1], p.kind === "cable" ? 0.15 : 0), p.at[2]], hnd.at, 0.015, c.gearDark);
-      else if (p.kind === "kettlebell") for (const hnd of hands) limb(add(hnd.at, rot(hnd.rot, [0, -0.13, 0])), add(hnd.at, rot(hnd.rot, [0, -0.131, 0])), 0.2, c.gear);
-      else for (const hnd of hands) limb(add(hnd.at, rot(hnd.rot, [0, 0, -0.1])), add(hnd.at, rot(hnd.rot, [0, 0, 0.1])), 0.09, c.gear);
+        const d = unit([l[0] - r[0], l[1] - r[1], l[2] - r[2]]), m: Vec3 = [(l[0] + r[0]) / 2, (l[1] + r[1]) / 2, (l[2] + r[2]) / 2];
+        const along = (k: number): Vec3 => [m[0] + d[0] * k, m[1] + d[1] * k, m[2] + d[2] * k];
+        if (p.kind === "barbell") {
+          limb(along(-1), along(1), 0.03, c.gearDark);
+          for (const side of [-1, 1]) cylinder(along(side * 0.78), along(side * 0.83), 0.225);
+        } else if (p.kind === "wheel") {
+          rod(along(-0.2), along(0.2), 0.03);
+          cylinder(along(-0.0225), along(0.0225), 0.09);
+        } else cylinder(along(-0.225), along(0.225), 0.075);
+      } else if (how === "strand") {
+        if (p.kind === "band" && hands.length === 2) limb(hands[0]!.at, hands[1]!.at, 0.02, c.gearDark);
+        else for (const hnd of hands) limb([p.at[0], Math.max(p.at[1], p.kind === "cable" ? 0.15 : 0), p.at[2]], hnd.at, 0.015, c.gearDark);
+      } else {
+        // One in each hand, or one item between the palms (#95).
+        for (const w of how === "one" ? [inHand({ at: between.pos, rot: between.rot })] : hands.map(inHand)) {
+          if (p.kind === "kettlebell") kettlebell(w, -0.13);
+          else if (p.kind === "ball") sphere(w(0, 0, 0), 0.15);
+          else if (p.kind === "dumbbells") dumbbell(w);
+          else limb(w(0, 0, -0.1), w(0, 0, 0.1), 0.09, c.gear);
+        }
+      }
     }
 
     // The body: a segment from each joint's parent to it, the hands, feet and head.

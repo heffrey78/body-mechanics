@@ -66,6 +66,11 @@ button { font-family: inherit; }
 .rtable td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; }
 .rtable tr:last-child td { border-bottom: 0; }
 .rtable input { font: inherit; width: 72px; min-height: 40px; padding: 0 8px; border-radius: 8px; border: var(--outline) solid var(--line-strong); background: var(--surface); color: var(--ink); }
+.pose-row { display: flex; align-items: center; gap: 6px; padding-right: 8px; border-bottom: 1px solid var(--line); }
+.pose-row:last-child { border-bottom: 0; }
+.pose-row[aria-current="true"] { background: var(--surface-2, transparent); box-shadow: inset 4px 0 0 var(--accent-text); }
+.pose-row .mini { width: 44px; height: 44px; font-size: 18px; flex-shrink: 0; }
+.pose-row .mini:disabled { opacity: 0.35; cursor: default; }
 .rtable .mini { width: 40px; height: 40px; font-size: 18px; }
 
 /* The body map (#89): a front and a back figure side by side, each area a tappable shape. */

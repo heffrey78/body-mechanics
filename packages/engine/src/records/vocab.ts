@@ -19,6 +19,16 @@ export const EQUIPMENT = [
 ] as const;
 export type Equipment = (typeof EQUIPMENT)[number];
 
+/**
+ * What a piece of equipment is drawn as in a demonstration (#96): a built-in item's own model, or a
+ * plain shape for the person's own equipment (a wheel with handles for an ab roller).
+ */
+export const SHAPES = [
+  "wall", "chair", "desk", "step", "bench", "mat", "band", "dumbbells", "kettlebell", "barbell", "pullup-bar", "cable", "foam-roller", "machine",
+  "wheel", "ball", "box",
+] as const;
+export type Shape = (typeof SHAPES)[number];
+
 export const KINDS = ["mobility", "strength", "endurance", "balance"] as const;
 export type Kind = (typeof KINDS)[number];
 

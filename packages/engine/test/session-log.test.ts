@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Clock, catalogue, deletedSession, mergeRecords, modifiersOf, routineFromSession, RecordIndex, SessionLog, Vault, createExercise, deviceClock, loadLibrary, memoryFilesPort, memorySecretsPort, search, type Session } from "../src/index.ts";
+import { Clock, catalogue, newId, deletedSession, mergeRecords, modifiersOf, routineFromSession, RecordIndex, SessionLog, Vault, createExercise, deviceClock, loadLibrary, memoryFilesPort, memorySecretsPort, search, type Session } from "../src/index.ts";
 
 async function setup() {
   const files = memoryFilesPort();
@@ -105,5 +105,29 @@ describe("logging a session (#31, #32)", () => {
     expect(library.length).toBe(catalogue().entries.length + 1);
     const top = search("couch sit to stand", library)[0];
     expect(top).toMatchObject({ full: true, item: { name: "Couch sit to stand", own: true } });
+  });
+});
+
+describe("set notes and what an exercise bothered (#98, #99)", () => {
+  it("a set's note is set and cleared; links are kept, indexed and dropped when empty", async () => {
+    const { ports, vault, index } = await setup();
+    let t = Date.parse("2026-11-21T07:00:00.000Z");
+    const log = new SessionLog(vault, new Clock("dddddddddddddddd", () => t), { index, now: () => new Date(t) });
+    const s = await log.start("bm:goblet-squat");
+    const entry = s.entries[0]!;
+    t += 60_000; const a = await log.logSet(entry.id, { reps: 10 });
+    await log.editSet(entry.id, a.id, { note: "Pinched at the bottom" });
+    expect(log.session!.entries[0]!.sets[0]!.note).toBe("Pinched at the bottom");
+    await log.editSet(entry.id, a.id, { note: undefined });
+    expect("note" in log.session!.entries[0]!.sets[0]!).toBe(false);
+
+    await log.setLinks(entry.id, [{ type: "mark", id: newId() }]);
+    const id = log.session!.entries[0]!.links![0]!.id;
+    expect(index.linkedTo(id).map((x) => x.entry.exercise)).toEqual(["bm:goblet-squat"]);
+    const back = (await (await Vault.open(ports, "/r")).read(`sessions/2026/11/${s.id}.yaml.age`)) as Session;
+    expect(back.entries[0]!.links).toEqual([{ type: "mark", id }]);
+    await log.setLinks(entry.id, []);
+    expect("links" in log.session!.entries[0]!).toBe(false);
+    expect(index.linkedTo(id)).toEqual([]);
   });
 });
