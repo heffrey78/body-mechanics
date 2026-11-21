@@ -22,3 +22,37 @@ BM_SMOKE=1 src-tauri/target/release/body-mechanics   # renders, reports and exit
 ```
 
 Android builds run in CI (the `android` job) and are uploaded as the `android-apk` artifact.
+
+### Arch Linux
+
+Tauri bundles only a .deb, so `packaging/arch/PKGBUILD` builds the binary from this checkout and
+packages it with the desktop entry and icons:
+
+```sh
+cd packaging/arch && makepkg -si
+```
+
+CI builds the same package for every commit (the `arch` job) and uploads it as the `desktop-arch`
+artifact. Its version names the commit, e.g. `0.1.0.r202611211438.g85f7ca2` (app version, commit time
+in UTC, short hash). Take it from the run for the branch push: a pull request's run builds GitHub's
+temporary merge commit. Install it with:
+
+```sh
+sudo pacman -U body-mechanics-*.pkg.tar.zst
+```
+
+The package installs `/usr/bin/body-mechanics`. A copy in `~/.local/bin` comes first on the PATH and
+has its own menu entry, so remove that copy and
+`~/.local/share/applications/io.github.heffrey78.bodymechanics.desktop` when moving to the package.
+
+### Android, locally
+
+The same script CI runs, given the SDK in `~/Android/Sdk` (cmdline-tools, `ndk;28.2.13676358`,
+`build-tools;36.1.0`, `platforms;android-36`), Java 17 and `rustup target add aarch64-linux-android`:
+
+```sh
+export ANDROID_HOME=~/Android/Sdk NDK_HOME=~/Android/Sdk/ndk/28.2.13676358 JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+export BM_ANDROID_DEBUG_KEYSTORE=~/.android/debug.keystore   # the key the phone's install was signed with
+scripts/android-build.sh aarch64
+~/Android/Sdk/platform-tools/adb install -r "$(find src-tauri/gen/android/app/build/outputs/apk -name '*.apk' | head -n 1)"
+```

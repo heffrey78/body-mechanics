@@ -1,0 +1,47 @@
+# Body Mechanics for Arch Linux, built from this checkout (not a release tarball):
+#   cd packaging/arch && makepkg -si
+# Tauri bundles only .deb, so this builds the binary with --no-bundle and installs the same files the
+# .deb does: the binary, the desktop entry and the hicolor icons.
+pkgname=body-mechanics
+# The version names the commit it was built from: the app's version, then the commit's time (UTC) and
+# short hash, e.g. 0.1.0.r202611211438.g85f7ca2. Without git it is the app's version alone.
+_root="$(realpath "${startdir:-$PWD}/../..")"
+_app="$(sed -nE 's/^version = "([^"]+)"/\1/p' "$_root/src-tauri/Cargo.toml" | head -n 1)"
+_rev="$(TZ=UTC git -C "$_root" log -1 --format='r%cd.g%h' --date=format-local:%Y%m%d%H%M 2>/dev/null || true)"
+pkgver="${_app}${_rev:+.$_rev}"
+pkgrel=1
+pkgdesc='An exercise app: sessions, routines and a body map, kept as encrypted records you own'
+arch=('x86_64')
+url='https://github.com/heffrey78/body-mechanics'
+license=('MIT')
+depends=('webkit2gtk-4.1' 'gtk3' 'glib2' 'cairo' 'gdk-pixbuf2' 'libsoup3' 'dbus' 'openssl' 'zlib')
+makedepends=('cargo' 'npm' 'git')
+optdepends=('gnome-keyring: Secret Service keychain for the app'"'"'s keys (or KWallet with its Secret Service API)')
+options=('!lto' '!debug')
+
+build() {
+  cd "$_root"
+  npm ci
+  npx tauri build --no-bundle
+}
+
+package() {
+  cd "$_root/src-tauri"
+  install -Dm755 target/release/body-mechanics "$pkgdir/usr/bin/body-mechanics"
+  install -Dm644 icons/32x32.png "$pkgdir/usr/share/icons/hicolor/32x32/apps/body-mechanics.png"
+  install -Dm644 icons/64x64.png "$pkgdir/usr/share/icons/hicolor/64x64/apps/body-mechanics.png"
+  install -Dm644 icons/128x128.png "$pkgdir/usr/share/icons/hicolor/128x128/apps/body-mechanics.png"
+  install -Dm644 icons/128x128@2x.png "$pkgdir/usr/share/icons/hicolor/256x256/apps/body-mechanics.png"
+  install -Dm644 icons/icon.png "$pkgdir/usr/share/icons/hicolor/512x512/apps/body-mechanics.png"
+  install -Dm644 /dev/stdin "$pkgdir/usr/share/applications/body-mechanics.desktop" <<'DESKTOP'
+[Desktop Entry]
+Type=Application
+Name=Body Mechanics
+Comment=Exercise sessions, routines and a body map
+Exec=body-mechanics
+Icon=body-mechanics
+StartupWMClass=body-mechanics
+Categories=Utility;
+Terminal=false
+DESKTOP
+}
