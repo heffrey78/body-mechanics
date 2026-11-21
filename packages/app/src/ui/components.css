@@ -68,30 +68,31 @@ button { font-family: inherit; }
 .rtable input { font: inherit; width: 72px; min-height: 40px; padding: 0 8px; border-radius: 8px; border: var(--outline) solid var(--line-strong); background: var(--surface); color: var(--ink); }
 .rtable .mini { width: 40px; height: 40px; font-size: 18px; }
 
-/* The body map (#48), as the #9 mockup: tappable blocks on a 220 × 450 figure. */
-.fig { position: relative; width: 220px; height: 450px; margin: 0 auto; flex-shrink: 0; }
-.fig-head { position: absolute; left: 88px; top: 0; width: 44px; height: 48px; border-radius: 22px; background: var(--surface-2); border: 1.5px solid var(--line-strong); }
-.part { position: absolute; padding: 0; font: inherit; font-size: 12px; font-weight: 700; color: var(--k-ink); background: var(--surface-2); border: 1.5px solid var(--line-strong); cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.part:hover, .part:focus-visible { border-color: var(--accent); border-width: 2px; outline: none; }
-.part.k-injury { color: var(--inj-ink); }
-.s-neck{left:96px;top:50px;width:28px;height:18px;border-radius:6px}
-.s-shL{left:44px;top:70px;width:30px;height:30px;border-radius:14px}
-.s-shR{left:146px;top:70px;width:30px;height:30px;border-radius:14px}
-.s-torso{left:76px;top:70px;width:68px;height:48px;border-radius:10px}
-.s-uaL{left:40px;top:102px;width:26px;height:62px;border-radius:12px}
-.s-uaR{left:154px;top:102px;width:26px;height:62px;border-radius:12px}
-.s-faL{left:32px;top:166px;width:26px;height:76px;border-radius:12px}
-.s-faR{left:162px;top:166px;width:26px;height:76px;border-radius:12px}
-.s-mid{left:78px;top:120px;width:64px;height:58px;border-radius:10px}
-.s-pelvis{left:74px;top:180px;width:72px;height:36px;border-radius:12px}
-.s-thL{left:74px;top:218px;width:35px;height:88px;border-radius:14px}
-.s-thR{left:111px;top:218px;width:35px;height:88px;border-radius:14px}
-.s-knL{left:77px;top:308px;width:30px;height:30px;border-radius:15px}
-.s-knR{left:113px;top:308px;width:30px;height:30px;border-radius:15px}
-.s-lgL{left:79px;top:340px;width:26px;height:80px;border-radius:12px}
-.s-lgR{left:115px;top:340px;width:26px;height:80px;border-radius:12px}
-.s-ftL{left:72px;top:422px;width:34px;height:26px;border-radius:10px}
-.s-ftR{left:114px;top:422px;width:34px;height:26px;border-radius:10px}
+/* The body map (#89): a front and a back figure side by side, each area a tappable shape. */
+.figures { display: flex; justify-content: center; gap: 8px; }
+.figures figure { margin: 0; flex: 1 1 0; max-width: 230px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.figures figcaption { font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; align-self: stretch; padding: 0 6px; }
+.figures figcaption .strong { color: var(--ink); }
+.figure { width: 100%; height: auto; display: block; overflow: visible; touch-action: manipulation; }
+.figure .area { cursor: pointer; outline: none; }
+.figure .area path { fill: var(--surface-2); stroke: var(--line-strong); stroke-width: 1.4; stroke-linejoin: round; }
+.figure .area:hover path, .figure .area:focus-visible path { stroke: var(--accent); stroke-width: 2.4; }
+.figure .area.k-pain path { fill: var(--pain); stroke: var(--pain-bd); }
+.figure .area.k-stiffness path { fill: var(--stiff); stroke: var(--stiff-bd); }
+.figure .area.k-weakness path { fill: var(--weak); stroke: var(--weak-bd); }
+.figure .area.k-injury path { fill: var(--inj); stroke: var(--inj-bd); }
+.figure .area.k-condition path { fill: var(--cond); stroke: var(--cond-bd); stroke-dasharray: 4 3; }
+.figure .fig-plain { fill: var(--surface-2); stroke: var(--line-strong); stroke-width: 1.4; }
+.figure .fig-detail { pointer-events: none; }
+.figure .fig-line { fill: none; stroke: var(--line-strong); stroke-width: 0.9; stroke-linecap: round; opacity: 0.8; }
+.figure .area-letter { background: none; border: 0; }
+.figure .area-letter circle { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1; }
+.figure .area-letter.k-pain circle { stroke: var(--pain-bd); }
+.figure .area-letter.k-stiffness circle { stroke: var(--stiff-bd); }
+.figure .area-letter.k-weakness circle { stroke: var(--weak-bd); }
+.figure .area-letter.k-injury circle { stroke: var(--inj-bd); }
+.figure .area-letter.k-condition circle { stroke: var(--cond-bd); }
+.figure .area-letter text { font-size: 10px; font-weight: 700; fill: var(--ink); }
 .due-note { font-size: 14px; font-weight: 600; color: var(--warn-ink); }
 .track { flex: 1 1 0; height: 8px; border-radius: 4px; background: var(--surface-2); overflow: hidden; }
 .track .fill { display: block; height: 100%; border-radius: 4px; background: var(--accent); }
