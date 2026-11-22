@@ -1,6 +1,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { search, type LibraryItem, type Location, type Minding, type Routine, type WeekStrip } from "@bm/engine";
 import { Button, Chip, Tag } from "../ui/components.tsx";
+import { OneRow } from "../ui/OneRow.tsx";
 import { RingFace } from "../ui/RingFace.tsx";
 import { REGION_LABEL } from "../ui/labels.ts";
 
@@ -8,7 +9,7 @@ import { REGION_LABEL } from "../ui/labels.ts";
  * Home (#2, #31, #73): the day and a greeting; where you are and Start a session; a Minding card per
  * active mark, saying what it changes; type what you're doing (results from the catalogue and your
  * own movements; Enter starts the top one only when every word matched, otherwise it opens the
- * new-movement form); your routines as cards; this week's sessions; recent exercises as chips.
+ * new-movement form), with one row of recent exercises under it (#114); your routines as cards; this week's sessions.
  */
 export function HomeScreen({ onPlan, library, recent, sessionOpen, locations, location, onLocation, onStart, onNew, onResume, minding, onCheckIn, routines, onRoutine, week, now = new Date() }: {
   /** The active marks and what they change (#73). */
@@ -47,14 +48,13 @@ export function HomeScreen({ onPlan, library, recent, sessionOpen, locations, lo
         <p className="kicker">{now.toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" })}</p>
         <h1 className="title hello">{sessionOpen ? "Mid-session." : "Ready when you are."}</h1>
       </div>
-      {sessionOpen ? <Button variant="primary" xl onClick={onResume}>Back to your session</Button> : null}
       {!sessionOpen && locations.length ? (
         <div className="chips" role="group" aria-label="Where are you?">
           {locations.map((l) => <Chip key={l.id} on={l.id === location} onClick={() => onLocation(l.id === location ? null : l.id)}>{l.name}</Chip>)}
         </div>
       ) : null}
       <input
-        className="field" type="search" aria-label="What are you doing?" placeholder="What are you doing?" autoComplete="off"
+        className="field" type="search" aria-label="Search for an exercise" placeholder="Search for an exercise" autoComplete="off"
         value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") enter(); }}
       />
       {q.trim() ? (
@@ -73,6 +73,14 @@ export function HomeScreen({ onPlan, library, recent, sessionOpen, locations, lo
           </button>
         </div>
       ) : null}
+      {/* Recent (#114): one row under the search, most recent first; hidden while searching. */}
+      {!q.trim() && recent.length ? (
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          <span className="label">Recent</span>
+          <OneRow items={recent} name={(r) => r.name} onPick={onStart} label="Recent exercises" />
+        </div>
+      ) : null}
+      {sessionOpen && !q.trim() ? <Button variant="primary" xl onClick={onResume}>Back to your session</Button> : null}
       {/* One way to get started (#52): a plan around the body; Suggest next lives in the session. */}
       {!sessionOpen && !q.trim() ? <Button variant="primary" xl onClick={onPlan}>Start a session</Button> : null}
       {!q.trim() ? minding.map((m) => (
@@ -103,12 +111,6 @@ export function HomeScreen({ onPlan, library, recent, sessionOpen, locations, lo
           </div>
           <span className="strong">{week.count} {week.count === 1 ? "session" : "sessions"} this week</span>
         </section>
-      ) : null}
-      {recent.length ? (
-        <>
-          <span className="label">Recent</span>
-          <div className="chips">{recent.map((r) => <Chip key={r.id} onClick={() => onStart(r)}>{r.name}</Chip>)}</div>
-        </>
       ) : null}
     </div>
   );

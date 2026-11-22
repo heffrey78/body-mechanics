@@ -285,17 +285,20 @@ export function App() {
     else syncer.stop();
   };
 
-  /** Recent exercises: the last ten distinct ones logged. */
+  /** Recent exercises (#114): the last ten distinct ones, most recent first: this session's, then past sessions', newest first. */
   const recent = (() => {
     const byId = new Map(library.map((x) => [x.id, x]));
     const seen: LibraryItem[] = [];
-    for (const s of index?.sessions() ?? []) for (const e of s.entries) {
+    const entries = [
+      ...(session ? [...session.entries].filter((e) => !e.deleted).reverse() : []),
+      ...(index?.sessions() ?? []).filter((s) => s.id !== session?.id).flatMap((s) => [...s.entries].reverse()),
+    ];
+    for (const e of entries) {
       const x = byId.get(e.exercise);
       if (x && !seen.includes(x)) seen.push(x);
       if (seen.length >= 10) break;
     }
-    if (session) for (const e of session.entries) { const x = byId.get(e.exercise); if (x && !seen.includes(x)) seen.unshift(x); }
-    return seen.slice(0, 10);
+    return seen;
   })();
 
   /** The open session changed: keep it, and the draft that brings it back after a restart. */
