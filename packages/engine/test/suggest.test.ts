@@ -52,7 +52,7 @@ describe("Suggest next (#42), the #13 scenarios without marks", () => {
 
 describe("Suggest next: the rules", () => {
   it("never suggests a movement without a body region; once tagged, it can be", () => {
-    const own: LibraryItem = { id: "oooooooooooooooo", name: "Couch sit to stand", aliases: [], works: [], strains: [], kinds: ["strength"], measure: "reps", sided: false, equipment: [], needs: [], optional: [], sweat: 0, own: true };
+    const own: LibraryItem = { id: "oooooooooooooooo", name: "Couch sit to stand", aliases: [], works: [], strains: [], kinds: ["strength"], tags: [], measure: "reps", sided: false, equipment: [], needs: [], optional: [], sweat: 0, own: true };
     const answers: Answers = { sweat: 0, area: ["quads"], kinds: ["strength"] };
     expect(suggest(answers, ctx({ library: [...library, own] })).some((x) => x.item.id === own.id)).toBe(false);
     const tagged = { ...own, works: ["quads" as const, "glutes" as const] };

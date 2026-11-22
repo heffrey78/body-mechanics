@@ -32,6 +32,13 @@ export type Shape = (typeof SHAPES)[number];
 export const KINDS = ["mobility", "strength", "endurance", "balance"] as const;
 export type Kind = (typeof KINDS)[number];
 
+/** What a session mode looks for (#100, #109), beside the kinds: a static stretch, a yoga pose, a breathing exercise, a calming one. */
+export const EXERCISE_TAGS = ["stretch", "yoga", "breathing", "calming"] as const;
+export type ExerciseTag = (typeof EXERCISE_TAGS)[number];
+/** Where the body is (#109): Wind down orders its sequence from standing to lying. */
+export const POSITIONS = ["standing", "kneeling", "seated", "lying"] as const;
+export type Position = (typeof POSITIONS)[number];
+
 export const MEASURES = ["reps", "time", "distance"] as const;
 export type Measure = (typeof MEASURES)[number];
 

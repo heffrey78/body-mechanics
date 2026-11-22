@@ -48,7 +48,7 @@ describe("equipment as alternatives and optional items (D4, #58)", () => {
     await vault.write({ ...plyo, id: "dddddddddddddddd", name: "Gone", deleted: true });
     const items = await loadEquipment(vault);
     expect(items.map((x) => x.name)).toEqual(["Plyo box", "TRX"]);
-    const row: LibraryItem = { id: "rrrrrrrrrrrrrrrr", name: "TRX row", aliases: [], works: ["upperback"], strains: [], kinds: ["strength"], measure: "reps", sided: false, equipment: [trx.id], needs: [[trx.id]], optional: [], sweat: 1, own: true };
+    const row: LibraryItem = { id: "rrrrrrrrrrrrrrrr", name: "TRX row", aliases: [], works: ["upperback"], strains: [], kinds: ["strength"], tags: [], measure: "reps", sided: false, equipment: [trx.id], needs: [[trx.id]], optional: [], sweat: 1, own: true };
     const home = starterLocations().find((l) => l.name === "Home")!;
     const answers = (equipment: string[]) => ({ location: { ...home, equipment }, sweat: 2 as const, area: [], kinds: [] });
     const lib = [...library, row];

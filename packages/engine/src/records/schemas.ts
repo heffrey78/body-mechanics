@@ -9,7 +9,7 @@ import { z } from "zod";
 import { HLC_PATTERN } from "./hlc.ts";
 import { ID_PATTERN } from "./ids.ts";
 import { JOINTS } from "../demo/skeleton.ts";
-import { BOTHERS, EFFORTS, EQUIPMENT, KINDS, MARK_KINDS, MEASURES, MODIFIER_KINDS, RED_FLAGS, REGIONS, RETIRED_THEMES, SHAPES, SIDED_REGIONS, SIDES, THEMES, THEME_MODES, UNITS } from "./vocab.ts";
+import { BOTHERS, EFFORTS, EQUIPMENT, EXERCISE_TAGS, KINDS, MARK_KINDS, MEASURES, MODIFIER_KINDS, POSITIONS, RED_FLAGS, REGIONS, RETIRED_THEMES, SHAPES, SIDED_REGIONS, SIDES, THEMES, THEME_MODES, UNITS } from "./vocab.ts";
 
 export const FORMAT_VERSION = 1;
 
@@ -56,6 +56,9 @@ export const Exercise = z.strictObject({
   /** Regions it loads, for the body map's warnings (#4). */
   strains: z.array(z.enum(REGIONS)).default([]),
   kinds: z.array(z.enum(KINDS)).default([]),
+  /** For session modes (#109); left out when empty, so older builds still read it. */
+  tags: z.array(z.enum(EXERCISE_TAGS)).optional(),
+  position: z.enum(POSITIONS).optional(),
   /** The old flat list (D1), read with the stand-in groups when `needs` isn't set (D4). */
   equipment: z.array(z.enum(EQUIPMENT)).default([]),
   /** What it needs (D4): alternatives, one of each group required. */
@@ -88,6 +91,8 @@ export const ExerciseOverride = z.strictObject({
   works: z.array(z.enum(REGIONS)).optional(),
   strains: z.array(z.enum(REGIONS)).optional(),
   kinds: z.array(z.enum(KINDS)).optional(),
+  tags: z.array(z.enum(EXERCISE_TAGS)).optional(),
+  position: z.enum(POSITIONS).optional(),
   needs: z.array(z.array(equipmentRef).min(1)).optional(),
   optional: z.array(equipmentRef).optional(),
   sweat: z.union([z.literal(0), z.literal(1), z.literal(2)]).optional(),
