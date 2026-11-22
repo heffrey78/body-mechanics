@@ -1,6 +1,6 @@
 {
  "version": "1",
- "builtFrom": "wger exerciseinfo, 2026-11-18",
+ "builtFrom": "wger exerciseinfo, 2026-11-22",
  "entries": [
   {
    "id": "bm:cat-cow",
@@ -18,6 +18,11 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "yoga",
+    "calming"
+   ],
+   "position": "kneeling",
    "sweat": 0,
    "equipment": [
     "floor"
@@ -58,6 +63,12 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "yoga",
+    "stretch",
+    "calming"
+   ],
+   "position": "kneeling",
    "sweat": 0,
    "equipment": [
     "floor"
@@ -94,6 +105,11 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "stretch",
+    "calming"
+   ],
+   "position": "seated",
    "sweat": 0,
    "equipment": [
     "chair",
@@ -138,6 +154,10 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "stretch"
+   ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [],
    "source": {
@@ -174,6 +194,10 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "stretch"
+   ],
+   "position": "kneeling",
    "sweat": 0,
    "equipment": [],
    "source": {
@@ -209,6 +233,7 @@
    "kinds": [
     "mobility"
    ],
+   "position": "seated",
    "sweat": 0,
    "equipment": [
     "floor"
@@ -244,6 +269,11 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "yoga",
+    "stretch"
+   ],
+   "position": "seated",
    "sweat": 0,
    "equipment": [
     "floor"
@@ -280,6 +310,11 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "stretch",
+    "calming"
+   ],
+   "position": "lying",
    "sweat": 0,
    "equipment": [
     "floor"
@@ -319,6 +354,10 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "stretch"
+   ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [
     "step"
@@ -352,6 +391,7 @@
    "kinds": [
     "mobility"
    ],
+   "position": "seated",
    "sweat": 0,
    "equipment": [],
    "source": {
@@ -383,6 +423,10 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "stretch"
+   ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [
     "wall"
@@ -414,6 +458,7 @@
    "kinds": [
     "mobility"
    ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [
     "wall"
@@ -447,6 +492,7 @@
    "kinds": [
     "mobility"
    ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [
     "wall"
@@ -482,6 +528,7 @@
     "mobility",
     "strength"
    ],
+   "position": "seated",
    "sweat": 0,
    "equipment": [],
    "source": {
@@ -517,6 +564,11 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "stretch",
+    "calming"
+   ],
+   "position": "seated",
    "sweat": 0,
    "equipment": [],
    "source": {
@@ -550,6 +602,10 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "stretch"
+   ],
+   "position": "seated",
    "sweat": 0,
    "equipment": [],
    "source": {
@@ -582,6 +638,10 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "stretch"
+   ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [],
    "source": {
@@ -612,6 +672,10 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "stretch"
+   ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [],
    "source": {
@@ -642,6 +706,7 @@
    "kinds": [
     "mobility"
    ],
+   "position": "lying",
    "sweat": 0,
    "equipment": [
     "foam-roller",
@@ -675,6 +740,10 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "calming"
+   ],
+   "position": "lying",
    "sweat": 0,
    "equipment": [
     "floor"
@@ -710,6 +779,11 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "yoga",
+    "calming"
+   ],
+   "position": "kneeling",
    "sweat": 0,
    "equipment": [
     "floor"
@@ -745,6 +819,7 @@
    "kinds": [
     "mobility"
    ],
+   "position": "standing",
    "sweat": 1,
    "equipment": [
     "floor"
@@ -781,6 +856,11 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "yoga",
+    "stretch"
+   ],
+   "position": "lying",
    "sweat": 0,
    "equipment": [
     "floor"
@@ -816,6 +896,12 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "yoga",
+    "stretch",
+    "calming"
+   ],
+   "position": "lying",
    "sweat": 0,
    "equipment": [
     "floor"
@@ -853,6 +939,10 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "stretch"
+   ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [],
    "source": {
@@ -885,6 +975,12 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "yoga",
+    "stretch",
+    "calming"
+   ],
+   "position": "seated",
    "sweat": 0,
    "equipment": [
     "floor"
@@ -919,6 +1015,10 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "stretch"
+   ],
+   "position": "kneeling",
    "sweat": 0,
    "equipment": [
     "floor",
@@ -956,6 +1056,10 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "stretch"
+   ],
+   "position": "kneeling",
    "sweat": 0,
    "equipment": [
     "bench",
@@ -996,6 +1100,10 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "stretch"
+   ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [
     "wall"
@@ -1029,6 +1137,10 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "stretch"
+   ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [],
    "source": {
@@ -1060,6 +1172,10 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "stretch"
+   ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [],
    "source": {
@@ -1094,6 +1210,11 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "yoga",
+    "stretch"
+   ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [],
    "source": {
@@ -1130,6 +1251,11 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "yoga",
+    "stretch"
+   ],
+   "position": "kneeling",
    "sweat": 0,
    "equipment": [
     "floor",
@@ -1161,6 +1287,7 @@
    "kinds": [
     "mobility"
    ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [],
    "source": {
@@ -1195,6 +1322,7 @@
    "kinds": [
     "mobility"
    ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [],
    "source": {
@@ -1230,6 +1358,10 @@
     "mobility",
     "strength"
    ],
+   "tags": [
+    "calming"
+   ],
+   "position": "lying",
    "sweat": 0,
    "equipment": [
     "floor"
@@ -1263,6 +1395,11 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "stretch",
+    "calming"
+   ],
+   "position": "lying",
    "sweat": 0,
    "equipment": [
     "floor"
@@ -1298,6 +1435,10 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "stretch"
+   ],
+   "position": "seated",
    "sweat": 0,
    "equipment": [
     "chair",
@@ -1344,6 +1485,11 @@
    "kinds": [
     "mobility"
    ],
+   "tags": [
+    "yoga",
+    "stretch"
+   ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [],
    "source": {
@@ -1420,6 +1566,7 @@
     "strength",
     "endurance"
    ],
+   "position": "standing",
    "sweat": 1,
    "equipment": [],
    "source": {
@@ -1900,6 +2047,7 @@
     "strength",
     "endurance"
    ],
+   "position": "lying",
    "sweat": 1,
    "equipment": [
     "floor"
@@ -1935,6 +2083,7 @@
    "kinds": [
     "strength"
    ],
+   "position": "lying",
    "sweat": 1,
    "equipment": [
     "floor"
@@ -2007,6 +2156,7 @@
     "strength",
     "endurance"
    ],
+   "position": "standing",
    "sweat": 1,
    "equipment": [
     "step",
@@ -2417,6 +2567,7 @@
     "strength",
     "endurance"
    ],
+   "position": "seated",
    "sweat": 1,
    "equipment": [
     "chair",
@@ -2455,6 +2606,7 @@
    "kinds": [
     "strength"
    ],
+   "position": "lying",
    "sweat": 0,
    "equipment": [
     "floor"
@@ -2602,6 +2754,7 @@
    "kinds": [
     "strength"
    ],
+   "position": "lying",
    "sweat": 0,
    "equipment": [
     "floor"
@@ -2874,6 +3027,7 @@
    "kinds": [
     "strength"
    ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [
     "wall"
@@ -2889,7 +3043,7 @@
    "authors": [
     "Body Mechanics"
    ],
-   "review": "pending"
+   "review": "approved"
   },
   {
    "id": "bm:bench-press",
@@ -3420,6 +3574,7 @@
     "strength",
     "endurance"
    ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [
     "band"
@@ -4017,6 +4172,10 @@
     "strength",
     "mobility"
    ],
+   "tags": [
+    "stretch"
+   ],
+   "position": "standing",
    "sweat": 1,
    "equipment": [
     "pullup-bar"
@@ -4129,6 +4288,7 @@
     "strength",
     "endurance"
    ],
+   "position": "kneeling",
    "sweat": 1,
    "equipment": [
     "floor"
@@ -4165,6 +4325,7 @@
     "strength",
     "endurance"
    ],
+   "position": "lying",
    "sweat": 1,
    "equipment": [
     "floor"
@@ -4197,6 +4358,7 @@
    "kinds": [
     "strength"
    ],
+   "position": "lying",
    "sweat": 0,
    "equipment": [
     "floor"
@@ -4231,6 +4393,7 @@
     "strength",
     "balance"
    ],
+   "position": "kneeling",
    "sweat": 0,
    "equipment": [
     "floor"
@@ -4263,6 +4426,7 @@
    "kinds": [
     "strength"
    ],
+   "position": "lying",
    "sweat": 0,
    "equipment": [
     "floor"
@@ -4662,6 +4826,7 @@
    "kinds": [
     "strength"
    ],
+   "position": "lying",
    "sweat": 0,
    "equipment": [
     "floor",
@@ -4803,6 +4968,7 @@
    "kinds": [
     "balance"
    ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [],
    "source": {
@@ -4837,6 +5003,7 @@
    "kinds": [
     "balance"
    ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [],
    "variationOf": "bm:single-leg-stand",
@@ -4869,6 +5036,7 @@
    "kinds": [
     "balance"
    ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [],
    "source": {
@@ -4902,6 +5070,7 @@
     "balance",
     "strength"
    ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [],
    "source": {
@@ -4934,6 +5103,7 @@
     "balance",
     "strength"
    ],
+   "position": "kneeling",
    "sweat": 0,
    "equipment": [
     "floor"
@@ -5039,6 +5209,7 @@
    "kinds": [
     "balance"
    ],
+   "position": "standing",
    "sweat": 0,
    "equipment": [],
    "source": {
@@ -5418,6 +5589,1005 @@
     "Body Mechanics"
    ],
    "review": "approved"
+  },
+  {
+   "id": "bm:mountain-pose",
+   "name": "Mountain pose",
+   "aliases": [
+    "tadasana"
+   ],
+   "instructions": "Stand with your feet hip-width apart, weight even across both feet. Lengthen up through the crown of your head, shoulders down and relaxed, arms by your sides. Breathe slowly and stay still.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "ankle",
+    "core",
+    "upperback"
+   ],
+   "strains": [],
+   "kinds": [
+    "balance",
+    "mobility"
+   ],
+   "tags": [
+    "yoga",
+    "calming"
+   ],
+   "position": "standing",
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:warrior-one",
+   "name": "Warrior I",
+   "aliases": [
+    "virabhadrasana I"
+   ],
+   "instructions": "Step one foot back a long stride and turn it out slightly, heel down. Bend the front knee over the ankle, hips facing forward, and reach both arms overhead. Keep the back leg strong.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "quads",
+    "hips",
+    "shoulder"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "strength",
+    "mobility"
+   ],
+   "tags": [
+    "yoga"
+   ],
+   "position": "standing",
+   "sweat": 1,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:warrior-two",
+   "name": "Warrior II",
+   "aliases": [
+    "virabhadrasana II"
+   ],
+   "instructions": "Stand with your feet wide, front foot pointing forward and back foot turned in. Bend the front knee over the ankle, arms out level with your shoulders, and look over the front hand. Keep the knee tracking over your toes.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "quads",
+    "hips",
+    "shoulder"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "strength",
+    "mobility"
+   ],
+   "tags": [
+    "yoga"
+   ],
+   "position": "standing",
+   "sweat": 1,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:triangle-pose",
+   "name": "Triangle pose",
+   "aliases": [
+    "trikonasana"
+   ],
+   "instructions": "Stand with your feet wide, front foot pointing forward. Keep both legs straight, reach forward over the front leg, then lower that hand to your shin or a block and reach the other arm up. Lengthen rather than bending sideways.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "hamstrings",
+    "hips",
+    "core"
+   ],
+   "strains": [
+    "lowerback",
+    "hamstrings"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "tags": [
+    "yoga",
+    "stretch"
+   ],
+   "position": "standing",
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:tree-pose",
+   "name": "Tree pose",
+   "aliases": [
+    "vrksasana"
+   ],
+   "instructions": "Stand on one leg and place the other foot on the inside of your calf or thigh, never on the knee. Hands at your chest or overhead. Fix your eyes on one point; touch a wall if you need it.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "ankle",
+    "hips",
+    "core"
+   ],
+   "strains": [
+    "ankle"
+   ],
+   "kinds": [
+    "balance"
+   ],
+   "tags": [
+    "yoga"
+   ],
+   "position": "standing",
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:chair-pose",
+   "name": "Chair pose",
+   "aliases": [
+    "utkatasana"
+   ],
+   "instructions": "Feet together or hip-width, bend your knees and sit your hips back as if onto a chair, arms reaching up. Keep your weight in your heels and your chest lifted.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "quads",
+    "glutes",
+    "shoulder"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "strength"
+   ],
+   "tags": [
+    "yoga"
+   ],
+   "position": "standing",
+   "sweat": 1,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:standing-side-bend",
+   "name": "Standing side bend",
+   "aliases": [],
+   "instructions": "Stand tall, feet hip-width. Reach one arm overhead and lean gently to the other side, lengthening along the reaching side. Keep your hips steady and breathe into the stretch.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "core",
+    "upperback"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "tags": [
+    "yoga",
+    "stretch"
+   ],
+   "position": "standing",
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:sun-salutation",
+   "name": "Sun salutation",
+   "aliases": [
+    "surya namaskar"
+   ],
+   "instructions": "From standing, reach up, fold forward, step back to a plank, lower down, lift into a cobra, push back to downward dog, then step forward, fold and rise. Move with your breath; one round is one rep.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "hamstrings",
+    "shoulder",
+    "core",
+    "lowerback"
+   ],
+   "strains": [
+    "lowerback",
+    "forearm",
+    "shoulder"
+   ],
+   "kinds": [
+    "mobility",
+    "endurance"
+   ],
+   "tags": [
+    "yoga"
+   ],
+   "position": "standing",
+   "sweat": 1,
+   "equipment": [
+    "mat"
+   ],
+   "optional": [
+    "mat"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:low-lunge",
+   "name": "Low lunge",
+   "aliases": [
+    "anjaneyasana",
+    "crescent lunge"
+   ],
+   "instructions": "Step one foot forward into a lunge and lower the back knee to the floor, padded if you like. Sink your hips forward until the front of the back hip stretches, hands on the front knee or reaching up.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "hips",
+    "quads"
+   ],
+   "strains": [
+    "knee"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "tags": [
+    "yoga",
+    "stretch"
+   ],
+   "position": "kneeling",
+   "sweat": 0,
+   "equipment": [
+    "mat"
+   ],
+   "optional": [
+    "mat"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:puppy-pose",
+   "name": "Extended puppy pose",
+   "aliases": [],
+   "instructions": "On hands and knees, keep your hips over your knees and walk your hands forward, letting your chest sink towards the floor. Rest your forehead down and let the shoulders open.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "shoulder",
+    "upperback",
+    "chest"
+   ],
+   "strains": [
+    "shoulder",
+    "knee"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "tags": [
+    "yoga",
+    "stretch",
+    "calming"
+   ],
+   "position": "kneeling",
+   "sweat": 0,
+   "equipment": [
+    "mat"
+   ],
+   "optional": [
+    "mat"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:seated-forward-fold",
+   "name": "Seated forward fold",
+   "aliases": [
+    "paschimottanasana"
+   ],
+   "instructions": "Sit with your legs straight in front. Lengthen your back, then fold forward from the hips towards your feet, as far as is comfortable. Bend the knees if your hamstrings pull or your back rounds hard.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "hamstrings",
+    "lowerback"
+   ],
+   "strains": [
+    "lowerback",
+    "hamstrings"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "tags": [
+    "yoga",
+    "stretch",
+    "calming"
+   ],
+   "position": "seated",
+   "sweat": 0,
+   "equipment": [
+    "mat"
+   ],
+   "optional": [
+    "mat"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:bridge-pose",
+   "name": "Bridge pose",
+   "aliases": [
+    "setu bandhasana"
+   ],
+   "instructions": "Lie on your back, knees bent and feet flat near your hips. Press through your feet to lift your hips, rolling up through the spine, and hold. Keep your neck still and don't turn your head.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "glutes",
+    "lowerback",
+    "chest"
+   ],
+   "strains": [
+    "neck"
+   ],
+   "kinds": [
+    "mobility",
+    "strength"
+   ],
+   "tags": [
+    "yoga"
+   ],
+   "position": "lying",
+   "sweat": 0,
+   "equipment": [
+    "mat"
+   ],
+   "optional": [
+    "mat"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:supine-twist",
+   "name": "Lying twist",
+   "aliases": [
+    "supine spinal twist"
+   ],
+   "instructions": "Lie on your back and draw one knee across your body towards the floor, the other leg long. Stretch the opposite arm out and let your shoulders rest down. Breathe and let the twist settle.",
+   "measure": "time",
+   "sided": true,
+   "works": [
+    "lowerback",
+    "glutes",
+    "chest"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "tags": [
+    "yoga",
+    "stretch",
+    "calming"
+   ],
+   "position": "lying",
+   "sweat": 0,
+   "equipment": [
+    "mat"
+   ],
+   "optional": [
+    "mat"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:happy-baby",
+   "name": "Happy baby",
+   "aliases": [
+    "ananda balasana"
+   ],
+   "instructions": "Lie on your back, bring your knees towards your armpits and hold the outsides of your feet, soles to the ceiling. Let your lower back rest down; rock gently if it feels good.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "hips",
+    "lowerback"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "tags": [
+    "yoga",
+    "stretch",
+    "calming"
+   ],
+   "position": "lying",
+   "sweat": 0,
+   "equipment": [
+    "mat"
+   ],
+   "optional": [
+    "mat"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:reclined-butterfly",
+   "name": "Reclined butterfly",
+   "aliases": [
+    "supta baddha konasana",
+    "reclined bound angle"
+   ],
+   "instructions": "Lie on your back with the soles of your feet together and your knees falling open. Rest your arms by your sides. Put cushions under your knees if the stretch is too much.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "hips"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "tags": [
+    "yoga",
+    "stretch",
+    "calming"
+   ],
+   "position": "lying",
+   "sweat": 0,
+   "equipment": [
+    "mat"
+   ],
+   "optional": [
+    "mat"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:legs-up-the-wall",
+   "name": "Legs up the wall",
+   "aliases": [
+    "viparita karani"
+   ],
+   "instructions": "Sit side-on to a wall, then swing your legs up it as you lie back, hips close to the wall. Rest your arms by your sides and breathe slowly.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "hamstrings",
+    "lowerback"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "tags": [
+    "yoga",
+    "calming"
+   ],
+   "position": "lying",
+   "sweat": 0,
+   "equipment": [
+    "wall",
+    "floor"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:corpse-pose",
+   "name": "Resting pose",
+   "aliases": [
+    "corpse pose",
+    "savasana"
+   ],
+   "instructions": "Lie on your back, legs relaxed and apart, arms a little away from your sides, palms up. Close your eyes and let your body grow heavy. Breathe naturally and stay still.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "core",
+    "lowerback"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "tags": [
+    "yoga",
+    "calming",
+    "breathing"
+   ],
+   "position": "lying",
+   "sweat": 0,
+   "equipment": [
+    "mat"
+   ],
+   "optional": [
+    "mat"
+   ],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending",
+   "notes": "Works is where tension lets go; a region is needed for it to be suggested."
+  },
+  {
+   "id": "bm:belly-breathing",
+   "name": "Belly breathing",
+   "aliases": [
+    "diaphragmatic breathing"
+   ],
+   "instructions": "Lie down or sit, one hand on your chest and one on your belly. Breathe in through your nose so the belly hand rises and the chest hand stays still, then breathe out slowly.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "core"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "tags": [
+    "breathing",
+    "calming"
+   ],
+   "position": "lying",
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:box-breathing",
+   "name": "Box breathing",
+   "aliases": [
+    "square breathing"
+   ],
+   "instructions": "Sit tall. Breathe in for a count of four, hold for four, breathe out for four, hold for four. Repeat, keeping each part smooth. Shorten the counts if the holds feel strained.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "core"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "tags": [
+    "breathing",
+    "calming"
+   ],
+   "position": "seated",
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:long-exhale-breathing",
+   "name": "Long exhale breathing",
+   "aliases": [
+    "4-7-8 breathing"
+   ],
+   "instructions": "Sit or lie comfortably. Breathe in through your nose for a count of four, then out slowly through your mouth for six to eight. A longer breath out than in helps the body settle.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "core"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "tags": [
+    "breathing",
+    "calming"
+   ],
+   "position": "seated",
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:body-scan",
+   "name": "Body scan",
+   "aliases": [],
+   "instructions": "Lie on your back with your eyes closed. Bring your attention slowly from your toes up to your head, noticing each part and letting it soften as you breathe out.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "neck",
+    "shoulder",
+    "lowerback"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "tags": [
+    "calming",
+    "breathing"
+   ],
+   "position": "lying",
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending",
+   "notes": "Works is where tension usually sits; a region is needed for it to be suggested."
+  },
+  {
+   "id": "bm:neck-rolls",
+   "name": "Neck half-circles",
+   "aliases": [],
+   "instructions": "Sitting tall, let your chin drop towards your chest, then roll your head slowly from one shoulder to the other and back. Keep to the front half; don't circle the head backwards.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "neck"
+   ],
+   "strains": [
+    "neck"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "position": "seated",
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:shoulder-rolls",
+   "name": "Shoulder rolls",
+   "aliases": [],
+   "instructions": "Stand or sit tall and roll your shoulders up, back and down in slow circles. Then roll them the other way.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "shoulder",
+    "upperback",
+    "neck"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "position": "standing",
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:wrist-circles",
+   "name": "Wrist circles",
+   "aliases": [],
+   "instructions": "Interlace your fingers or keep your hands free, and circle your wrists slowly in both directions, as large as is comfortable.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "forearm"
+   ],
+   "strains": [],
+   "kinds": [
+    "mobility"
+   ],
+   "position": "standing",
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:standing-roll-down",
+   "name": "Standing roll-down",
+   "aliases": [],
+   "instructions": "Stand with soft knees. Tuck your chin and roll down one vertebra at a time towards the floor, let your arms hang, then roll back up slowly, stacking your spine.",
+   "measure": "reps",
+   "sided": false,
+   "works": [
+    "lowerback",
+    "hamstrings",
+    "upperback"
+   ],
+   "strains": [
+    "lowerback"
+   ],
+   "kinds": [
+    "mobility"
+   ],
+   "position": "standing",
+   "sweat": 0,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
+  },
+  {
+   "id": "bm:march-in-place",
+   "name": "Marching in place",
+   "aliases": [],
+   "instructions": "March on the spot, lifting your knees to a comfortable height and swinging your arms. Build up gently to a steady pace.",
+   "measure": "time",
+   "sided": false,
+   "works": [
+    "hips",
+    "quads",
+    "calf"
+   ],
+   "strains": [],
+   "kinds": [
+    "endurance",
+    "mobility"
+   ],
+   "position": "standing",
+   "sweat": 1,
+   "equipment": [],
+   "source": {
+    "kind": "own"
+   },
+   "licence": {
+    "name": "CC-BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/"
+   },
+   "authors": [
+    "Body Mechanics"
+   ],
+   "review": "pending"
   }
  ],
  "rules": {

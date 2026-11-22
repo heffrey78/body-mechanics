@@ -27,6 +27,21 @@ describe("the catalogue", () => {
     for (const id of ["bm:mcgill-curl-up", "bm:chin-tuck", "bm:cat-cow", "bm:terminal-knee-extension", "bm:wall-slides", "bm:single-leg-stand"]) expect(catalogueEntry(id), id).toBeDefined();
   });
 
+  it("has enough for every session mode with nothing but a floor (#100, #109)", () => {
+    const bare = entries.filter((e) => e.sweat === 0 && (e.needs ?? e.equipment.map((x) => [x])).every((g) => g.some((x) => x === "floor")));
+    const count = (tag: "stretch" | "yoga" | "breathing" | "calming") => bare.filter((e) => e.tags?.includes(tag)).length;
+    expect(count("stretch")).toBeGreaterThanOrEqual(6);
+    expect(count("yoga")).toBeGreaterThanOrEqual(6);
+    expect(count("calming")).toBeGreaterThanOrEqual(6);
+    expect(count("breathing")).toBeGreaterThanOrEqual(3);
+    // Wind down runs from standing to lying: each position has something calming.
+    for (const p of ["standing", "kneeling", "seated", "lying"] as const) {
+      expect(entries.some((e) => e.position === p && (e.tags?.includes("calming") || e.tags?.includes("stretch"))), p).toBe(true);
+    }
+    // Every tagged exercise says where the body is.
+    for (const e of entries.filter((x) => x.tags?.length)) expect(e.position, e.id).toBeDefined();
+  });
+
   it("keeps left and right out of names: one-sidedness is `sided`", () => {
     for (const e of entries) for (const n of [e.name, ...e.aliases]) expect(n, e.id).not.toMatch(/^(left|right)\b|\b(left|right)$/i);
   });
