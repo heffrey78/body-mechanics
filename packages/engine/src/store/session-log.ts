@@ -6,7 +6,7 @@
  */
 import { Clock } from "../records/hlc.ts";
 import { newId } from "../records/ids.ts";
-import type { Effort, Equipment, Kind, Measure, Region } from "../records/vocab.ts";
+import type { Effort, Equipment, ExerciseTag, Kind, Measure, Mode, Position, Region } from "../records/vocab.ts";
 import type { BodyLink, Entry, Exercise, ExerciseOverride, LoggedSet, Modifier, Session } from "../records/schemas.ts";
 import { catalogue, type CatalogueEntry } from "../catalogue/index.ts";
 import { mentioned, needsFromLegacy } from "../records/equipment.ts";
@@ -65,13 +65,13 @@ export class SessionLog {
   }
 
   /** The Suggest next answers for this session (#43): where, how long, how much sweat, the focus. */
-  async setAnswers(answers: { location?: string; minutes?: number; sweat: 0 | 1 | 2; area: Region[]; kinds: Kind[] }): Promise<void> {
+  async setAnswers(answers: { location?: string; minutes?: number; sweat: 0 | 1 | 2; area: Region[]; kinds: Kind[]; mode?: Mode }): Promise<void> {
     const s = this.#need();
     const stamp = this.#clock.tick();
     const before = JSON.stringify([s.location, s.answers, s.focus]);
     if (answers.location) s.location = answers.location;
     else delete s.location;
-    s.answers = { sweat: answers.sweat, ...(answers.minutes ? { minutes: answers.minutes } : {}) };
+    s.answers = { sweat: answers.sweat, ...(answers.minutes ? { minutes: answers.minutes } : {}), ...(answers.mode && answers.mode !== "workout" ? { mode: answers.mode } : {}) };
     s.focus = { area: answers.area, kinds: answers.kinds };
     if (JSON.stringify([s.location, s.answers, s.focus]) === before) return;
     s.edits = { ...(s.edits ?? {}), location: stamp, answers: stamp, focus: stamp };
@@ -206,6 +206,9 @@ export interface LibraryItem {
   works: Region[];
   strains: Region[];
   kinds: Kind[];
+  /** For session modes (#109); empty when none. */
+  tags: ExerciseTag[];
+  position?: Position;
   measure: Measure;
   sided: boolean;
   /** Every item it mentions, for display and filters (D4: `needs` and `optional` decide). */
@@ -232,12 +235,12 @@ function equipmentOf(e: { equipment: Equipment[]; needs?: string[][] | undefined
 
 /** A catalogue entry as the library lists it. */
 export const fromCatalogue = (e: CatalogueEntry): LibraryItem => ({
-  id: e.id, name: e.name, aliases: e.aliases, works: e.works, strains: e.strains, kinds: e.kinds, measure: e.measure,
+  id: e.id, name: e.name, aliases: e.aliases, works: e.works, strains: e.strains, kinds: e.kinds, tags: e.tags ?? [], ...(e.position ? { position: e.position } : {}), measure: e.measure,
   sided: e.sided, ...equipmentOf(e), sweat: e.sweat, own: false, instructions: e.instructions,
 });
 
 const fromOwn = (e: Exercise): LibraryItem => ({
-  id: e.id, name: e.name, aliases: e.aliases, works: e.works, strains: e.strains, kinds: e.kinds, measure: e.measure,
+  id: e.id, name: e.name, aliases: e.aliases, works: e.works, strains: e.strains, kinds: e.kinds, tags: e.tags ?? [], ...(e.position ? { position: e.position } : {}), measure: e.measure,
   sided: e.sided, ...equipmentOf(e), sweat: e.sweat, own: true,
   ...(e.instructions ? { instructions: e.instructions } : {}), ...(e.deleted ? { deleted: true as const } : {}),
 });
@@ -245,7 +248,7 @@ const fromOwn = (e: Exercise): LibraryItem => ({
 /** A catalogue exercise with your changes laid over it (#61, D4). */
 function withOverride(item: LibraryItem, o: ExerciseOverride): LibraryItem {
   const out: LibraryItem = { ...item, overridden: true };
-  for (const k of ["measure", "sided", "works", "strains", "kinds", "sweat"] as const) if (o[k] !== undefined) (out as unknown as Record<string, unknown>)[k] = o[k];
+  for (const k of ["measure", "sided", "works", "strains", "kinds", "tags", "position", "sweat"] as const) if (o[k] !== undefined) (out as unknown as Record<string, unknown>)[k] = o[k];
   if (o.needs || o.optional) {
     const needs = o.needs ?? item.needs, optional = o.optional ?? item.optional;
     Object.assign(out, { needs, optional, equipment: mentioned({ needs, optional }) });

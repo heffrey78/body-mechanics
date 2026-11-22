@@ -1,13 +1,13 @@
 import { useMemo, useState } from "react";
 import {
-  EQUIPMENT, KINDS, REGIONS, catalogue, demoFor, fromCatalogue, newId, search,
-  type Demo, type EquipmentItem, type Exercise, type ExerciseOverride, type Kind, type LibraryItem, type Measure, type Region,
+  EQUIPMENT, EXERCISE_TAGS, KINDS, POSITIONS, REGIONS, catalogue, demoFor, fromCatalogue, newId, search,
+  type Demo, type EquipmentItem, type Exercise, type ExerciseOverride, type ExerciseTag, type Kind, type LibraryItem, type Measure, type Position, type Region,
 } from "@bm/engine";
 import { DemoBuilder } from "../demo/DemoBuilder.tsx";
 import { DemoPlayer } from "../demo/DemoPlayer.tsx";
 import { propModels } from "../demo/models.ts";
 import { Button, Chip, Segmented, Tag } from "../ui/components.tsx";
-import { KIND_LABEL, MEASURE_LABEL, REGION_LABEL, SWEAT_LABEL, equipmentLabel } from "../ui/labels.ts";
+import { KIND_LABEL, MEASURE_LABEL, POSITION_LABEL, TAG_LABEL, REGION_LABEL, SWEAT_LABEL, equipmentLabel } from "../ui/labels.ts";
 
 const toggle = <T,>(list: T[], x: T) => (list.includes(x) ? list.filter((y) => y !== x) : [...list, x]);
 
@@ -123,7 +123,7 @@ function ExerciseDetail({ item, names, demo, modelOf, onDemo, onBack, onEdit, on
       <div className="card">
         <span><span className="label">Works</span><br />{regions(item.works)}</span>
         <span><span className="label">Puts load on</span><br />{regions(item.strains)}</span>
-        <span><span className="label">Kind</span><br />{item.kinds.map((k) => KIND_LABEL[k]).join(", ") || "None"} · {MEASURE_LABEL[item.measure].toLowerCase()} · {SWEAT_LABEL[item.sweat].toLowerCase()}</span>
+        <span><span className="label">Kind</span><br />{item.kinds.map((k) => KIND_LABEL[k]).join(", ") || "None"} · {MEASURE_LABEL[item.measure].toLowerCase()} · {SWEAT_LABEL[item.sweat].toLowerCase()}{item.tags.length ? ` · ${item.tags.map((t) => TAG_LABEL[t].toLowerCase()).join(", ")}` : ""}{item.position ? ` · ${POSITION_LABEL[item.position].toLowerCase()}` : ""}</span>
         <span><span className="label">Equipment</span><br />{describeNeeds(item, names)}</span>
       </div>
       {item.instructions ? <p style={{ whiteSpace: "pre-line", margin: 0, lineHeight: 1.5 }}>{item.instructions}</p> : null}
@@ -140,7 +140,7 @@ function ExerciseDetail({ item, names, demo, modelOf, onDemo, onBack, onEdit, on
 }
 
 interface Fields {
-  name: string; measure: Measure; sided: boolean; works: Region[]; strains: Region[]; kinds: Kind[];
+  name: string; measure: Measure; sided: boolean; works: Region[]; strains: Region[]; kinds: Kind[]; tags: ExerciseTag[]; position: Position | undefined;
   needs: string[][]; optional: string[]; sweat: 0 | 1 | 2; instructions: string;
 }
 
@@ -152,7 +152,7 @@ function ExerciseEditor({ item, record, override, custom, onSaveOwn, onSaveOverr
   const catalogueOne = !!item && !item.own;
   const [f, setF] = useState<Fields>(() => ({
     name: item?.name ?? "", measure: item?.measure ?? "reps", sided: item?.sided ?? false, works: item?.works ?? [], strains: item?.strains ?? [],
-    kinds: item?.kinds ?? [], needs: item?.needs.map((g) => [...g]) ?? [], optional: item?.optional ?? [], sweat: item?.sweat ?? 0, instructions: item?.instructions ?? "",
+    kinds: item?.kinds ?? [], tags: item?.tags ?? [], position: item?.position, needs: item?.needs.map((g) => [...g]) ?? [], optional: item?.optional ?? [], sweat: item?.sweat ?? 0, instructions: item?.instructions ?? "",
   }));
   const set = <K extends keyof Fields>(k: K, v: Fields[K]) => setF((x) => ({ ...x, [k]: v }));
   const all: { id: string; label: string }[] = [...EQUIPMENT.map((e) => ({ id: e as string, label: equipmentLabel(e, new Map()) })), ...custom.map((c) => ({ id: c.id, label: c.name }))];
@@ -163,17 +163,17 @@ function ExerciseEditor({ item, record, override, custom, onSaveOwn, onSaveOverr
       const base = fromCatalogue(catalogue().entries.find((e) => e.id === item!.id)!);
       const o: ExerciseOverride = { type: "override", v: 1, id: override?.id ?? newId(), of: item!.id, ...(override?.edits ? { edits: override.edits } : {}) };
       const mine = { ...f, needs };
-      for (const k of ["measure", "sided", "works", "strains", "kinds", "sweat", "needs", "optional"] as const) {
+      for (const k of ["measure", "sided", "works", "strains", "kinds", "tags", "position", "sweat", "needs", "optional"] as const) {
         if (JSON.stringify(mine[k]) !== JSON.stringify(base[k])) (o as unknown as Record<string, unknown>)[k] = mine[k];
       }
       return onSaveOverride(o);
     }
     const name = f.name.trim();
     if (!name) return;
-    const { needs: _n, optional: _o, instructions: _i, ...rest } = record ?? ({} as Partial<Exercise>);
+    const { needs: _n, optional: _o, instructions: _i, tags: _t, position: _p, ...rest } = record ?? ({} as Partial<Exercise>);
     onSaveOwn({
       ...rest, type: "exercise", v: 1, id: record?.id ?? item?.id ?? newId(), name, aliases: record?.aliases ?? [], measure: f.measure, sided: f.sided,
-      works: f.works, strains: f.strains, kinds: f.kinds, equipment: [], needs, ...(f.optional.length ? { optional: f.optional } : {}), sweat: f.sweat,
+      works: f.works, strains: f.strains, kinds: f.kinds, ...(f.tags.length ? { tags: f.tags } : {}), ...(f.position ? { position: f.position } : {}), equipment: [], needs, ...(f.optional.length ? { optional: f.optional } : {}), sweat: f.sweat,
       ...(f.instructions.trim() ? { instructions: f.instructions.trim() } : {}),
     } as Exercise);
   };
@@ -193,6 +193,10 @@ function ExerciseEditor({ item, record, override, custom, onSaveOwn, onSaveOverr
       <div className="chips">{REGIONS.map((r) => <Chip key={r} on={f.strains.includes(r)} onClick={() => set("strains", toggle(f.strains, r))}>{REGION_LABEL[r]}</Chip>)}</div>
       <span className="label">Kind</span>
       <div className="chips">{KINDS.map((k) => <Chip key={k} on={f.kinds.includes(k)} onClick={() => set("kinds", toggle(f.kinds, k))}>{KIND_LABEL[k]}</Chip>)}</div>
+      <span className="label">Good for</span>
+      <div className="chips">{EXERCISE_TAGS.map((t) => <Chip key={t} on={f.tags.includes(t)} onClick={() => set("tags", toggle(f.tags, t))}>{TAG_LABEL[t]}</Chip>)}</div>
+      <span className="label">Position</span>
+      <div className="chips">{POSITIONS.map((p) => <Chip key={p} on={f.position === p} onClick={() => set("position", f.position === p ? undefined : p)}>{POSITION_LABEL[p]}</Chip>)}</div>
 
       <span className="label">Needs</span>
       <span className="muted" style={{ fontSize: 13 }}>Each line is one thing it needs; pick everything that will do for it.</span>

@@ -6,6 +6,7 @@
 import type { Kind } from "../records/vocab.ts";
 import { describeConcern, type Concern } from "../body/assess.ts";
 import { suggest, type Answers, type Context, type Suggestion } from "./suggest.ts";
+import { MODE_SPECS, positionRank } from "./modes.ts";
 
 export interface PlanSection {
   label: string;
@@ -50,6 +51,8 @@ const isHold = (s: Suggestion) => s.item.measure === "time" && s.item.kinds.incl
  * in the plan or skipped. A time limit is spread over the plan's slots.
  */
 export function buildPlan(answers: Answers, ctx: Context, skip: ReadonlySet<string> = new Set()): Plan {
+  const spec = MODE_SPECS[answers.mode ?? "workout"];
+  if (spec.slots) return modePlan(answers, ctx, skip);
   const slots = recipe(answers.kinds);
   const n = slots.reduce((a, s) => a + s.count, 0);
   const per = answers.minutesLeft !== undefined ? Math.max(3, Math.floor(answers.minutesLeft / n)) : undefined;
@@ -69,9 +72,48 @@ export function buildPlan(answers: Answers, ctx: Context, skip: ReadonlySet<stri
     }
     if (items.length) sections.push({ label: slot.label, items });
   }
+  return { sections, notAffected: untouched(answers, ctx, sections) };
+}
+
+/**
+ * A plan for a mode (#109): its own sections, each filled from the mode's ranks, then ordered by
+ * position, down to the floor (Wind down, Yoga…) or up from it (Wake up).
+ */
+function modePlan(answers: Answers, ctx: Context, skip: ReadonlySet<string>): Plan {
+  const spec = MODE_SPECS[answers.mode!];
+  const slots = spec.slots!;
+  // Time is spent as the plan fills, keeping about two minutes for each pick still to come, so a
+  // three-minute breathing finish still fits after the stretches.
+  let left = answers.minutesLeft;
+  let toCome = slots.reduce((a, s) => a + s.count, 0);
+  const chosen: string[] = [...ctx.done];
+  const sections: PlanSection[] = [];
+  const { minutesLeft: _m, ...rest } = answers;
+  for (const slot of slots) {
+    const items: Suggestion[] = [];
+    for (let i = 0; i < slot.count; i++) {
+      toCome--;
+      const limit = left === undefined ? undefined : left - 2 * toCome;
+      if (limit !== undefined && limit < 1) continue;
+      const ranked = suggest({ ...rest, ...(limit !== undefined ? { minutesLeft: limit } : {}) }, { ...ctx, done: chosen, refused: new Set([...ctx.refused, ...skip]) });
+      const pick = ranked.find((s) => slot.fit(s.item));
+      if (!pick) continue;
+      items.push(pick);
+      chosen.push(pick.item.id);
+      if (left !== undefined) left -= pick.minutes;
+    }
+    const dir = spec.order === "up" ? -1 : 1;
+    // A stable sort keeps the ranking among exercises in the same position.
+    if (spec.order) items.sort((a, b) => dir * (positionRank(a.item) - positionRank(b.item)));
+    if (items.length) sections.push({ label: slot.label, items });
+  }
+  return { sections, notAffected: untouched(answers, ctx, sections) };
+}
+
+/** Active marks and conditions the plan doesn't work or strain, outside the focus. */
+function untouched(answers: Answers, ctx: Context, sections: PlanSection[]): Concern[] {
   const all = sections.flatMap((s) => s.items);
   const touched = (c: Concern) => answers.area.includes(c.region) || all.some((s) => s.item.works.includes(c.region) || s.item.strains.includes(c.region));
   const seen = new Set<string>();
-  const notAffected = (ctx.body ?? []).filter((c) => !touched(c) && !seen.has(describeConcern(c)) && seen.add(describeConcern(c)));
-  return { sections, notAffected };
+  return (ctx.body ?? []).filter((c) => !touched(c) && !seen.has(describeConcern(c)) && seen.add(describeConcern(c)));
 }

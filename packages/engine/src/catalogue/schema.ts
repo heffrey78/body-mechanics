@@ -3,7 +3,7 @@
  * fields the engine needs. Built by scripts/catalogue/build.ts from catalogue/curated.yaml.
  */
 import { z } from "zod";
-import { EQUIPMENT, KINDS, MARK_KINDS, MEASURES, REGIONS, modifierInfo } from "../records/vocab.ts";
+import { EQUIPMENT, EXERCISE_TAGS, KINDS, MARK_KINDS, MEASURES, POSITIONS, REGIONS, modifierInfo } from "../records/vocab.ts";
 
 export const CatalogueEntry = z.strictObject({
   id: z.string().regex(/^bm:[a-z0-9-]+$/),
@@ -15,6 +15,9 @@ export const CatalogueEntry = z.strictObject({
   works: z.array(z.enum(REGIONS)).min(1),
   strains: z.array(z.enum(REGIONS)),
   kinds: z.array(z.enum(KINDS)).min(1),
+  /** For session modes (#109). */
+  tags: z.array(z.enum(EXERCISE_TAGS)).optional(),
+  position: z.enum(POSITIONS).optional(),
   sweat: z.union([z.literal(0), z.literal(1), z.literal(2)]),
   equipment: z.array(z.enum(EQUIPMENT)),
   /** D4: alternatives (one of each group) and optional items; without them, `equipment` is read the old way. */

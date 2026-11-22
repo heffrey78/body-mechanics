@@ -37,4 +37,21 @@ describe("your exercises and your versions of catalogue ones (#61)", () => {
     const ctx = { library: lib, done: [], refused: new Set<string>(), history: [], lastTime: () => undefined, units: "kg" as const, now };
     expect(suggest({ location: starterLocations()[0]!, sweat: 2, area: ["quads"], kinds: ["strength"] }, ctx).some((s) => s.item.id === mine.id)).toBe(false);
   });
+
+  it("carries tags and a position for session modes (#109): your own, and over a catalogue one", async () => {
+    const files = memoryFilesPort();
+    const { vault } = await Vault.create({ files, secrets: memorySecretsPort() }, "/r", "correct horse battery", { scryptLogN: 10 });
+    const mine = await createExercise(vault, { name: "Legs on the couch", aliases: [], measure: "time", sided: false, works: ["hamstrings"], strains: [], kinds: ["mobility"], tags: ["calming", "stretch"], position: "lying", equipment: [], sweat: 0 });
+    const plain = await createExercise(vault, { name: "Couch sit to stand", aliases: [], measure: "reps", sided: false, works: ["quads"], strains: [], kinds: ["strength"], equipment: [], sweat: 0 });
+    const o: ExerciseOverride = { type: "override", v: 1, id: "oooooooooooooooo", of: "bm:childs-pose", tags: ["yoga", "calming"], position: "kneeling" };
+    await vault.write(o);
+    const lib = await loadLibrary(vault);
+    expect(lib.find((x) => x.id === mine.id)).toMatchObject({ tags: ["calming", "stretch"], position: "lying" });
+    expect(lib.find((x) => x.id === plain.id)).toMatchObject({ tags: [] });
+    expect(lib.find((x) => x.id === plain.id)!.position).toBeUndefined();
+    expect(lib.find((x) => x.id === "bm:childs-pose")).toMatchObject({ tags: ["yoga", "calming"], position: "kneeling", overridden: true });
+    // An exercise without tags is written without the field, so older builds still read it.
+    const raw = [...(await vault.readMany(await vault.list("exercises"))).records.values()].find((r) => (r as { id: string }).id === plain.id)!;
+    expect("tags" in (raw as object)).toBe(false);
+  });
 });

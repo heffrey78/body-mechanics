@@ -150,3 +150,29 @@ The catalogue (packages/engine/src/catalogue/catalogue.json) is published under 
 | Jogging | [wger 319](https://wger.de/en/exercise/319/view/) | CC-BY-SA 4 | Papazit |
 | Jump squat | [wger 614](https://wger.de/en/exercise/614/view/) | CC-BY-SA 3 | OGhTebfCxhexZXuf35mUxV9C--A |
 | Skater hops | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Mountain pose | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Warrior I | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Warrior II | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Triangle pose | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Tree pose | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Chair pose | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Standing side bend | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Sun salutation | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Low lunge | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Extended puppy pose | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Seated forward fold | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Bridge pose | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Lying twist | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Happy baby | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Reclined butterfly | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Legs up the wall | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Resting pose | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Belly breathing | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Box breathing | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Long exhale breathing | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Body scan | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Neck half-circles | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Shoulder rolls | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Wrist circles | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Standing roll-down | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |
+| Marching in place | Body Mechanics | CC-BY-SA 4.0 | Body Mechanics |

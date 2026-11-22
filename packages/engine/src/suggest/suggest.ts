@@ -10,7 +10,8 @@
  * for its gentler version (if that fits too) or keeps its modifiers, and one that helps an active
  * mark or condition scores up, more when the mark is in the focus and not yet helped this session.
  */
-import type { Kind, Region } from "../records/vocab.ts";
+import type { Kind, Mode, Region } from "../records/vocab.ts";
+import { MODE_SPECS } from "./modes.ts";
 import type { Location } from "../records/schemas.ts";
 import type { LibraryItem } from "../store/session-log.ts";
 import type { EntrySummary, SessionSummary } from "../store/index.ts";
@@ -34,6 +35,8 @@ export interface Answers {
   area: Region[];
   /** Kinds asked for; empty: a balanced mix. */
   kinds: Kind[];
+  /** What the session is for (#100, #109); undefined: a workout. */
+  mode?: Mode;
 }
 
 export interface Context {
@@ -83,9 +86,9 @@ const REGION_WORD: Record<Region, string> = {
 const DAY = 86_400_000;
 
 /** The dose: last time's sets and best amount (moved on by how it felt), else a start for the measure. */
-function dose(item: LibraryItem, last: EntrySummary | undefined, units: "kg" | "lb"): { sets: number; amount: number; loadKg?: number; note?: string } {
+function dose(item: LibraryItem, last: EntrySummary | undefined, units: "kg" | "lb", mode: Mode = "workout"): { sets: number; amount: number; loadKg?: number; note?: string } {
   const f = FIELD[item.measure];
-  const start = { reps: { sets: 2, amount: 10 }, time: { sets: 2, amount: 30 }, distance: { sets: 1, amount: 200 } }[item.measure];
+  const start = MODE_SPECS[mode].start?.(item) ?? { reps: { sets: 2, amount: 10 }, time: { sets: 2, amount: 30 }, distance: { sets: 1, amount: 200 } }[item.measure];
   if (!last || !last.sets.length) return start;
   const amounts = last.sets.map((s) => (s.left || s.right ? Math.min(s.left?.[f] ?? 0, s.right?.[f] ?? 0) : s[f] ?? 0));
   const loads = last.sets.map((s) => s.loadKg ?? 0);
@@ -107,6 +110,8 @@ function minutesFor(item: LibraryItem, sets: number, amount: number): number {
 
 /** Ranked suggestions, best first. Empty when nothing fits. */
 export function suggest(answers: Answers, ctx: Context): Suggestion[] {
+  const mode = answers.mode ?? "workout";
+  const spec = MODE_SPECS[mode];
   const have = new Set(answers.location?.equipment ?? []);
   const doneSet = new Set(ctx.done);
   const byId = new Map(ctx.library.map((x) => [x.id, x]));
@@ -144,7 +149,7 @@ export function suggest(answers: Answers, ctx: Context): Suggestion[] {
         modifiers = a.swapModifiers.length ? a.swapModifiers : own.modifiers;
       }
     }
-    const d = dose(item, ctx.lastTime(item.id), ctx.units);
+    const d = dose(item, ctx.lastTime(item.id), ctx.units, mode);
     const minutes = minutesFor(item, d.sets, d.amount);
     if (answers.minutesLeft !== undefined && minutes > answers.minutesLeft) continue;
     const caution = a.action === "caution" ? a.reasons[0] : undefined;
@@ -159,10 +164,13 @@ export function suggest(answers: Answers, ctx: Context): Suggestion[] {
   // 2. Soft filters: the focus, unless nothing would be left.
   const inArea = (x: LibraryItem) => !answers.area.length || x.works.some((r) => answers.area.includes(r));
   const inKinds = (x: LibraryItem) => !answers.kinds.length || x.kinds.some((k) => answers.kinds.includes(k));
-  let pool = hard.filter((c) => inArea(c.item) && inKinds(c.item));
+  // The mode first (#109): when nothing here fits it, the gentlest of the rest, and say so.
+  let base = hard.filter((c) => spec.admits(c.item));
   let relaxed = "";
-  if (!pool.length) { pool = hard.filter((c) => inArea(c.item)); relaxed = "Nothing here matches every kind you asked for"; }
-  if (!pool.length) { pool = hard; relaxed = "Nothing here matches your focus"; }
+  if (!base.length) { base = hard.filter((c) => c.item.sweat === 0 && c.item.kinds.includes("mobility")); relaxed = `Nothing here fits ${spec.label} exactly`; }
+  let pool = base.filter((c) => inArea(c.item) && inKinds(c.item));
+  if (!pool.length) { pool = base.filter((c) => inArea(c.item)); relaxed ||= "Nothing here matches every kind you asked for"; }
+  if (!pool.length) { pool = base; relaxed ||= "Nothing here matches your focus"; }
 
   // 3. Scoring, with the reasons.
   const out: Suggestion[] = pool.map(({ item, d, minutes, modifiers, body: bodyLines, insteadOf, caution }) => {
@@ -182,6 +190,11 @@ export function suggest(answers: Answers, ctx: Context): Suggestion[] {
     reasons.push(...bodyLines);
     // The caution is shown on its own (Suggestion.caution), not among the reasons.
     if (caution) score -= 0.5;
+    if (mode !== "workout") {
+      const f = spec.favour(item);
+      score += f.score;
+      reasons.unshift(f.reason);
+    }
     const focusHit = item.works.filter((r) => answers.area.includes(r));
     if (answers.area.length && focusHit.length) {
       score += answers.area.includes(item.works[0]!) ? 3 : 1.5;
@@ -193,7 +206,7 @@ export function suggest(answers: Answers, ctx: Context): Suggestion[] {
     if (kindHit.length) {
       score += 2;
       reasons.push(`${KIND_WORD[kindHit[0]!]}, as you asked`);
-    } else if (!answers.kinds.length) {
+    } else if (!answers.kinds.length && mode === "workout") {
       const fresh = item.kinds.filter((k) => !kindsToday.has(k));
       if (fresh.length && doneItems.length) { score += 1.5; reasons.push(`${KIND_WORD[fresh[0]!]}: none yet this session`); }
       // Nothing done yet and no kinds asked for: start gently.
@@ -216,7 +229,8 @@ export function suggest(answers: Answers, ctx: Context): Suggestion[] {
     if (answers.sweat === 0) reasons.push("No sweat");
     if (answers.location) {
       // What it'll use here: the first alternative present in each required group, then optional extras.
-      const used = [...item.needs.map((alts) => alts.find((e) => have.has(e))), ...item.optional.filter((e) => have.has(e))]
+      // Each item once: a mat can be both a needed alternative and an optional extra.
+      const used = [...new Set([...item.needs.map((alts) => alts.find((e) => have.has(e))), ...item.optional.filter((e) => have.has(e))])]
         .filter((e): e is NonNullable<typeof e> => !!e).map((e) => e.replace("-", " "));
       reasons.push(used.length ? `Uses the ${used.join(" and ")} at ${answers.location.name}` : "Needs no equipment");
     }

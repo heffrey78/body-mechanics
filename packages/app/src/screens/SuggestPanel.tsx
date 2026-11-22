@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { AREAS, KINDS, concerns, modifierInfo, showLoad, suggest, type Body, type Kind, type LibraryItem, type Location, type RecordIndex, type Region, type Suggestion } from "@bm/engine";
+import { AREAS, KINDS, MODES, MODE_SPECS, concerns, modifierInfo, showLoad, suggest, type Body, type Kind, type LibraryItem, type Location, type Mode, type RecordIndex, type Region, type Suggestion } from "@bm/engine";
 import { Button, Chip, Segmented, Tag } from "../ui/components.tsx";
 import { KIND_LABEL } from "../ui/labels.ts";
 import { SWEAT_WORDS } from "./LocationsScreen.tsx";
@@ -11,7 +11,15 @@ export interface SuggestAnswers {
   sweat: 0 | 1 | 2;
   area: Region[];
   kinds: Kind[];
+  /** What the session is for (#100, #113); absent: a workout. */
+  mode?: Mode;
 }
+
+/** The engine's answers from the form's, with the minutes left. */
+export const engineAnswers = (a: SuggestAnswers, location: Location | undefined, minutesLeft: number | undefined) => ({
+  ...(location ? { location } : {}), ...(minutesLeft !== undefined ? { minutesLeft } : {}), sweat: a.sweat, area: a.area, kinds: a.kinds,
+  ...(a.mode ? { mode: a.mode } : {}),
+});
 
 type AreaChoice = "whole" | "upper" | "lower" | "core";
 const AREA_LABEL: Record<AreaChoice, string> = { whole: "Whole body", upper: "Upper body", lower: "Lower body", core: "Core" };
@@ -62,7 +70,7 @@ export function SuggestPanel({ answers, defaultLocation, locations, library, ind
     const minutesLeft = answers.minutes !== undefined ? Math.max(0, Math.floor(answers.minutes - elapsed)) : undefined;
     const fortnight = Date.now() - 14 * 86_400_000;
     return suggest(
-      { ...(location ? { location } : {}), ...(minutesLeft !== undefined ? { minutesLeft } : {}), sweat: answers.sweat, area: answers.area, kinds: answers.kinds },
+      engineAnswers(answers, location, minutesLeft),
       {
         library, done, refused, units, now: new Date(), seed, body: concerns(body), standsIn,
         history: (index?.sessions() ?? []).filter((s) => Date.parse(s.startedAt) >= fortnight && (!startedAt || s.startedAt !== startedAt)),
@@ -103,20 +111,28 @@ export function SuggestPanel({ answers, defaultLocation, locations, library, ind
   );
 }
 
-export function Questions({ initial, defaultLocation, locations, onDone, onClose, submit = "Suggest" }: {
-  initial: SuggestAnswers | null; defaultLocation: string | null; locations: Location[]; onDone: (a: SuggestAnswers) => void; onClose: () => void; submit?: string;
+export function Questions({ initial, defaultLocation, locations, onDone, onClose, title = "Suggest next", submit = "Suggest" }: {
+  initial: SuggestAnswers | null; defaultLocation: string | null; locations: Location[]; onDone: (a: SuggestAnswers) => void; onClose: () => void; title?: string; submit?: string;
 }) {
   const [location, setLocation] = useState<string | undefined>(initial ? initial.location : defaultLocation ?? undefined);
   const loc = locations.find((l) => l.id === location);
-  const [sweat, setSweat] = useState<0 | 1 | 2>(initial?.sweat ?? loc?.sweat ?? 1);
+  // The mode (#113): the session's, else the location's usual one, else a workout.
+  const [mode, setMode] = useState<Mode>(initial ? initial.mode ?? "workout" : loc?.mode ?? "workout");
+  // A mode other than Workout starts from its own sweat; a workout from the location's.
+  const sweatFor = (m: Mode, l: Location | undefined) => (m === "workout" ? l?.sweat ?? 1 : MODE_SPECS[m].sweat);
+  const [sweat, setSweat] = useState<0 | 1 | 2>(initial?.sweat ?? sweatFor(mode, loc));
   const [minutes, setMinutes] = useState<number | undefined>(initial?.minutes);
   const [area, setArea] = useState<AreaChoice>(areaOf(initial?.area ?? []));
   const [kinds, setKinds] = useState<Kind[]>(initial?.kinds ?? []);
   return (
-    <div className="card" aria-label="Suggest next questions">
+    <div className="card" aria-label={`${title} questions`}>
       <div className="hrow" style={{ minHeight: 0 }}>
-        <span className="label">Suggest next</span>
+        <span className="label">{title}</span>
         <Button variant="ghost" onClick={onClose}>Close</Button>
+      </div>
+      <span className="label">For</span>
+      <div className="chips" role="group" aria-label="What is this session for?">
+        {MODES.map((m) => <Chip key={m} on={mode === m} onClick={() => { setMode(m); setSweat(sweatFor(m, loc)); }}>{MODE_SPECS[m].label}</Chip>)}
       </div>
       {locations.length ? (
         <>
@@ -128,7 +144,10 @@ export function Questions({ initial, defaultLocation, locations, onDone, onClose
                 const next = l.id === location ? undefined : l.id;
                 setLocation(next);
                 const nl = locations.find((x) => x.id === next);
-                if (nl) setSweat(nl.sweat);
+                // A place with a usual mode (#113) starts from it; otherwise the mode stays as picked.
+                const nm = nl?.mode ?? mode;
+                if (nl?.mode) setMode(nl.mode);
+                if (nl) setSweat(sweatFor(nm, nl));
               }}>{l.name}</Chip>
             ))}
           </div>
@@ -144,11 +163,19 @@ export function Questions({ initial, defaultLocation, locations, onDone, onClose
         options={(["0", "1", "2"] as const).map((id) => ({ id, label: SWEAT_WORDS[Number(id)]! }))} />
       <span className="label">Focus</span>
       <div className="chips">{(Object.keys(AREA_LABEL) as AreaChoice[]).map((a) => <Chip key={a} on={area === a} onClick={() => setArea(a)}>{AREA_LABEL[a]}</Chip>)}</div>
-      <div className="chips">
-        {KINDS.map((k) => <Chip key={k} on={kinds.includes(k)} onClick={() => setKinds(kinds.includes(k) ? kinds.filter((x) => x !== k) : [...kinds, k])}>{KIND_LABEL[k]}</Chip>)}
-      </div>
-      <span className="muted">No kind chosen: a balanced mix.</span>
-      <Button variant="primary" xl onClick={() => onDone({ ...(location ? { location } : {}), ...(minutes ? { minutes } : {}), sweat, area: area === "whole" ? [] : AREAS[area], kinds })}>{submit}</Button>
+      {/* The kinds shape a workout; the other modes pick their own (#113). */}
+      {mode === "workout" ? (
+        <>
+          <div className="chips">
+            {KINDS.map((k) => <Chip key={k} on={kinds.includes(k)} onClick={() => setKinds(kinds.includes(k) ? kinds.filter((x) => x !== k) : [...kinds, k])}>{KIND_LABEL[k]}</Chip>)}
+          </div>
+          <span className="muted">No kind chosen: a balanced mix.</span>
+        </>
+      ) : null}
+      <Button variant="primary" xl onClick={() => onDone({
+        ...(location ? { location } : {}), ...(minutes ? { minutes } : {}), sweat, area: area === "whole" ? [] : AREAS[area],
+        kinds: mode === "workout" ? kinds : [], ...(mode !== "workout" ? { mode } : {}),
+      })}>{submit}</Button>
     </div>
   );
 }
