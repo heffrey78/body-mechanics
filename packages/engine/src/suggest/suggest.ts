@@ -229,7 +229,8 @@ export function suggest(answers: Answers, ctx: Context): Suggestion[] {
     if (answers.sweat === 0) reasons.push("No sweat");
     if (answers.location) {
       // What it'll use here: the first alternative present in each required group, then optional extras.
-      const used = [...item.needs.map((alts) => alts.find((e) => have.has(e))), ...item.optional.filter((e) => have.has(e))]
+      // Each item once: a mat can be both a needed alternative and an optional extra.
+      const used = [...new Set([...item.needs.map((alts) => alts.find((e) => have.has(e))), ...item.optional.filter((e) => have.has(e))])]
         .filter((e): e is NonNullable<typeof e> => !!e).map((e) => e.replace("-", " "));
       reasons.push(used.length ? `Uses the ${used.join(" and ")} at ${answers.location.name}` : "Needs no equipment");
     }

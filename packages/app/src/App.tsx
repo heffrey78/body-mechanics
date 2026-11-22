@@ -188,7 +188,7 @@ export function App() {
   /** This session's Suggest next answers, from the record (so they survive a restart). */
   const sessionAnswers = (s: Session): SuggestAnswers | null => s.answers?.sweat === undefined ? null : {
     ...(s.location ? { location: s.location } : {}), ...(s.answers.minutes ? { minutes: s.answers.minutes } : {}),
-    sweat: s.answers.sweat, area: s.focus?.area ?? [], kinds: s.focus?.kinds ?? [],
+    sweat: s.answers.sweat, area: s.focus?.area ?? [], kinds: s.focus?.kinds ?? [], ...(s.answers.mode ? { mode: s.answers.mode } : {}),
   };
   const takeSuggestion = async (x: Suggestion) => {
     if (!log) return;
@@ -305,13 +305,17 @@ export function App() {
   };
 
   /** Run a plan (#36): a routine (`routine` set) or a repeat of a past session. */
-  const startPlan = async (items: RoutineItem[], routine?: string) => {
+  const startPlan = async (items: RoutineItem[], routine?: string, answers?: SuggestAnswers) => {
     const live = items.filter((i) => !i.deleted);
     if (!log || log.session || !live.length) return;
     setSummary(null);
     setPending(null);
     setPlan(live);
-    changed(await log.start(live[0]!.exercise, { ...(routine ? { routine } : {}), ...(location ? { location } : {}), modifiers: live[0]!.modifiers ?? [] }), null, live);
+    const where = answers?.location ?? location;
+    const started = await log.start(live[0]!.exercise, { ...(routine ? { routine } : {}), ...(where ? { location: where } : {}), modifiers: live[0]!.modifiers ?? [] });
+    // A planned session keeps its answers (#113), so Suggest next follows the same mode and focus.
+    if (answers) await log.setAnswers(answers);
+    changed(log.session ?? started, null, live);
     setHome({ screen: "session" });
     setTab("home");
   };
@@ -577,7 +581,7 @@ export function App() {
     );
   } else if (tab === "home" && home.screen === "plan") {
     body = <PlanScreen defaultLocation={location} locations={locations} library={library} index={index} body={bodyRecords} standsIn={standsInOf(equipment)} units={profile?.units ?? "kg"}
-      onStart={(items) => void startPlan(items)} onBack={() => setHome({ screen: "start" })} />;
+      onStart={(items, a) => void startPlan(items, undefined, a)} onBack={() => setHome({ screen: "start" })} />;
   } else if (tab === "home" && home.screen === "new") {
     body = (
       <NewMovement

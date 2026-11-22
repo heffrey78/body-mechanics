@@ -6,7 +6,7 @@
  */
 import { Clock } from "../records/hlc.ts";
 import { newId } from "../records/ids.ts";
-import type { Effort, Equipment, ExerciseTag, Kind, Measure, Position, Region } from "../records/vocab.ts";
+import type { Effort, Equipment, ExerciseTag, Kind, Measure, Mode, Position, Region } from "../records/vocab.ts";
 import type { BodyLink, Entry, Exercise, ExerciseOverride, LoggedSet, Modifier, Session } from "../records/schemas.ts";
 import { catalogue, type CatalogueEntry } from "../catalogue/index.ts";
 import { mentioned, needsFromLegacy } from "../records/equipment.ts";
@@ -65,13 +65,13 @@ export class SessionLog {
   }
 
   /** The Suggest next answers for this session (#43): where, how long, how much sweat, the focus. */
-  async setAnswers(answers: { location?: string; minutes?: number; sweat: 0 | 1 | 2; area: Region[]; kinds: Kind[] }): Promise<void> {
+  async setAnswers(answers: { location?: string; minutes?: number; sweat: 0 | 1 | 2; area: Region[]; kinds: Kind[]; mode?: Mode }): Promise<void> {
     const s = this.#need();
     const stamp = this.#clock.tick();
     const before = JSON.stringify([s.location, s.answers, s.focus]);
     if (answers.location) s.location = answers.location;
     else delete s.location;
-    s.answers = { sweat: answers.sweat, ...(answers.minutes ? { minutes: answers.minutes } : {}) };
+    s.answers = { sweat: answers.sweat, ...(answers.minutes ? { minutes: answers.minutes } : {}), ...(answers.mode && answers.mode !== "workout" ? { mode: answers.mode } : {}) };
     s.focus = { area: answers.area, kinds: answers.kinds };
     if (JSON.stringify([s.location, s.answers, s.focus]) === before) return;
     s.edits = { ...(s.edits ?? {}), location: stamp, answers: stamp, focus: stamp };

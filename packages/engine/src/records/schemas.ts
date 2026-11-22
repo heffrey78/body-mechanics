@@ -9,7 +9,7 @@ import { z } from "zod";
 import { HLC_PATTERN } from "./hlc.ts";
 import { ID_PATTERN } from "./ids.ts";
 import { JOINTS } from "../demo/skeleton.ts";
-import { BOTHERS, EFFORTS, EQUIPMENT, EXERCISE_TAGS, KINDS, MARK_KINDS, MEASURES, MODIFIER_KINDS, POSITIONS, RED_FLAGS, REGIONS, RETIRED_THEMES, SHAPES, SIDED_REGIONS, SIDES, THEMES, THEME_MODES, UNITS } from "./vocab.ts";
+import { BOTHERS, EFFORTS, EQUIPMENT, EXERCISE_TAGS, KINDS, MARK_KINDS, MEASURES, MODES, MODIFIER_KINDS, POSITIONS, RED_FLAGS, REGIONS, RETIRED_THEMES, SHAPES, SIDED_REGIONS, SIDES, THEMES, THEME_MODES, UNITS } from "./vocab.ts";
 
 export const FORMAT_VERSION = 1;
 
@@ -187,7 +187,12 @@ export const Session = z.strictObject({
   /** The location record's id (#41). */
   location: z.string().max(80).optional(),
   answers: z
-    .strictObject({ minutes: z.number().int().positive().max(600).optional(), sweat: z.union([z.literal(0), z.literal(1), z.literal(2)]).optional() })
+    .strictObject({
+      minutes: z.number().int().positive().max(600).optional(),
+      sweat: z.union([z.literal(0), z.literal(1), z.literal(2)]).optional(),
+      /** What the session is for (#100, #113); absent: a workout. */
+      mode: z.enum(MODES).optional(),
+    })
     .optional(),
   focus: z.strictObject({ area: z.array(z.enum(REGIONS)).default([]), kinds: z.array(z.enum(KINDS)).default([]) }).optional(),
   routine: id.optional(),
@@ -250,6 +255,8 @@ export const Location = z.strictObject({
   equipment: z.array(equipmentRef),
   /** How much sweat is fine here, by default (#3): 0 none, 1 a little, 2 bring it. */
   sweat: z.union([z.literal(0), z.literal(1), z.literal(2)]),
+  /** What a session here is usually for (#100, #113): the mode the questions start from. */
+  mode: z.enum(MODES).optional(),
   deleted: z.literal(true).optional(),
   edits,
 });

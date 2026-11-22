@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import {
-  FIELD, buildPlan, concerns, describeConcern, modifiersOf, newId, type Body, type LibraryItem, type Location, type RecordIndex, type RoutineItem, type Suggestion,
+  FIELD, MODE_SPECS, buildPlan, concerns, describeConcern, modifiersOf, newId, type Body, type LibraryItem, type Location, type RecordIndex, type RoutineItem, type Suggestion,
 } from "@bm/engine";
 import { Button, Tag } from "../ui/components.tsx";
 import { modifierText } from "../ui/ModifierPicker.tsx";
-import { Questions, describeDose, type SuggestAnswers } from "./SuggestPanel.tsx";
+import { Questions, describeDose, engineAnswers, type SuggestAnswers } from "./SuggestPanel.tsx";
 
 /** A suggestion as a planned item: its dose and modifiers become the targets (#36). */
 export function planItem(s: Suggestion): RoutineItem {
@@ -28,7 +28,8 @@ export function PlanScreen({ defaultLocation, locations, library, index, body, s
   /** Your own equipment → the built-in items it stands in for (#60). */
   standsIn: ReadonlyMap<string, readonly string[]>;
   units: "kg" | "lb";
-  onStart: (items: RoutineItem[]) => void;
+  /** Run the plan; the answers go with the session, so Suggest next keeps its mode (#113). */
+  onStart: (items: RoutineItem[], answers: SuggestAnswers) => void;
   onBack: () => void;
 }) {
   const [answers, setAnswers] = useState<SuggestAnswers | null>(null);
@@ -39,7 +40,7 @@ export function PlanScreen({ defaultLocation, locations, library, index, body, s
     const location = locations.find((l) => l.id === answers.location);
     const fortnight = Date.now() - 14 * 86_400_000;
     return buildPlan(
-      { ...(location ? { location } : {}), ...(answers.minutes ? { minutesLeft: answers.minutes } : {}), sweat: answers.sweat, area: answers.area, kinds: answers.kinds },
+      engineAnswers(answers, location, answers.minutes),
       {
         library, done: [], refused: new Set(), units, now: new Date(), seed, body: concerns(body), standsIn,
         history: (index?.sessions() ?? []).filter((s) => Date.parse(s.startedAt) >= fortnight),
@@ -54,8 +55,8 @@ export function PlanScreen({ defaultLocation, locations, library, index, body, s
       <div className="pad">
         <div className="hrow"><Button variant="ghost" onClick={onBack}>‹ Home</Button></div>
         <h1 className="title">Start a session</h1>
-        <span className="muted">Pick a focus. The plan works around what's marked on your body; swap anything, and in the session Suggest next gives one more idea at a time.</span>
-        <Questions initial={null} defaultLocation={defaultLocation} locations={locations} onDone={(a) => { setSkip(new Set()); setAnswers(a); }} onClose={onBack} submit="Build my plan" />
+        <span className="muted">Pick what it's for and a focus. The plan works around what's marked on your body; swap anything, and in the session Suggest next gives one more idea at a time.</span>
+        <Questions initial={null} defaultLocation={defaultLocation} locations={locations} onDone={(a) => { setSkip(new Set()); setAnswers(a); }} onClose={onBack} title="Start a session" submit="Build my plan" />
       </div>
     );
   }
@@ -66,7 +67,7 @@ export function PlanScreen({ defaultLocation, locations, library, index, body, s
         <Button variant="ghost" onClick={() => setAnswers(null)}>‹ Change focus</Button>
         <span className="muted num">{items.reduce((a, s) => a + s.minutes, 0)} min</span>
       </div>
-      <h1 className="title">Your plan</h1>
+      <h1 className="title">{answers.mode ? `Your plan: ${MODE_SPECS[answers.mode].label}` : "Your plan"}</h1>
       {plan.sections.map((sec) => (
         <div key={sec.label} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           <span className="label">{sec.label}</span>
@@ -88,7 +89,7 @@ export function PlanScreen({ defaultLocation, locations, library, index, body, s
       ))}
       {!items.length ? <span className="muted">Nothing fits that focus here. Try more time, more sweat or another focus.</span> : null}
       {plan.notAffected.length ? <span className="muted">Not affected by this plan: {plan.notAffected.map(describeConcern).join(", ")}.</span> : null}
-      <Button variant="primary" xl disabled={!items.length} onClick={() => onStart(items.map(planItem))}>Start</Button>
+      <Button variant="primary" xl disabled={!items.length} onClick={() => onStart(items.map(planItem), answers)}>Start</Button>
     </div>
   );
 }

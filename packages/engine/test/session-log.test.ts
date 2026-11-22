@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Clock, catalogue, newId, deletedSession, mergeRecords, modifiersOf, routineFromSession, RecordIndex, SessionLog, Vault, createExercise, deviceClock, loadLibrary, memoryFilesPort, memorySecretsPort, search, type Session } from "../src/index.ts";
+import { Clock, catalogue, newId, deletedSession, mergeRecords, modifiersOf, routineFromSession, RecordIndex, SessionLog, Vault, createExercise, deviceClock, loadLibrary, memoryFilesPort, memorySecretsPort, search, Location, type Session } from "../src/index.ts";
 
 async function setup() {
   const files = memoryFilesPort();
@@ -41,6 +41,19 @@ describe("logging a session (#31, #32)", () => {
     const back = (await (await Vault.open(ports, "/r")).read(`sessions/${s.startedAt.slice(0, 4)}/${s.startedAt.slice(5, 7)}/${s.id}.yaml.age`)) as Session;
     expect(back).toMatchObject({ location: "llllllllllllllll", answers: { minutes: 10, sweat: 0 }, focus: { area: ["neck", "shoulder"], kinds: ["mobility"] } });
     expect(back.edits?.answers).toMatch(/~dddddddddddddddd$/);
+  });
+
+  it("keeps the session's mode with its answers; a workout stores none, so older builds read it as before (#113)", async () => {
+    const { ports, vault } = await setup();
+    const log = new SessionLog(vault, new Clock("dddddddddddddddd"));
+    const s = await log.start("bm:cat-cow");
+    const path = `sessions/${s.startedAt.slice(0, 4)}/${s.startedAt.slice(5, 7)}/${s.id}.yaml.age`;
+    await log.setAnswers({ sweat: 0, area: [], kinds: [], mode: "wind-down" });
+    expect(((await (await Vault.open(ports, "/r")).read(path)) as Session).answers).toEqual({ sweat: 0, mode: "wind-down" });
+    await log.setAnswers({ sweat: 1, area: [], kinds: [], mode: "workout" });
+    expect(((await (await Vault.open(ports, "/r")).read(path)) as Session).answers).toEqual({ sweat: 1 });
+    expect(Location.parse({ type: "location", v: 1, id: "llllllllllllllll", name: "Bedroom", equipment: ["floor"], sweat: 0, mode: "wind-down" }).mode).toBe("wind-down");
+    expect(() => Location.parse({ type: "location", v: 1, id: "llllllllllllllll", name: "Bedroom", equipment: ["floor"], sweat: 0, mode: "nap" })).toThrow();
   });
 
   it("keeps how an exercise was done: modifiers mark it modified, and a routine made from it keeps them (#51)", async () => {
