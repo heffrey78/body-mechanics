@@ -146,3 +146,10 @@ button { font-family: inherit; }
 .week .day.done { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
 .week .day.today { border: 2px solid var(--tabbar); color: var(--ink); font-weight: 600; }
 .week .day.done.today { border-color: var(--tabbar); }
+
+/* One row of pills (#114): no wrapping; OneRow drops or cuts short what doesn't fit. */
+.onerow { position: relative; display: flex; gap: 8px; flex-wrap: nowrap; overflow: hidden; align-items: center; min-width: 0; }
+.onerow > .chip { flex: none; min-width: 0; }
+.onerow-ruler { position: absolute; visibility: hidden; pointer-events: none; display: flex; gap: 8px; white-space: nowrap; left: 0; top: 0; }
+.onerow-ruler > .chip { flex: none; white-space: nowrap; }
+.chip-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
