@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { AREAS, catalogue, fits, fromCatalogue, equipped, starterLocations, suggest, type Answers, type Context, type LibraryItem, type Location } from "../src/index.ts";
+import { AREAS, MODE_SPECS, buildPlan, catalogue, fits, fromCatalogue, equipped, starterLocations, suggest, type Answers, type Context, type LibraryItem, type Location } from "../src/index.ts";
 
 const library: LibraryItem[] = catalogue().entries.map(fromCatalogue);
 const places = Object.fromEntries(starterLocations().map((l) => [l.name, l])) as Record<string, Location>;
@@ -98,5 +98,77 @@ describe("Suggest next: the rules", () => {
         expect(x.reasons.length).toBeGreaterThan(0);
       }
     }
+  });
+});
+
+describe("session modes (#100, #109)", () => {
+  const home = places["Home"]!;
+  const office = places["Office"]!;
+  const modes = ["stretch", "wind-down", "relax", "yoga", "wake-up"] as const;
+  const RANK = { standing: 0, kneeling: 1, seated: 2, lying: 3 } as const;
+  const rank = (x: LibraryItem) => RANK[x.position ?? "seated"];
+
+  it("suggests only what each mode admits, and every suggestion's reasons name the mode", () => {
+    for (const mode of modes) for (const location of [home, office]) {
+      const s = suggest({ location, sweat: 1, area: [], kinds: [], mode }, ctx());
+      expect(s.length, `${mode} at ${location.name}`).toBeGreaterThan(3);
+      for (const x of s) {
+        expect(MODE_SPECS[mode].admits(x.item), `${mode}: ${x.item.name}`).toBe(true);
+        expect(x.reasons[0], `${mode}: ${x.item.name}`).toMatch(new RegExp(`^${MODE_SPECS[mode].label}: `));
+      }
+    }
+  });
+
+  it("plans a full session in every mode, at home and at the office, inside the time", () => {
+    for (const mode of modes) for (const location of [home, office]) {
+      const plan = buildPlan({ location, sweat: 1, area: [], kinds: [], mode, minutesLeft: 20 }, ctx());
+      const items = plan.sections.flatMap((s) => s.items);
+      expect(items.length, `${mode} at ${location.name}`).toBeGreaterThanOrEqual(4);
+      expect(new Set(items.map((x) => x.item.id)).size).toBe(items.length);
+      expect(items.reduce((a, x) => a + x.minutes, 0), `${mode} at ${location.name}`).toBeLessThanOrEqual(20);
+    }
+  });
+
+  it("winds down from standing to lying, and ends on breathing", () => {
+    const plan = buildPlan({ location: home, sweat: 0, area: [], kinds: [], mode: "wind-down", minutesLeft: 25 }, ctx());
+    const items = plan.sections.flatMap((s) => s.items);
+    for (let i = 1; i < items.length; i++) expect(rank(items[i]!.item)).toBeGreaterThanOrEqual(rank(items[i - 1]!.item));
+    expect(plan.sections.at(-1)!.label).toBe("Breathe");
+    expect(items.at(-1)!.item.tags).toContain("breathing");
+    for (const x of items) expect(x.item.sweat).toBe(0);
+  });
+
+  it("stretches with static holds, relaxes mostly with breathing, and holds yoga poses for about five breaths", () => {
+    const stretch = buildPlan({ location: home, sweat: 0, area: [], kinds: [], mode: "stretch" }, ctx()).sections.flatMap((s) => s.items);
+    for (const x of stretch) expect(x.item.tags).toContain("stretch");
+    expect(stretch.filter((x) => x.item.measure === "time").every((x) => x.amount === 45)).toBe(true);
+    const relax = suggest({ location: home, sweat: 0, area: [], kinds: [], mode: "relax" }, ctx());
+    expect(relax[0]!.item.tags).toContain("breathing");
+    expect(relax[0]!.amount).toBeGreaterThanOrEqual(180);
+    const yoga = buildPlan({ location: home, sweat: 1, area: [], kinds: [], mode: "yoga" }, ctx()).sections[0]!.items;
+    for (const x of yoga) expect(x.item.tags).toContain("yoga");
+    expect(yoga.find((x) => x.item.measure === "time")!.amount).toBe(30);
+  });
+
+  it("wakes up with moving exercises, nothing sweaty or sleepy", () => {
+    const s = suggest({ location: home, sweat: 2, area: [], kinds: [], mode: "wake-up" }, ctx());
+    for (const x of s) {
+      expect(x.item.sweat).toBeLessThanOrEqual(1);
+      expect(x.item.tags).not.toContain("calming");
+    }
+    expect(s.slice(0, 5).every((x) => x.item.measure === "reps")).toBe(true);
+  });
+
+  it("falls back to the gentlest exercises, and says so, when nothing here fits the mode", () => {
+    const yogaFree = library.filter((x) => !x.tags.includes("yoga") && !x.tags.includes("breathing"));
+    const s = suggest({ location: home, sweat: 1, area: [], kinds: [], mode: "yoga" }, ctx({ library: yogaFree }));
+    expect(s.length).toBeGreaterThan(0);
+    for (const x of s) expect(x.item.kinds).toContain("mobility");
+    expect(s[0]!.reasons).toContain("Nothing here fits Yoga exactly");
+  });
+
+  it("leaves a workout as it was: no mode and mode workout give the same suggestions", () => {
+    const a: Answers = { location: places["Gym"]!, sweat: 2, area: [], kinds: [] };
+    expect(suggest({ ...a, mode: "workout" }, ctx({ seed: "x" }))).toEqual(suggest(a, ctx({ seed: "x" })));
   });
 });

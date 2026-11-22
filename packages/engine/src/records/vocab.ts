@@ -38,6 +38,9 @@ export type ExerciseTag = (typeof EXERCISE_TAGS)[number];
 /** Where the body is (#109): Wind down orders its sequence from standing to lying. */
 export const POSITIONS = ["standing", "kneeling", "seated", "lying"] as const;
 export type Position = (typeof POSITIONS)[number];
+/** What a session is for (#100, #109). Workout is the default. */
+export const MODES = ["workout", "stretch", "wind-down", "relax", "yoga", "wake-up"] as const;
+export type Mode = (typeof MODES)[number];
 
 export const MEASURES = ["reps", "time", "distance"] as const;
 export type Measure = (typeof MEASURES)[number];
